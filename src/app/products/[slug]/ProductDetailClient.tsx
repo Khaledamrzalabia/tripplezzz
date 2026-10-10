@@ -50,9 +50,9 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           <span style={{ color: "var(--clr-text-primary)" }}>{product.name}</span>
         </nav>
 
-        <div className="product-detail-grid">
+        <div className="product-detail-grid" style={{ minWidth: 0, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
           {/* Gallery */}
-          <div className="product-gallery">
+          <div className="product-gallery" style={{ minWidth: 0, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
             <div className="product-gallery-main" style={{ overflow: "hidden", position: "relative" }}>
               <Image
                 src={activeImage.src}
@@ -114,13 +114,13 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           </div>
 
           {/* Product Info */}
-          <div className="product-info">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+          <div className="product-info" style={{ minWidth: 0, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem", flexWrap: "wrap", gap: "0.5rem" }}>
               <span className="product-category">{product.collection ? `${product.collection.toUpperCase()} &bull; ` : ""}{product.category.toUpperCase()}</span>
               {product.featured && <span className="mockup-card-badge-new" style={{ position: "static" }}>FEATURED DROP</span>}
             </div>
 
-            <h1 className="product-name">{product.name}</h1>
+            <h1 className="product-name" style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>{product.name}</h1>
 
             {isComingSoon ? (
               <p className="product-price product-coming-soon-label" style={{ color: "var(--clr-accent, #c9a96e)", fontSize: "1.25rem", letterSpacing: "0.08em", textTransform: "uppercase" }}>
@@ -131,9 +131,9 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
             )}
 
             {product.availability === "in-stock" && (
-              <p className="availability-tag" style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
-                In Stock &bull; Ships within 24–48 hours
+              <p className="availability-tag" style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", display: "inline-block", flexShrink: 0 }} />
+                <span>In Stock &bull; Ships within 24–48 hours</span>
               </p>
             )}
             {product.availability === "low-stock" && <p className="availability-tag" style={{ color: "#f0a500" }}>⚠️ Limited Stock Available</p>}
@@ -143,8 +143,8 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
 
             {/* Size selection & Size Guide Trigger */}
             {product.sizes && product.sizes.length > 0 && (
-              <div style={{ marginBottom: "1.75rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+              <div style={{ marginBottom: "1.75rem", width: "100%", maxWidth: "100%" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem", flexWrap: "wrap", gap: "0.5rem" }}>
                   <p className="option-label" style={{ margin: 0 }}>
                     Size — <span style={{ color: "var(--clr-text-secondary)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>{selectedSize}</span>
                   </p>
@@ -199,22 +199,41 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               disabled={isOutOfStock || isComingSoon}
               style={{
                 width: "100%",
-                padding: "1.1rem",
-                fontSize: "0.95rem",
+                maxWidth: "100%",
+                boxSizing: "border-box",
+                padding: "1rem 1.25rem",
+                fontSize: "0.9rem",
+                whiteSpace: "normal",
+                lineHeight: 1.3,
+                textAlign: "center",
+                wordBreak: "break-word",
                 ...(isComingSoon ? { opacity: 0.6, cursor: "not-allowed", background: "var(--clr-surface-2)", color: "var(--clr-text-secondary)", borderColor: "var(--clr-border)" } : {})
               }}
             >
               {isComingSoon ? "Coming Soon — Drop Date TBA" : isOutOfStock ? "Sold Out" : added ? "Added To Bag ✓" : "ADD TO BAG"}
             </button>
 
-            <p className="product-desc" style={{ marginTop: "2rem" }}>
+            <p className="product-desc" style={{ marginTop: "2rem", wordBreak: "break-word", overflowWrap: "break-word", maxWidth: "100%", boxSizing: "border-box" }}>
               {product.longDescription ?? product.description}
             </p>
 
             {/* Accordion / Tabbed Specifications (Per Design Spec 10.5 & 11.3) */}
-            <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--clr-border)" }}>
+            <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--clr-border)", width: "100%", maxWidth: "100%", minWidth: 0, boxSizing: "border-box" }}>
               {/* Tab Nav */}
-              <div style={{ display: "flex", gap: "1rem", borderBottom: "1px solid var(--clr-border)", overflowX: "auto" }}>
+              <div
+                className="product-tabs-nav"
+                style={{
+                  display: "flex",
+                  gap: "1rem",
+                  borderBottom: "1px solid var(--clr-border)",
+                  overflowX: "auto",
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  WebkitOverflowScrolling: "touch",
+                  scrollbarWidth: "none",
+                }}
+              >
                 {(
                   [
                     { id: "specs", label: "CRAFT & SPECS" },
@@ -238,6 +257,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                       letterSpacing: "0.08em",
                       cursor: "pointer",
                       whiteSpace: "nowrap",
+                      flexShrink: 0,
                     }}
                   >
                     {tab.label}
@@ -246,27 +266,27 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               </div>
 
               {/* Tab Content */}
-              <div style={{ padding: "1.5rem 0", fontSize: "0.9rem", color: "var(--clr-text-secondary)", lineHeight: 1.7 }}>
+              <div style={{ padding: "1.5rem 0", fontSize: "0.9rem", color: "var(--clr-text-secondary)", lineHeight: 1.7, width: "100%", maxWidth: "100%", boxSizing: "border-box", wordBreak: "break-word", overflowWrap: "break-word" }}>
                 {activeTab === "specs" && (
-                  <ul style={{ paddingLeft: "1.25rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                    <li>500gsm custom-milled loopback cotton fleece.</li>
-                    <li>Over 45,000 stitches of high-density 3D metallic embroidery.</li>
-                    <li>Tonal custom drawstrings with heavy engraved aglets.</li>
-                    <li>Double-layer structured hood engineered to sit upright.</li>
+                  <ul style={{ paddingLeft: "1.25rem", paddingRight: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "100%", boxSizing: "border-box" }}>
+                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>500gsm custom-milled loopback cotton fleece.</li>
+                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Over 45,000 stitches of high-density 3D metallic embroidery.</li>
+                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Tonal custom drawstrings with heavy engraved aglets.</li>
+                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Double-layer structured hood engineered to sit upright.</li>
                   </ul>
                 )}
                 {activeTab === "fit" && (
-                  <p>
+                  <p style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
                     Cut with our signature dropped shoulder and relaxed boxy drape. Model is 185cm (6&apos;1&quot;) wearing size Large. For a closer tailored fit, select one size smaller than your standard size.
                   </p>
                 )}
                 {activeTab === "care" && (
-                  <p>
+                  <p style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
                     Machine wash cold inside-out with like colours. Use mild detergent. Do not tumble dry. Reshape and air dry flat in shade. Cool iron on reverse; do not iron directly on embroidered crests.
                   </p>
                 )}
                 {activeTab === "shipping" && (
-                  <p>
+                  <p style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
                     Dispatched in sustainable branded packaging within 24–48 hours. Express regional delivery takes 2–4 business days. Free worldwide shipping on orders over $150 USD. 14-day hassle-free return window.
                   </p>
                 )}

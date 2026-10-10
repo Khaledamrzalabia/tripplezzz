@@ -60,6 +60,8 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,6 +85,9 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   font-size: 16px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
 }
 
 img,
@@ -5220,31 +5225,106 @@ select {
   .product-detail {
     padding-top: 1rem !important;
     padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)) !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .product-detail .site-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-inline: 1rem !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
   .product-detail-grid {
     display: flex !important;
     flex-direction: column !important;
     gap: 1.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .product-gallery {
     position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .product-gallery-main {
     aspect-ratio: 1/1 !important;
     border-radius: 8px !important;
     overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .product-info {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
   .product-name {
     font-size: 1.75rem !important;
-    line-height: 1.1 !important;
+    line-height: 1.15 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
   }
 
   .product-price {
     font-size: 1.35rem !important;
+  }
+
+  .product-desc {
+    font-size: 0.92rem !important;
+    line-height: 1.7 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .product-tabs-nav {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    border-bottom: 1px solid var(--clr-border) !important;
+    padding-bottom: 2px !important;
+  }
+
+  .product-tabs-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .product-tabs-nav button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 0.78rem !important;
+    padding: 0.7rem 0.2rem !important;
+  }
+
+  .product-info ul,
+  .product-info ol,
+  .product-info li,
+  .product-info p {
+    max-width: 100% !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    box-sizing: border-box !important;
   }
 
   .size-btn {
@@ -5255,11 +5335,19 @@ select {
   }
 
   .product-add-btn {
-    min-height: 50px !important;
-    font-size: 0.92rem !important;
+    min-height: 48px !important;
+    font-size: 0.88rem !important;
     font-weight: 800 !important;
-    letter-spacing: 0.08em !important;
+    letter-spacing: 0.05em !important;
     border-radius: 6px !important;
+    white-space: normal !important;
+    text-align: center !important;
+    word-break: break-word !important;
+    line-height: 1.3 !important;
+    padding: 0.85rem 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* Sticky Mobile Buy Bar - Perfectly anchored at the bottom edge */
