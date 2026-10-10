@@ -10,10 +10,7 @@ export default function CartDrawer() {
   const { state, isDrawerOpen, closeDrawer, updateQty, removeItem, totalItems, totalPrice } = useCart();
   const { formatPrice } = useCurrency();
 
-  // Free shipping threshold: $150 USD equivalent
-  const freeShippingThresholdUSD = 150;
-  const progressPercent = Math.min(100, Math.round((totalPrice / freeShippingThresholdUSD) * 100));
-  const remainingUSD = Math.max(0, freeShippingThresholdUSD - totalPrice);
+
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -53,19 +50,7 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {/* Free Shipping Bar */}
-        <div className="tz-drawer-shipping-bar">
-          <div className="tz-drawer-shipping-text">
-            {remainingUSD === 0 ? (
-              <span className="tz-shipping-unlocked">🎉 You unlocked <strong>FREE SHIPPING</strong>!</span>
-            ) : (
-              <span>Add <strong>{formatPrice(remainingUSD)}</strong> more for <strong>FREE SHIPPING</strong></span>
-            )}
-          </div>
-          <div className="tz-drawer-progress-track">
-            <div className="tz-drawer-progress-fill" style={{ width: `${progressPercent}%` }} />
-          </div>
-        </div>
+
 
         {/* Items */}
         <div className="tz-drawer-body">

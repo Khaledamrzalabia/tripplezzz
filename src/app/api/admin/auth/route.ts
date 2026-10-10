@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import crypto from "crypto";
 import { supabase, isSupabaseConfigured } from "../../../../lib/supabase";
-import { isPostgresConfigured } from "../../../../lib/db";
+import { isPostgresConfigured, getPool } from "../../../../lib/db";
 
-// Admin credentials from environment variables
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "triplez2026";
+// Admin credentials from environment variables (defaults to requested admin credentials)
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "mohamedhelmy@triplezzz.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "@migohelmy@ABC123XYZ@";
 const SESSION_COOKIE_NAME = "tz_admin_session";
 
 export async function GET() {
@@ -52,21 +52,49 @@ export async function POST(request: Request) {
     let success = false;
     let authUser = null;
 
-    // Check credentials against configured ADMIN_USERNAME & ADMIN_PASSWORD
     const inputUser = String(username).trim();
     const inputPass = String(password);
 
-    const uBuf = Buffer.from(inputUser);
-    const expectedUBuf = Buffer.from(ADMIN_USERNAME);
-    const pBuf = Buffer.from(inputPass);
-    const expectedPBuf = Buffer.from(ADMIN_PASSWORD);
+    // 1. Verify against Supabase PostgreSQL Database (public.admin_users table)
+    const pool = getPool();
+    if (pool) {
+      try {
+        const inputHash = crypto.createHash("sha256").update(inputPass).digest("hex");
+        const { rows } = await pool.query(
+          "SELECT email, password_hash, role FROM public.admin_users WHERE LOWER(email) = LOWER($1) LIMIT 1",
+          [inputUser]
+        );
 
-    const userMatches = uBuf.length === expectedUBuf.length && crypto.timingSafeEqual(uBuf, expectedUBuf);
-    const passMatches = pBuf.length === expectedPBuf.length && crypto.timingSafeEqual(pBuf, expectedPBuf);
+        if (rows.length > 0) {
+          const userRecord = rows[0];
+          const storedHash = userRecord.password_hash;
+          const aBuf = Buffer.from(inputHash);
+          const bBuf = Buffer.from(storedHash);
 
-    if (userMatches && passMatches) {
-      success = true;
-      authUser = ADMIN_USERNAME;
+          if (aBuf.length === bBuf.length && crypto.timingSafeEqual(aBuf, bBuf)) {
+            success = true;
+            authUser = userRecord.email;
+          }
+        }
+      } catch (dbErr) {
+        console.warn("Supabase database admin verification error:", dbErr);
+      }
+    }
+
+    // 2. Also check credentials against configured environment variables
+    if (!success) {
+      const uBuf = Buffer.from(inputUser.toLowerCase());
+      const expectedUBuf = Buffer.from(ADMIN_USERNAME.toLowerCase());
+      const pBuf = Buffer.from(inputPass);
+      const expectedPBuf = Buffer.from(ADMIN_PASSWORD);
+
+      const userMatches = uBuf.length === expectedUBuf.length && crypto.timingSafeEqual(uBuf, expectedUBuf);
+      const passMatches = pBuf.length === expectedPBuf.length && crypto.timingSafeEqual(pBuf, expectedPBuf);
+
+      if (userMatches && passMatches) {
+        success = true;
+        authUser = ADMIN_USERNAME;
+      }
     }
 
     if (!success) {
