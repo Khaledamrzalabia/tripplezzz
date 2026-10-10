@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Triple Z — Football Streetwear
 
-## Getting Started
+> **Football, Worn Differently.**  
+> Premium streetwear label combining contemporary fashion with football culture.
 
-First, run the development server:
+---
 
+## ⚡ Production Overview
+
+Triple Z is a high-performance Next.js 16 e-commerce web application engineered with modern luxury design principles, full multi-currency support, dynamic lookbook, live product catalog, and search.
+
+- **Framework**: Next.js 16.4.0 (Turbopack, Partial Prerendering, Cache Components)
+- **Runtime**: React 19.3.0
+- **Type Safety**: TypeScript 5 (Strict Mode)
+- **Code Quality**: ESLint 9 (Zero errors, zero warnings)
+- **SEO & Social**: Automated `sitemap.xml`, `robots.txt`, Web App Manifest (`manifest.webmanifest`), Schema.org JSON-LD (Store & Product), OpenGraph & Twitter Cards.
+- **Security**: Hardened HTTP security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Strict-Transport-Security`, `Permissions-Policy`, `poweredByHeader: false`).
+
+---
+
+## 🚀 Getting Started
+
+### 1. Local Development
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 2. Linting & Validation
+```bash
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Production Build
+```bash
+npm run build
+npm run start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🐳 Docker Deployment
 
-## Learn More
+A multi-stage production Dockerfile is included:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Build Docker image
+docker build -t triple-z-app .
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Run container on port 3000
+docker run -d -p 3000:3000 --name triple-z triple-z-app
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🌐 Deploy to Vercel or Cloud
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push your repository to GitHub / GitLab.
+2. Import the project into [Vercel](https://vercel.com).
+3. Set the environment variable:
+   ```env
+   NEXT_PUBLIC_SITE_URL=https://your-domain.com
+   ```
+4. Deploy — Next.js will automatically detect settings and build all static routes with instant edge distribution.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📁 Key Routes
+
+- `/` — Campaign Landing & Mockup Experience (Hero with Messi 10 Pedestal)
+- `/shop` — Filterable Storefront by category, availability, and sort
+- `/collections` — Argentina & Portugal Curated Campaigns
+- `/products/[slug]` — Product detail with craft specifications, fit guide, and reviews
+- `/cart` & Slide-Out Bag — Persistent multi-currency drawer with free-shipping tracker
+- `/checkout` — Streamlined multi-step checkout
+- `/lookbook` — Editorial visual lookbook
+- `/size-guide` — Measurement tables with CM/IN toggles
+- `/admin` — Product catalog management dashboard
+- `/sitemap.xml` — Dynamic search engine index
+- `/manifest.webmanifest` — Progressive Web App manifest
+
+---
+
+## 📄 License
+All rights reserved © 2026 Triple Z.

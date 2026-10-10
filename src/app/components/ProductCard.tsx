@@ -1,0 +1,125 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import type { Product } from "../../types/product";
+import { useCart } from "../../context/CartContext";
+import { useCurrency } from "../../context/CurrencyContext";
+
+interface Props {
+  product: Product;
+}
+
+export default function ProductCard({ product }: Props) {
+  const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
+  const [liked, setLiked] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  const primaryImage = product.images[0];
+  const isComingSoon = product.availability === "coming-soon";
+
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isComingSoon || product.availability === "out-of-stock") return;
+    addItem(product, 1, product.sizes?.[0]);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+
+  const handleToggleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLiked(!liked);
+  };
+
+  return (
+    <div className={`mockup-product-card ${isComingSoon ? "is-coming-soon" : ""}`}>
+      {/* Image Container */}
+      <div className="mockup-card-image-wrap">
+        {/* Badge top-left */}
+        {product.featured && (
+          <span className="mockup-card-badge-new">NEW</span>
+        )}
+
+        {/* Heart top-right */}
+        <button
+          type="button"
+          onClick={handleToggleLike}
+          className={`mockup-card-heart ${liked ? "active" : ""}`}
+          aria-label="Save to wishlist"
+        >
+          {liked ? "♥" : "♡"}
+        </button>
+
+        {/* Product Image Link */}
+        <Link href={`/products/${product.slug}`} className="mockup-product-link" aria-label={product.name}>
+          {primaryImage ? (
+            <Image
+              src={primaryImage.src}
+              alt={primaryImage.alt || product.name}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 20vw"
+              className="mockup-card-img"
+            />
+          ) : (
+            <div className="mockup-card-no-img">No Image</div>
+          )}
+        </Link>
+      </div>
+
+      {/* Card Body */}
+      <div className="mockup-card-body">
+        <Link href={`/products/${product.slug}`} className="mockup-product-title-link">
+          <h3 className="mockup-card-title">{product.name}</h3>
+        </Link>
+
+        {/* Price & Action Row */}
+        <div className="mockup-card-footer">
+          <div>
+            {isComingSoon ? (
+              <span className="mockup-card-coming-soon">Coming Soon</span>
+            ) : (
+              <span className="mockup-card-price">{formatPrice(product.price)}</span>
+            )}
+
+            {/* Color dots */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="mockup-card-colors">
+                {product.colors.map((c, i) => (
+                  <span
+                    key={i}
+                    className="mockup-color-dot"
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Cart Icon Button */}
+          <button
+            type="button"
+            onClick={handleQuickAdd}
+            disabled={isComingSoon || product.availability === "out-of-stock"}
+            className={`mockup-card-cart-btn ${added ? "added" : ""}`}
+            aria-label="Add to cart"
+            title={isComingSoon ? "Coming Soon" : "Add to Cart"}
+          >
+            {added ? (
+              <span style={{ fontSize: "11px", fontWeight: 700 }}>✓</span>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
