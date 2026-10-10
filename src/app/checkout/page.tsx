@@ -350,8 +350,8 @@ export default function CheckoutPage() {
         )}
 
         {customer && (
-          <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid #10b981", borderRadius: "var(--radius-md)", padding: "0.9rem 1.25rem", marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-            <span style={{ color: "#10b981", fontWeight: 600 }}>
+          <div style={{ background: "var(--clr-success-bg)", border: "1px solid var(--clr-success)", borderRadius: "var(--radius-md)", padding: "0.9rem 1.25rem", marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+            <span style={{ color: "var(--clr-success)", fontWeight: 600 }}>
               ✓ مسجل بحساب: <strong>{customer.fullName}</strong> ({customer.email})
             </span>
             <Link href="/account" style={{ color: "var(--clr-text-secondary)", fontSize: "0.85rem", textDecoration: "underline" }}>
@@ -361,7 +361,7 @@ export default function CheckoutPage() {
         )}
 
         {formError && (
-          <div style={{ background: "rgba(239, 68, 68, 0.15)", border: "1px solid #ef4444", color: "#fca5a5", padding: "1rem", borderRadius: "var(--radius-md)", marginBottom: "2rem" }}>
+          <div style={{ background: "var(--clr-error-bg)", border: "1px solid var(--clr-error)", color: "var(--clr-text-primary)", padding: "1rem", borderRadius: "var(--radius-md)", marginBottom: "2rem" }}>
             {formError}
           </div>
         )}
@@ -587,23 +587,23 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Payment Instructions & Proof Upload */}
-                  <div style={{ background: "rgba(0, 0, 0, 0.3)", borderRadius: "var(--radius-sm)", padding: "1.25rem", borderLeft: "3px solid var(--clr-accent)" }}>
+                  <div style={{ background: "rgba(255, 255, 255, 0.02)", borderRadius: "var(--radius-md)", padding: "1.25rem", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
                     <h4 style={{ margin: "0 0 0.5rem", fontSize: "0.95rem", color: "var(--clr-accent)" }}>
                       بيانات التحويل الخاصة بـ Triple Z:
                     </h4>
                     {paymentMethod === "instapay" && (
                       <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--clr-text-primary)" }}>
-                        📌 عنوان الدفع (IPA): <strong>triplez@instapay</strong> أو رقم: <strong>01000000000</strong>
+                        عنوان الدفع (IPA): <strong>triplez@instapay</strong> أو رقم: <strong>01000000000</strong>
                       </p>
                     )}
                     {paymentMethod === "vodafone_cash" && (
                       <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--clr-text-primary)" }}>
-                        📌 رقم محفظة فودافون كاش: <strong>01000000000</strong>
+                        رقم محفظة فودافون كاش: <strong>01000000000</strong>
                       </p>
                     )}
                     {paymentMethod === "paypal" && (
                       <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--clr-text-primary)" }}>
-                        📌 حساب PayPal: <strong>payments@triple-z.com</strong>
+                        حساب PayPal: <strong>payments@triple-z.com</strong>
                       </p>
                     )}
 
@@ -630,7 +630,7 @@ export default function CheckoutPage() {
                         />
                         {uploadingProof && <span style={{ fontSize: "0.75rem", color: "var(--clr-accent)" }}>جاري رفع الصورة...</span>}
                         {paymentProofUrl && (
-                          <span style={{ fontSize: "0.8rem", color: "#10b981", display: "block", marginTop: "0.25rem" }}>
+                          <span style={{ fontSize: "0.8rem", color: "var(--clr-success)", display: "block", marginTop: "0.25rem" }}>
                             ✓ تم رفع سكرين التحويل بنجاح
                           </span>
                         )}

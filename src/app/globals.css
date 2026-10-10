@@ -15,7 +15,9 @@
   --clr-text-secondary: rgba(250, 250, 250, 0.72);
   --clr-text-muted: rgba(250, 250, 250, 0.60);
   --clr-error: #e05252;
-  --clr-success: #52c45a;
+  --clr-error-bg: rgba(224, 82, 82, 0.12);
+  --clr-success: #10b981;
+  --clr-success-bg: rgba(16, 185, 129, 0.12);
 
   /* Typography */
   --font-display: var(--font-display), 'Bebas Neue', 'Arial Narrow', sans-serif;
@@ -69,7 +71,20 @@ html {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Preserve essential opacity & color state feedback for interactive controls */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    transition-duration: 0.15s !important;
+    transition-property: opacity, background-color, border-color, color, fill, stroke !important;
+    transform: none !important;
   }
 
   html {
@@ -98,6 +113,24 @@ video {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Accessible Global Focus Indicators (WCAG 2.2 AA SC 2.4.7 & SC 2.4.11) */
+:focus-visible {
+  outline: 2px solid var(--clr-accent);
+  outline-offset: 3px;
+}
+
+/* Polished Browser Surfaces */
+::selection {
+  background: var(--clr-accent);
+  color: var(--clr-black);
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--clr-accent);
 }
 
 button {
@@ -394,8 +427,10 @@ select {
 }
 
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2411,6 +2446,17 @@ select {
   color: var(--clr-accent, #c9a96e);
   opacity: 1;
 }
+
+/* Ensure 44x44px minimum tap target area for mobile touch devices */
+.mockup-card-heart::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+}
 .mockup-card-body {
   padding: 0.85rem 0.75rem;
 }
@@ -4161,8 +4207,10 @@ select {
   }
 
   .icon-btn {
-    width: 38px !important;
-    height: 38px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -4479,17 +4527,19 @@ select {
     border: 1.5px solid #0e1118 !important;
   }
 
-  /* 4. HERO SECTION — EXACT DESKTOP EXPERIENCE ON MOBILE (FULL WIDTH IMAGE + ANIMATED ENERGY TICKER) */
+  /* 4. HERO SECTION — NATIVE MOBILE-FIRST EXPERIENCE */
   .hero {
-    min-height: auto !important;
+    min-height: min(640px, calc(88dvh - 58px)) !important;
     height: auto !important;
     max-height: none !important;
     width: 100% !important;
-    aspect-ratio: 1024 / 682 !important;
+    aspect-ratio: auto !important;
     margin-top: 0 !important;
-    padding: 0 !important;
+    padding: 3rem 1.25rem 2.25rem 1.25rem !important;
     display: flex !important;
-    align-items: center !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: flex-start !important;
     position: relative !important;
     overflow: hidden !important;
     background: #080a0e !important;
@@ -4504,7 +4554,7 @@ select {
 
   .hero-bg img {
     object-fit: cover !important;
-    object-position: center center !important;
+    object-position: center 25% !important;
     width: 100% !important;
     height: 100% !important;
   }
@@ -4513,8 +4563,7 @@ select {
     position: absolute !important;
     inset: 0 !important;
     background: 
-      linear-gradient(90deg, rgba(8, 10, 14, 0.55) 0%, rgba(8, 10, 14, 0.35) 45%, rgba(8, 10, 14, 0.1) 100%),
-      linear-gradient(180deg, rgba(8, 10, 14, 0.3) 0%, transparent 40%, rgba(8, 10, 14, 0.5) 100%) !important;
+      linear-gradient(180deg, rgba(8, 10, 14, 0.3) 0%, rgba(8, 10, 14, 0.65) 45%, rgba(8, 10, 14, 0.98) 100%) !important;
   }
 
   .hero-content {
@@ -4523,15 +4572,15 @@ select {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
-    padding-left: 1.15rem !important;
-    padding-right: 1.15rem !important;
+    padding: 0 !important;
     display: flex !important;
-    align-items: center !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
   }
 
   .hero-text-block {
-    width: 70% !important;
-    max-width: 290px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
     transform: none !important;
   }
@@ -4539,86 +4588,84 @@ select {
   .hero-top-eyebrow {
     display: flex !important;
     align-items: center !important;
-    gap: 0.3rem !important;
-    margin-bottom: 0.2rem !important;
+    gap: 0.4rem !important;
+    margin-bottom: 0.5rem !important;
   }
 
   .hero-gold-dash {
-    width: 14px !important;
-    height: 1px !important;
+    width: 18px !important;
+    height: 2px !important;
     background: var(--clr-accent) !important;
   }
 
   .hero-eyebrow-text {
-    font-size: 0.58rem !important;
-    letter-spacing: 0.12em !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.14em !important;
     font-weight: 700 !important;
     color: var(--clr-accent) !important;
   }
 
   .hero-headline {
-    font-size: clamp(1.25rem, 5.4vw, 1.65rem) !important;
-    line-height: 0.94 !important;
-    margin-bottom: 0.3rem !important;
+    font-size: clamp(2.3rem, 10vw, 3.2rem) !important;
+    line-height: 0.92 !important;
+    margin-bottom: 0.75rem !important;
     letter-spacing: 0.02em !important;
   }
 
   .hero-subline {
-    font-size: 0.66rem !important;
-    line-height: 1.32 !important;
-    margin-bottom: 0.55rem !important;
+    font-size: 0.92rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 1.5rem !important;
     max-width: 100% !important;
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
     display: block !important;
     white-space: normal !important;
   }
 
   .hero-actions {
     display: flex !important;
-    flex-direction: row !important;
-    gap: 0.35rem !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin-bottom: 0 !important;
   }
 
   .hero-btn-primary {
-    flex: 1 !important;
-    width: auto !important;
-    min-height: 28px !important;
-    height: 28px !important;
-    padding: 0 0.5rem !important;
-    font-size: 0.58rem !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    padding: 0 1.5rem !important;
+    font-size: 0.88rem !important;
     font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
+    letter-spacing: 0.08em !important;
     text-align: center !important;
-    border-radius: 4px !important;
+    border-radius: 999px !important;
     background: #fafafa !important;
     color: #0a0a0a !important;
     display: inline-flex !important;
     justify-content: center !important;
     align-items: center !important;
-    white-space: nowrap !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
   }
 
   .hero-btn-secondary {
-    flex: 1 !important;
-    width: auto !important;
-    min-height: 28px !important;
-    height: 28px !important;
-    padding: 0 0.5rem !important;
-    font-size: 0.58rem !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    padding: 0 1.5rem !important;
+    font-size: 0.88rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.04em !important;
+    letter-spacing: 0.08em !important;
     text-align: center !important;
-    border-radius: 4px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
     color: #fafafa !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
     backdrop-filter: blur(8px) !important;
     display: inline-flex !important;
     justify-content: center !important;
     align-items: center !important;
-    white-space: nowrap !important;
   }
 
   /* Animated "ARE YOU READY" Marquee Ticker Strip below Hero */
@@ -5048,29 +5095,36 @@ select {
 
   .mockup-culture-pillars {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
     margin-top: 0 !important;
     border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
-    background: rgba(0, 0, 0, 0.45) !important;
+    background: rgba(0, 0, 0, 0.55) !important;
     margin-inline: -1.25rem !important;
     margin-bottom: -1.25rem !important;
-    padding: 0.9rem 1.25rem !important;
+    padding: 1.15rem 1.25rem !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
   }
 
+  .mockup-culture-pillar {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+  }
+
   .pillar-num {
-    font-size: 1.15rem !important;
+    font-size: 1.35rem !important;
     color: var(--clr-accent, #c9a96e) !important;
+    min-width: 2rem !important;
   }
 
   .pillar-text {
-    font-size: 0.6rem !important;
+    font-size: 0.82rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
-    line-height: 1.25 !important;
-    color: rgba(250, 250, 250, 0.7) !important;
+    line-height: 1.35 !important;
+    color: rgba(250, 250, 250, 0.85) !important;
     word-break: break-word !important;
   }
 
@@ -5099,23 +5153,33 @@ select {
   }
 
   .mockup-craft-cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.45rem !important;
-    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.9rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-inline: 0.25rem !important;
     margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important;
+    scrollbar-width: none !important;
+    width: 100% !important;
+  }
+
+  .mockup-craft-cards-grid::-webkit-scrollbar {
+    display: none !important;
   }
 
   .mockup-craft-card {
-    flex: none !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    flex: 0 0 78% !important;
+    max-width: 290px !important;
+    min-width: 245px !important;
+    scroll-snap-align: start !important;
     background: #111419 !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 6px !important;
+    border-radius: 10px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
@@ -5123,44 +5187,35 @@ select {
 
   .mockup-craft-img-wrap {
     height: auto !important;
-    aspect-ratio: 1 / 1 !important;
+    aspect-ratio: 4 / 3 !important;
     width: 100% !important;
     position: relative !important;
     background: #181c24 !important;
   }
 
   .mockup-craft-card-info {
-    padding: 0.5rem 0.35rem !important;
+    padding: 0.85rem 0.75rem !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.15rem !important;
-    text-align: center !important;
+    gap: 0.35rem !important;
+    text-align: left !important;
   }
 
   .craft-card-title {
-    font-size: 0.65rem !important;
+    font-size: 0.95rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.02em !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
     color: var(--clr-accent, #c9a96e) !important;
     margin: 0 !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
   }
 
   .craft-card-desc {
-    font-size: 0.58rem !important;
+    font-size: 0.82rem !important;
     color: var(--clr-text-secondary) !important;
     margin: 0 !important;
-    line-height: 1.25 !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
+    line-height: 1.45 !important;
+    display: block !important;
   }
 
   /* 10. COMMUNITY LOOKBOOK */
@@ -5233,7 +5288,7 @@ select {
   .mockup-newsletter-input {
     width: 100% !important;
     height: 48px !important;
-    font-size: 0.92rem !important;
+    font-size: 16px !important;
     border-radius: 6px !important;
     background: rgba(255, 255, 255, 0.06) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -5584,7 +5639,7 @@ select {
     border-radius: 6px !important;
     background: #fafafa !important;
     color: #0a0a0a !important;
-    min-height: 40px !important;
+    min-height: 44px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -5652,12 +5707,20 @@ select {
     gap: 1rem !important;
   }
 
-  .form-input {
+  .form-input,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="search"],
+  select,
+  textarea {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    min-height: 48px !important;
     height: 48px !important;
-    font-size: 0.92rem !important;
+    font-size: 16px !important; /* Prevents unwanted iOS Safari viewport zoom */
     border-radius: 6px !important;
   }
 

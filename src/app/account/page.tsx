@@ -432,8 +432,8 @@ function StatusBadge({ status }: { status: string }) {
     confirmed: { label: "تم التأكيد", color: "#3b82f6", bg: "rgba(59, 130, 246, 0.15)" },
     preparing: { label: "جاري التجهيز", color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.15)" },
     shipped: { label: "تم الشحن مع المندوب", color: "#06b6d4", bg: "rgba(6, 182, 212, 0.15)" },
-    delivered: { label: "تم التوصيل بنجاح", color: "#10b981", bg: "rgba(16, 185, 129, 0.15)" },
-    cancelled: { label: "ملغي", color: "#ef4444", bg: "rgba(239, 68, 68, 0.15)" },
+    delivered: { label: "تم التوصيل بنجاح", color: "var(--clr-success)", bg: "var(--clr-success-bg)" },
+    cancelled: { label: "ملغي", color: "var(--clr-error)", bg: "var(--clr-error-bg)" },
   };
 
   const c = configs[status] || configs.pending;

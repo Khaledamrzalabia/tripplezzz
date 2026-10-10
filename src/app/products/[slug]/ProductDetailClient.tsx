@@ -134,7 +134,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
 
             {product.availability === "in-stock" && (
               <p className="availability-tag" style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", display: "inline-block", flexShrink: 0 }} />
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--clr-success)", display: "inline-block", flexShrink: 0 }} />
                 <span>In Stock • Ships within 24–48 hours</span>
               </p>
             )}

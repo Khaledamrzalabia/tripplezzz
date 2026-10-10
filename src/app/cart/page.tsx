@@ -124,7 +124,7 @@ export default function CartPage() {
             </div>
             <div className="cart-summary-row">
               <span>Shipping</span>
-              <span style={{ color: totalPrice >= 150 ? "#10b981" : "var(--clr-text-muted)" }}>
+              <span style={{ color: totalPrice >= 150 ? "var(--clr-success)" : "var(--clr-text-muted)" }}>
                 {totalPrice >= 150 ? "FREE" : "Calculated at checkout"}
               </span>
             </div>
