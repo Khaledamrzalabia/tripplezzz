@@ -61,16 +61,16 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                 sizes="(max-width: 768px) 100vw, 50vw"
                 style={{
                   objectFit: "cover",
-                  filter: isComingSoon || product.isBlurred ? "blur(14px) brightness(0.75)" : "none",
-                  transform: isComingSoon || product.isBlurred ? "scale(1.08)" : "none",
+                  filter: isComingSoon || product.isBlurred ? "blur(26px) brightness(0.65) saturate(110%)" : "none",
+                  transform: isComingSoon || product.isBlurred ? "scale(1.15)" : "none",
                   transition: "all 0.3s ease",
                 }}
                 priority
               />
               {(isComingSoon || product.isBlurred) && (
                 <div className="mockup-card-coming-soon-overlay">
-                  <span className="mockup-card-coming-soon-pill" style={{ fontSize: "0.85rem", padding: "0.6rem 1.5rem" }}>
-                    COMING SOON DROP
+                  <span className="mockup-card-coming-soon-pill" style={{ fontSize: "0.9rem", padding: "0.75rem 2rem", letterSpacing: "0.18em" }}>
+                    🔒 COMING SOON DROP
                   </span>
                 </div>
               )}
@@ -96,7 +96,17 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                     }}
                     aria-label={`View image ${idx + 1}`}
                   >
-                    <Image src={img.src} alt={img.alt || product.name} fill sizes="76px" style={{ objectFit: "cover" }} />
+                    <Image
+                      src={img.src}
+                      alt={img.alt || product.name}
+                      fill
+                      sizes="76px"
+                      style={{
+                        objectFit: "cover",
+                        filter: isComingSoon || product.isBlurred ? "blur(14px) brightness(0.7)" : "none",
+                        transform: isComingSoon || product.isBlurred ? "scale(1.2)" : "none",
+                      }}
+                    />
                   </button>
                 ))}
               </div>
