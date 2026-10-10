@@ -22,25 +22,30 @@ export async function GET() {
   });
 }
 
-import { checkRateLimit, getClientIp } from "../../../../lib/rateLimit";
+import { guardMultiSignalRateLimit } from "../../../../lib/rateLimit";
 
 export async function POST(request: Request) {
   try {
-    const ip = getClientIp(request);
-    const limit = checkRateLimit(`admin_auth_${ip}`, {
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      maxRequests: 5, // max 5 login attempts per 15 mins
-    });
+    const body = await request.json();
+    const { username, password } = body;
+
+    // Multi-signal protection (IP + Fingerprint + Target Username)
+    const limit = guardMultiSignalRateLimit(
+      request,
+      "admin_auth",
+      {
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        maxRequests: 5, // max 5 attempts per window
+      },
+      username || ""
+    );
 
     if (!limit.allowed) {
       return NextResponse.json(
-        { error: "تم تجاوز الحد الأقصى للمحاولات. يرجى الانتظار 15 دقيقة قبل المحاولة مرة أخرى." },
+        { error: "تم تجاوز الحد الأقصى للمحاولات وتم تجميد الطلبات مؤقتاً لحماية الحساب. يرجى الانتظار 15 دقيقة." },
         { status: 429 }
       );
     }
-
-    const body = await request.json();
-    const { username, password } = body;
 
     if (!username || !password) {
       return NextResponse.json(

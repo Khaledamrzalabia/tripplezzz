@@ -3,6 +3,8 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
+import { guardMultiSignalRateLimit } from "../../../lib/rateLimit";
+
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
   "image/png",
@@ -15,6 +17,18 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB max
 
 export async function POST(request: Request) {
   try {
+    const limit = guardMultiSignalRateLimit(request, "file_upload", {
+      windowMs: 10 * 60 * 1000, // 10 minutes
+      maxRequests: 10, // max 10 uploads per 10 mins
+    });
+
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "تم تجاوز الحد المسموح به لرفع الملفات مؤقتاً." },
+        { status: 429 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 

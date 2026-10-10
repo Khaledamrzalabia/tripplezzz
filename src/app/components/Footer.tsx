@@ -14,7 +14,6 @@ const FOOTER_SECTIONS = {
     { label: "Our Story", href: "/about" },
     { label: "Contact", href: "/contact" },
     { label: "Size Guide", href: "/size-guide" },
-    { label: "Studio / Admin", href: "/admin" },
   ],
   SUPPORT: [
     { label: "Shipping & Returns", href: "/shipping" },

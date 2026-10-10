@@ -97,15 +97,6 @@ export default function Header() {
               </svg>
             </Link>
 
-            <Link href="/admin" className="icon-btn header-admin-btn" aria-label="Admin studio" title="Admin Studio">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-                <rect x="3" y="3" width="7" height="7"/>
-                <rect x="14" y="3" width="7" height="7"/>
-                <rect x="14" y="14" width="7" height="7"/>
-                <rect x="3" y="14" width="7" height="7"/>
-              </svg>
-            </Link>
-
             <button
               type="button"
               onClick={openDrawer}
@@ -246,13 +237,6 @@ export default function Header() {
                 className="mobile-nav-admin-link"
               >
                 👤 حسابي / My Account
-              </Link>
-              <Link
-                href="/admin"
-                onClick={() => setMobileOpen(false)}
-                className="mobile-nav-admin-link"
-              >
-                ⚙ Admin Studio
               </Link>
               <button
                 type="button"

@@ -52,9 +52,23 @@ export async function GET(req: NextRequest) {
   }
 }
 
+import { guardMultiSignalRateLimit } from "../../../lib/rateLimit";
+
 // POST /api/orders — Create a new order
 export async function POST(req: NextRequest) {
   try {
+    const limit = guardMultiSignalRateLimit(req, "create_order", {
+      windowMs: 10 * 60 * 1000, // 10 minutes
+      maxRequests: 6, // max 6 orders placed per 10 mins per device/IP
+    });
+
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "تم تجاوز الحد المسموح به لإنشاء الطلبات مؤقتاً لحماية النظام من الطلبات المكررة." },
+        { status: 429 }
+      );
+    }
+
     const pool = getPool();
     if (!pool) {
       return NextResponse.json({ error: "Database not connected" }, { status: 503 });

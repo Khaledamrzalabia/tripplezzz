@@ -38,26 +38,30 @@ export async function GET(req: NextRequest) {
   }
 }
 
-import { checkRateLimit, getClientIp } from "../../../../lib/rateLimit";
+import { guardMultiSignalRateLimit } from "../../../../lib/rateLimit";
 
 // POST /api/customer/auth — Register or Login
 export async function POST(req: NextRequest) {
   try {
-    const ip = getClientIp(req);
-    const limit = checkRateLimit(`customer_auth_${ip}`, {
-      windowMs: 15 * 60 * 1000,
-      maxRequests: 20, // 20 attempts per 15 mins for customer accounts
-    });
+    const body = await req.json();
+    const { action, email, password, fullName, phone, whatsapp, governorate, city, address } = body;
+
+    const limit = guardMultiSignalRateLimit(
+      req,
+      "customer_auth",
+      {
+        windowMs: 15 * 60 * 1000,
+        maxRequests: 15, // max 15 attempts per 15 mins
+      },
+      email || ""
+    );
 
     if (!limit.allowed) {
       return NextResponse.json(
-        { error: "محاولات كثيرة جداً. يرجى الانتظار قليلاً قبل إعادة المحاولة." },
+        { error: "محاولات تسجيل دخول كثيرة جداً. لحماية حسابك يرجى الانتظار 15 دقيقة قبل إعادة المحاولة." },
         { status: 429 }
       );
     }
-
-    const body = await req.json();
-    const { action, email, password, fullName, phone, whatsapp, governorate, city, address } = body;
 
     const pool = getPool();
     if (!pool) {
