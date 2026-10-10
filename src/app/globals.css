@@ -2308,14 +2308,32 @@ select {
 }
 @media (max-width: 768px) {
   .mockup-featured-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.75rem !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.85rem !important;
+    padding-bottom: 1rem !important;
+    padding-inline: 0.25rem !important;
+    scrollbar-width: none !important;
+  }
+  .mockup-featured-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .mockup-featured-grid .mockup-product-card {
+    flex: 0 0 72% !important;
+    max-width: 280px !important;
+    min-width: 240px !important;
+    scroll-snap-align: start !important;
   }
 }
 @media (max-width: 480px) {
-  .mockup-featured-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.65rem !important;
+  .mockup-featured-grid .mockup-product-card {
+    flex: 0 0 76% !important;
+    max-width: 260px !important;
+    min-width: 220px !important;
   }
 }
 .mockup-product-card {
@@ -4500,12 +4518,39 @@ select {
     font-weight: 700 !important;
   }
 
-  /* 6. FEATURED PIECES (2-COLUMN RESPONSIVE MOBILE GRID WITH PROPER 2-LINE TITLES) */
+  /* 6. FEATURED PIECES (HORIZONTAL SCROLLING ROW ON MOBILE) */
   .mockup-featured-section {
     padding-block: 2.75rem 2rem !important;
   }
 
-  .mockup-featured-grid,
+  .mockup-featured-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.9rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-inline: 0.25rem !important;
+    margin: 0 !important;
+    scrollbar-width: none !important;
+  }
+
+  .mockup-featured-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mockup-featured-grid .mockup-product-card {
+    flex: 0 0 72% !important;
+    max-width: 270px !important;
+    min-width: 230px !important;
+    width: 72% !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* Catalog shop pages keep standard 2-column grid */
   .products-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -4515,7 +4560,6 @@ select {
     margin: 0 !important;
   }
 
-  .mockup-featured-grid .mockup-product-card,
   .products-grid .mockup-product-card {
     flex: none !important;
     width: 100% !important;
