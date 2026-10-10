@@ -2835,21 +2835,7 @@ select {
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
-@media (max-width: 600px) {
-  .mockup-craft-cards-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
-  }
-  .mockup-craft-card-info {
-    padding: 0.5rem 0.35rem !important;
-  }
-  .craft-card-title {
-    font-size: 0.65rem !important;
-  }
-  .craft-card-desc {
-    font-size: 0.6rem !important;
-  }
-}
+
 .mockup-craft-card {
   background: #111111;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -4836,19 +4822,20 @@ select {
     line-height: 1.2 !important;
   }
 
-  /* 9. CRAFT & DETAIL (SMOOTH SWIPEABLE RAIL) */
+  /* 9. CRAFT & DETAIL (MODERN SWIPEABLE STORY RAIL) */
   .mockup-craft-section {
-    padding-block: 2.75rem !important;
+    padding-block: 2.75rem 2rem !important;
   }
 
   .mockup-craft-grid {
     display: flex !important;
-    flex-direction: column-reverse !important;
-    gap: 1.75rem !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
   }
 
   .mockup-craft-title {
     font-size: 2.1rem !important;
+    line-height: 1.05 !important;
     margin-bottom: 0.85rem !important;
   }
 
@@ -4856,16 +4843,21 @@ select {
     font-size: 0.9rem !important;
     line-height: 1.6 !important;
     margin-bottom: 1.25rem !important;
+    color: rgba(250, 250, 250, 0.75) !important;
   }
 
   .mockup-craft-cards-grid {
     display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto !important;
+    overflow-y: hidden !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
     gap: 0.85rem !important;
-    padding-bottom: 0.5rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-inline: 0.25rem !important;
     margin-inline: -1.15rem !important;
     padding-inline: 1.15rem !important;
   }
@@ -4875,34 +4867,45 @@ select {
   }
 
   .mockup-craft-card {
-    flex: 0 0 240px !important;
+    flex: 0 0 76% !important;
+    max-width: 290px !important;
     min-width: 240px !important;
+    width: 76% !important;
     scroll-snap-align: start !important;
     background: #111419 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .mockup-craft-img-wrap {
-    height: 155px !important;
+    height: 175px !important;
+    width: 100% !important;
     position: relative !important;
+    background: #181c24 !important;
   }
 
   .mockup-craft-card-info {
-    padding: 0.85rem 0.75rem !important;
+    padding: 0.9rem 0.85rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.2rem !important;
   }
 
   .craft-card-title {
-    font-size: 0.82rem !important;
+    font-size: 0.85rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.04em !important;
-    margin-bottom: 0.25rem !important;
+    letter-spacing: 0.06em !important;
+    color: var(--clr-accent, #c9a96e) !important;
+    margin: 0 !important;
   }
 
   .craft-card-desc {
-    font-size: 0.75rem !important;
+    font-size: 0.78rem !important;
     color: var(--clr-text-secondary) !important;
+    margin: 0 !important;
   }
 
   /* 10. COMMUNITY LOOKBOOK */
