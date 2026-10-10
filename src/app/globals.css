@@ -1,6 +1,4 @@
 /* Triple Z — Design System */
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap');
 
 :root {
   /* Brand Palette */
@@ -20,8 +18,8 @@
   --clr-success: #52c45a;
 
   /* Typography */
-  --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: var(--font-display), 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Courier New', monospace;
 
   /* Spacing */

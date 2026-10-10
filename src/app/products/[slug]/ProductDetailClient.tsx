@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "../../../context/CartContext";
 import { useCurrency } from "../../../context/CurrencyContext";
+import dynamic from "next/dynamic";
 import ProductCard from "../../components/ProductCard";
-import SizeGuideModal from "../../components/SizeGuideModal";
 import type { Product } from "../../../types/product";
+
+const SizeGuideModal = dynamic(() => import("../../components/SizeGuideModal"), { ssr: false });
 
 interface ProductDetailClientProps {
   product: Product;
