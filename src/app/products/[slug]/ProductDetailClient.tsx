@@ -53,15 +53,27 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         <div className="product-detail-grid">
           {/* Gallery */}
           <div className="product-gallery">
-            <div className="product-gallery-main">
+            <div className="product-gallery-main" style={{ overflow: "hidden", position: "relative" }}>
               <Image
                 src={activeImage.src}
                 alt={activeImage.alt ?? product.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
+                style={{
+                  objectFit: "cover",
+                  filter: isComingSoon || product.isBlurred ? "blur(14px) brightness(0.75)" : "none",
+                  transform: isComingSoon || product.isBlurred ? "scale(1.08)" : "none",
+                  transition: "all 0.3s ease",
+                }}
                 priority
               />
+              {(isComingSoon || product.isBlurred) && (
+                <div className="mockup-card-coming-soon-overlay">
+                  <span className="mockup-card-coming-soon-pill" style={{ fontSize: "0.85rem", padding: "0.6rem 1.5rem" }}>
+                    COMING SOON DROP
+                  </span>
+                </div>
+              )}
             </div>
             {product.images && product.images.length > 1 && (
               <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>

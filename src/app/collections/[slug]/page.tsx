@@ -14,8 +14,6 @@ const COLLECTION_META: Record<string, { name: string; description: string; image
 
 type Params = { slug: string };
 
-export const instant = false;
-
 export async function generateStaticParams() {
   return Object.keys(COLLECTION_META).map((slug) => ({ slug }));
 }

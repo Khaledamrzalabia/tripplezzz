@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import ProductCard from "../components/ProductCard";
 import { getAllProducts } from "../../lib/products";
 import type { Product, ProductCategory } from "../../types/product";
@@ -23,11 +24,18 @@ const SORT_OPTIONS = [
   { value: "name-asc", label: "Name: A–Z" },
 ];
 
-export default function ShopPage() {
+function ShopContent() {
+  const searchParams = useSearchParams();
+  const paramSearch = searchParams.get("search") || searchParams.get("q") || "";
+  const paramCategory = (searchParams.get("category") as ProductCategory) || "all";
+
   const [products, setProducts] = useState<Product[]>(ALL_PRODUCTS);
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<"all" | ProductCategory>("all");
+  const [userQuery, setUserQuery] = useState<string | null>(null);
+  const [userCategory, setUserCategory] = useState<ProductCategory | "all" | null>(null);
   const [sort, setSort] = useState("default");
+
+  const query = userQuery !== null ? userQuery : paramSearch;
+  const category = userCategory !== null ? userCategory : paramCategory;
 
   useEffect(() => {
     fetch("/api/products")
@@ -44,7 +52,11 @@ export default function ShopPage() {
     if (query.trim()) {
       const q = query.toLowerCase();
       result = result.filter(
-        (p) => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          (p.slug && p.slug.toLowerCase().includes(q)) ||
+          p.category.toLowerCase().includes(q)
       );
     }
     if (sort === "price-asc") result = [...result].sort((a, b) => (a.price ?? 999999) - (b.price ?? 999999));
@@ -61,10 +73,10 @@ export default function ShopPage() {
         <div className="site-container">
           <p className="section-eyebrow">Catalogue</p>
           <h1 className="section-title" id="shop-heading" style={{ marginBottom: "0.5rem" }}>
-            All Products
+            {query ? `All ${query.charAt(0).toUpperCase() + query.slice(1)}s` : category !== "all" ? `${CATEGORY_LABELS[category] || category} Collection` : "All Products"}
           </h1>
           <p style={{ color: "var(--clr-text-secondary)", fontSize: "0.9rem" }}>
-            {products.length} pieces
+            {filtered.length} pieces found {query && `matching "${query}" across all nation collections`}
           </p>
         </div>
       </div>
@@ -79,7 +91,7 @@ export default function ShopPage() {
             className="shop-search"
             placeholder="Search products…"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => setUserQuery(e.target.value)}
             aria-label="Search products"
           />
           <label htmlFor="shop-sort" className="sr-only">Sort by</label>
@@ -100,13 +112,28 @@ export default function ShopPage() {
           {categories.map((cat) => (
             <button
               key={cat}
-              className={`filter-chip${category === cat ? " active" : ""}`}
-              onClick={() => setCategory(cat as "all" | ProductCategory)}
-              aria-pressed={category === cat}
+              className={`filter-chip${category === cat && !query ? " active" : ""}`}
+              onClick={() => {
+                setUserCategory(cat as "all" | ProductCategory);
+                setUserQuery("");
+              }}
+              aria-pressed={category === cat && !query}
             >
               {CATEGORY_LABELS[cat] ?? cat}
             </button>
           ))}
+          {query && (
+            <button
+              className="filter-chip active"
+              onClick={() => {
+                setUserQuery("");
+                setUserCategory("all");
+              }}
+              style={{ background: "var(--clr-accent)", color: "var(--clr-black)" }}
+            >
+              Clear filter: &ldquo;{query}&rdquo; ✕
+            </button>
+          )}
         </div>
 
         {/* Grid */}
@@ -126,5 +153,13 @@ export default function ShopPage() {
         )}
       </div>
     </>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="site-container" style={{ padding: "4rem 0", textAlign: "center" }}>Loading catalogue...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }

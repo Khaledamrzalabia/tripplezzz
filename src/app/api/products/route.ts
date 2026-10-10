@@ -42,7 +42,9 @@ export async function POST(request: Request) {
       category: body.category || "tops",
       collection: body.collection || "core",
       sizes: Array.isArray(body.sizes) ? body.sizes : ["S", "M", "L", "XL"],
+      colors: Array.isArray(body.colors) && body.colors.length > 0 ? body.colors : ["#0a0a0a", "#4a7c9d", "#c9a96e"],
       availability: body.availability || "in-stock",
+      isBlurred: Boolean(body.isBlurred || body.availability === "coming-soon"),
       featured: Boolean(body.featured),
       isPlaceholder: false,
     };

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import type { Product } from "../../types/product";
@@ -6,7 +9,25 @@ interface Props {
   products: Product[];
 }
 
-export default function FeaturedSection({ products }: Props) {
+export default function FeaturedSection({ products: initialProducts }: Props) {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const featured = data.filter((p: Product) => p.featured);
+          if (featured.length > 0) {
+            setProducts(featured);
+          } else if (data.length > 0) {
+            setProducts(data);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section className="section mockup-featured-section" aria-labelledby="featured-heading">
       <div className="site-container">

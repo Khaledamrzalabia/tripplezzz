@@ -1,12 +1,26 @@
 // =============================================
 // TRIPLE Z — Product Data Service (Universal)
-// Client & Server safe (no Node.js fs dependencies)
+// Dynamically reads fresh data on server, safe on client
 // =============================================
 
 import type { Product, ProductCategory } from "../types/product";
 import defaultProducts from "../data/products.json";
 
 export function getAllProducts(): Product[] {
+  if (typeof window === "undefined") {
+    try {
+      /* eslint-disable @typescript-eslint/no-require-imports */
+      const fs = require("fs");
+      const path = require("path");
+      const dataPath = path.join(process.cwd(), "src", "data", "products.json");
+      if (fs.existsSync(dataPath)) {
+        const raw = fs.readFileSync(dataPath, "utf-8");
+        return JSON.parse(raw) as Product[];
+      }
+    } catch {
+      // fallback to default imported products
+    }
+  }
   return (defaultProducts as unknown) as Product[];
 }
 

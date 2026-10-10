@@ -44,7 +44,9 @@ export async function PUT(request: Request, { params }: RouteProps) {
       category: body.category || existing.category,
       collection: body.collection || existing.collection,
       sizes: Array.isArray(body.sizes) ? body.sizes : existing.sizes,
+      colors: Array.isArray(body.colors) ? body.colors : existing.colors,
       availability: body.availability || existing.availability,
+      isBlurred: body.isBlurred !== undefined ? Boolean(body.isBlurred) : (body.availability === "coming-soon" ? true : existing.isBlurred),
       featured: body.featured !== undefined ? Boolean(body.featured) : existing.featured,
       isPlaceholder: false,
     };

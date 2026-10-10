@@ -270,20 +270,15 @@ select {
 
 /* Header */
 .site-header {
-  position: fixed;
+  position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
   z-index: 100;
-  height: 64px;
+  height: 80px;
   display: flex;
   align-items: center;
-  transition: background var(--transition-base), border-color var(--transition-base);
-}
-
-.site-header.scrolled {
-  background: rgba(10, 10, 10, 0.92);
-  backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid var(--clr-border);
+  background: transparent;
+  pointer-events: auto;
 }
 
 .header-inner {
@@ -297,11 +292,28 @@ select {
 }
 
 .header-logo {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  letter-spacing: 0.1em;
-  color: var(--clr-white);
+  display: flex;
+  align-items: center;
   text-decoration: none;
+}
+
+.header-brand-logo-img {
+  height: 52px;
+  width: auto;
+  max-width: 170px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.7));
+}
+
+@media (max-width: 768px) {
+  .site-header {
+    height: 68px;
+  }
+  .header-brand-logo-img {
+    height: 40px;
+    max-width: 130px;
+  }
 }
 
 .header-nav {
@@ -450,124 +462,7 @@ select {
   color: var(--clr-white);
 }
 
-/* Hero */
-.hero {
-  position: relative;
-  height: 100svh;
-  min-height: 600px;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.hero-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(10, 10, 10, 0.25) 0%,
-      rgba(10, 10, 10, 0.0) 25%,
-      rgba(10, 10, 10, 0.55) 60%,
-      rgba(10, 10, 10, 0.98) 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(10, 10, 10, 0.8) 0%,
-      rgba(10, 10, 10, 0.4) 45%,
-      rgba(10, 10, 10, 0.05) 100%
-    );
-  z-index: 1;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  padding-bottom: clamp(3rem, 8vh, 6rem);
-  padding-inline: clamp(1.5rem, 4vw, 4.5rem);
-  max-width: 100%;
-  margin-inline: auto;
-}
-
-.hero-eyebrow {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--clr-accent);
-  font-weight: 600;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.hero-eyebrow::before {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 1px;
-  background: var(--clr-accent);
-}
-
-.hero-headline {
-  font-family: var(--font-display);
-  font-size: clamp(4.5rem, 12vw, 10rem);
-  line-height: 0.9;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--clr-white);
-  margin-bottom: 1.5rem;
-}
-
-.hero-subline {
-  font-size: clamp(0.9rem, 1.5vw, 1.125rem);
-  color: var(--clr-text-secondary);
-  max-width: 480px;
-  margin-bottom: 2.5rem;
-  line-height: 1.7;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.hero-scroll {
-  position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--clr-text-muted);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-
-.hero-scroll-line {
-  width: 1px;
-  height: 48px;
-  background: linear-gradient(to bottom, var(--clr-accent), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
-}
+/* Hero styles defined in main hero section */
 
 @keyframes scrollPulse {
 
@@ -1975,60 +1870,182 @@ select {
   inset: 0;
   z-index: 1;
   background: 
-    linear-gradient(90deg, rgba(8, 10, 14, 0.95) 0%, rgba(8, 10, 14, 0.85) 35%, rgba(8, 10, 14, 0.35) 65%, rgba(8, 10, 14, 0.75) 100%),
-    linear-gradient(180deg, rgba(8, 10, 14, 0.8) 0%, transparent 20%, transparent 75%, rgba(8, 10, 14, 0.98) 100%);
+    linear-gradient(90deg, rgba(8, 10, 14, 0.45) 0%, rgba(8, 10, 14, 0.25) 35%, rgba(8, 10, 14, 0.0) 60%, rgba(8, 10, 14, 0.15) 100%),
+    linear-gradient(180deg, rgba(8, 10, 14, 0.35) 0%, transparent 22%, transparent 78%, rgba(8, 10, 14, 0.45) 100%);
   pointer-events: none;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
+@media (min-width: 769px) {
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 50% !important;
+    max-width: 50% !important;
+    margin: 0 !important;
+    margin-right: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding-inline: 1.5rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-text-block {
+    width: 100% !important;
+    max-width: 440px !important;
+    margin: 0 !important;
+    transform: translateX(90px);
+  }
 }
 
-.hero-brand-crest {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.85rem;
-  color: var(--clr-accent, #c9a96e);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.25em;
-  opacity: 0.9;
-}
-
-.hero-crest-stars {
-  letter-spacing: 0.15em;
-  font-size: 0.7rem;
+@media (max-width: 768px) {
+  .hero {
+    min-height: 100svh !important;
+    padding-top: calc(var(--nav-height, 65px) + 1.25rem) !important;
+    padding-bottom: 2.5rem !important;
+    align-items: flex-end !important;
+  }
+  .hero-content {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-inline: 1.25rem !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+  .hero-text-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
 }
 
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(3.2rem, 7.5vw, 6.5rem);
+  font-size: clamp(3rem, 5.8vw, 5.2rem);
   line-height: 0.92;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #ffffff;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   font-weight: 900;
+  text-shadow: 0 4px 25px rgba(0, 0, 0, 0.75);
 }
 
 .hero-subline {
-  font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+  font-size: clamp(0.85rem, 1.1vw, 0.95rem);
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
-  max-width: 480px;
-  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 440px;
+  margin-bottom: 1.85rem;
   font-weight: 400;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
 }
 
 .hero-actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-  margin-bottom: 3.5rem;
+  gap: 0.85rem;
+  flex-wrap: nowrap !important;
+  margin-bottom: 1.5rem;
+  width: max-content;
+}
+
+.hero-btn-primary {
+  background: #ffffff;
+  color: #0a0a0a;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.85rem 1.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid #ffffff;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.hero-btn-primary:hover {
+  background: var(--clr-accent, #c9a96e);
+  border-color: var(--clr-accent, #c9a96e);
+  color: #0a0a0a;
+  transform: translateY(-1px);
+}
+
+.hero-btn-secondary {
+  background: rgba(10, 10, 10, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.85rem 1.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.hero-btn-secondary:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.hero-bottom-indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: clamp(1.5rem, 4vw, 4.5rem);
+  right: clamp(1.5rem, 4vw, 4.5rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 2;
+  pointer-events: none;
+}
+.hero-indicator-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+  background: rgba(10, 10, 10, 0.35);
+}
+.hero-indicator-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.hero-scroll-bar {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.35);
+}
+.hero-scroll-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
 }
 
 .hero-top-eyebrow {
@@ -2286,10 +2303,16 @@ select {
   .mockup-featured-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 768px) {
-  .mockup-featured-grid { grid-template-columns: repeat(2, 1fr); }
+  .mockup-featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
 }
 @media (max-width: 480px) {
-  .mockup-featured-grid { grid-template-columns: 1fr; }
+  .mockup-featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
 }
 .mockup-product-card {
   background: #111111;
@@ -2415,6 +2438,79 @@ select {
   color: #fafafa;
 }
 
+/* Teaser Coming Soon Card Styles */
+.mockup-product-card.is-coming-soon {
+  border: 1px solid rgba(201, 169, 110, 0.25);
+  background: #0d0d0d;
+}
+.mockup-product-card.is-coming-soon:hover {
+  border-color: rgba(201, 169, 110, 0.45);
+}
+
+.mockup-card-img-blurred {
+  filter: blur(14px) brightness(0.72) saturate(110%);
+  transform: scale(1.12);
+  transition: all 0.4s ease;
+}
+.mockup-product-card:hover .mockup-card-img-blurred {
+  filter: blur(10px) brightness(0.82) saturate(120%);
+  transform: scale(1.16);
+}
+
+.mockup-card-coming-soon-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.45) 0%, transparent 75%);
+}
+
+.mockup-card-coming-soon-pill {
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 169, 110, 0.55);
+  color: #e5cb93;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.mockup-card-teaser-body {
+  padding: 0.95rem 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+}
+
+.teaser-colors-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.mockup-color-dot.teaser-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.mockup-product-card:hover .mockup-color-dot.teaser-dot {
+  transform: scale(1.25);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
 /* Section 3: Collections Banners & Categories */
 .mockup-collections-section {
   padding-block: 4rem;
@@ -2425,7 +2521,29 @@ select {
   gap: 1.25rem;
 }
 @media (max-width: 768px) {
-  .mockup-banners-grid { grid-template-columns: 1fr; }
+  .mockup-banners-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+  .mockup-banner-card {
+    height: 195px !important;
+    border-radius: 8px !important;
+  }
+  .mockup-banner-content {
+    padding: 0.85rem !important;
+  }
+  .mockup-banner-title {
+    font-size: 1.1rem !important;
+    line-height: 1.05 !important;
+    margin-bottom: 0.35rem !important;
+  }
+  .mockup-banner-desc {
+    display: none !important;
+  }
+  .mockup-banner-content .btn {
+    padding: 0.45rem 0.85rem !important;
+    font-size: 0.68rem !important;
+  }
 }
 .mockup-banner-card {
   position: relative;
@@ -2471,69 +2589,103 @@ select {
   margin-top: 1.25rem;
 }
 @media (max-width: 768px) {
-  .mockup-categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .mockup-categories-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+  .mockup-cat-card {
+    height: 145px !important;
+    min-height: 145px !important;
+  }
+  .mockup-cat-content {
+    padding: 0.9rem !important;
+  }
+  .mockup-cat-title {
+    font-size: 1.15rem !important;
+  }
+  .mockup-cat-desc {
+    font-size: 0.68rem !important;
+  }
 }
 .mockup-cat-card {
   position: relative;
-  height: 95px;
-  border-radius: 6px;
+  height: clamp(180px, 18vw, 220px);
+  min-height: 180px;
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-decoration: none;
   color: inherit;
   display: block;
+  transition: all var(--transition-normal);
+}
+.mockup-cat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 169, 110, 0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
 }
 .mockup-cat-bg {
   position: absolute;
   inset: 0;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mockup-cat-card:hover .mockup-cat-bg {
+  transform: scale(1.08);
 }
 .mockup-cat-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(10, 10, 10, 0.65);
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.3) 0%, rgba(10, 10, 10, 0.85) 100%);
   transition: background var(--transition-fast);
   z-index: 1;
 }
 .mockup-cat-card:hover .mockup-cat-overlay {
-  background: rgba(10, 10, 10, 0.5);
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.15) 0%, rgba(10, 10, 10, 0.75) 100%);
 }
 .mockup-cat-content {
   position: absolute;
   inset: 0;
-  padding: 1rem;
+  padding: 1.5rem 1.35rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   z-index: 2;
 }
 .mockup-cat-title {
   font-family: var(--font-display, inherit);
-  font-size: 1.15rem;
+  font-size: 1.35rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin: 0;
   color: #fafafa;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 .mockup-cat-desc {
-  font-size: 0.72rem;
-  color: var(--clr-text-secondary);
-  margin-top: 0.2rem;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0.25rem;
+  line-height: 1.4;
 }
 .mockup-cat-arrow {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(10, 10, 10, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  color: #fafafa;
+  flex-shrink: 0;
   transition: all var(--transition-fast);
 }
 .mockup-cat-card:hover .mockup-cat-arrow {
-  transform: translateX(3px);
-  border-color: var(--clr-white);
-  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+  border-color: var(--clr-accent, #c9a96e);
+  background: var(--clr-accent, #c9a96e);
+  color: #0a0a0a;
 }
 
 /* Section 4: Culture & Brand Story */
@@ -2575,6 +2727,12 @@ select {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+@media (max-width: 600px) {
+  .mockup-culture-pillars {
+    gap: 1rem !important;
+    justify-content: space-between !important;
+  }
 }
 .mockup-culture-pillar {
   display: flex;
@@ -2647,7 +2805,19 @@ select {
   gap: 1rem;
 }
 @media (max-width: 600px) {
-  .mockup-craft-cards-grid { grid-template-columns: 1fr; }
+  .mockup-craft-cards-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .mockup-craft-card-info {
+    padding: 0.5rem 0.35rem !important;
+  }
+  .craft-card-title {
+    font-size: 0.65rem !important;
+  }
+  .craft-card-desc {
+    font-size: 0.6rem !important;
+  }
 }
 .mockup-craft-card {
   background: #111111;
@@ -2706,7 +2876,10 @@ select {
   .mockup-community-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 500px) {
-  .mockup-community-grid { grid-template-columns: repeat(2, 1fr); }
+  .mockup-community-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+  }
 }
 .mockup-community-tile {
   position: relative;
@@ -2833,21 +3006,24 @@ select {
 
 /* Section 8: Footer */
 .mockup-footer {
-  padding-block: 4.5rem 2.5rem;
+  padding-block: 2.75rem 1.75rem;
   background: #070707;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 .mockup-footer-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr 1fr 1.6fr;
-  gap: 2rem;
-  margin-bottom: 3.5rem;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr 1.4fr;
+  gap: 1.75rem;
+  margin-bottom: 2rem;
+}
+.mockup-footer-links-group {
+  display: contents;
 }
 @media (max-width: 1024px) {
-  .mockup-footer-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
-  .mockup-footer-grid { grid-template-columns: 1fr; }
+  .mockup-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
 }
 .mockup-footer-logo {
   font-family: var(--font-display, inherit);
@@ -2887,23 +3063,23 @@ select {
   border-color: var(--clr-white);
 }
 .mockup-footer-col-title {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--clr-accent, #c9a96e);
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.65rem;
 }
 .mockup-footer-links {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.4rem;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 .mockup-footer-links a {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--clr-text-secondary);
   text-decoration: none;
   transition: color var(--transition-fast);
@@ -3792,4 +3968,405 @@ select {
   font-size: 0.78rem;
   color: var(--clr-text-muted);
   margin: 0;
+}
+
+/* ========================================================== */
+/* MOBILE APP EXPERIENCE MASTER STYLES (@media (max-width: 768px)) */
+/* ========================================================== */
+@media (max-width: 768px) {
+  /* Prevent horizontal blowout */
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .site-container {
+    padding-inline: 1.15rem !important;
+  }
+
+  /* 1. HERO SECTION */
+  .hero {
+    min-height: 94svh !important;
+    height: 94svh !important;
+    padding-top: calc(var(--nav-height, 65px) + 1.25rem) !important;
+    padding-bottom: 2rem !important;
+    display: flex !important;
+    align-items: flex-end !important;
+  }
+  .hero-overlay {
+    background: 
+      linear-gradient(180deg, rgba(8, 10, 14, 0.55) 0%, rgba(8, 10, 14, 0.2) 35%, rgba(8, 10, 14, 0.88) 100%) !important;
+  }
+  .hero-content {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-inline: 0 !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+  .hero-text-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+  .hero-headline {
+    font-size: clamp(2.4rem, 10vw, 3.5rem) !important;
+    line-height: 0.94 !important;
+    margin-bottom: 0.65rem !important;
+    letter-spacing: 0.02em !important;
+  }
+  .hero-subline {
+    font-size: 0.85rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 1.25rem !important;
+    max-width: 320px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+  .hero-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.55rem !important;
+    width: 100% !important;
+    max-width: 360px !important;
+    margin-bottom: 0 !important;
+  }
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100% !important;
+    padding: 0.82rem 0.5rem !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  .hero-bottom-indicators {
+    display: none !important;
+  }
+
+  /* 2. SECTION HEADERS */
+  .mockup-section-header {
+    margin-bottom: 1.25rem !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    gap: 0.75rem !important;
+  }
+  .mockup-section-title {
+    font-size: 1.65rem !important;
+    line-height: 1.1 !important;
+  }
+  .mockup-section-subtitle {
+    font-size: 0.78rem !important;
+    margin-top: 0.2rem !important;
+  }
+  .mockup-view-all-link {
+    font-size: 0.7rem !important;
+    white-space: nowrap !important;
+  }
+
+  /* 3. FEATURED PIECES (Swipeable Rail on Mobile) */
+  .mockup-featured-section {
+    padding-block: 3.5rem 2.5rem !important;
+  }
+  .mockup-featured-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 0.85rem !important;
+    padding-bottom: 0.85rem !important;
+    padding-inline: 1.15rem !important;
+    margin-inline: -1.15rem !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .mockup-featured-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .mockup-featured-grid .mockup-product-card {
+    flex: 0 0 190px !important;
+    width: 190px !important;
+    min-width: 190px !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* 4. COLLECTIONS BANNERS (Swipeable Rail on Mobile) */
+  .mockup-collections-section {
+    padding-block: 3rem !important;
+  }
+  .mockup-banners-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 0.85rem !important;
+    padding-bottom: 0.5rem !important;
+    padding-inline: 1.15rem !important;
+    margin-inline: -1.15rem !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .mockup-banners-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .mockup-banner-card {
+    flex: 0 0 85% !important;
+    width: 85% !important;
+    min-width: 270px !important;
+    max-width: 320px !important;
+    height: 220px !important;
+    border-radius: 8px !important;
+    scroll-snap-align: start !important;
+  }
+  .mockup-banner-content {
+    padding: 1.25rem 1rem !important;
+  }
+  .mockup-banner-title {
+    font-size: 1.35rem !important;
+    line-height: 1.05 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  .mockup-banner-desc {
+    font-size: 0.78rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .mockup-banner-content .btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* 5. SHOP BY APPAREL (2x2 Compact Grid) */
+  .mockup-apparel-header {
+    margin-top: 3.5rem !important;
+    padding-top: 2rem !important;
+  }
+  .mockup-categories-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+  .mockup-cat-card {
+    height: 155px !important;
+    min-height: 155px !important;
+    border-radius: 8px !important;
+  }
+  .mockup-cat-content {
+    padding: 0.95rem 0.85rem !important;
+  }
+  .mockup-cat-title {
+    font-size: 1.2rem !important;
+  }
+  .mockup-cat-desc {
+    font-size: 0.68rem !important;
+  }
+  .mockup-cat-arrow {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* 6. CULTURE SECTION */
+  .mockup-culture-section {
+    padding-block: 3.5rem !important;
+  }
+  .mockup-culture-grid {
+    gap: 2rem !important;
+  }
+  .mockup-culture-title {
+    font-size: 2rem !important;
+    margin-bottom: 0.85rem !important;
+  }
+  .mockup-culture-desc {
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .mockup-culture-img-container {
+    height: 260px !important;
+    border-radius: 8px !important;
+  }
+  .mockup-culture-floating-quote {
+    padding: 0.85rem 1rem !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    max-width: 170px !important;
+  }
+  .quote-text {
+    font-size: 0.88rem !important;
+  }
+  .quote-author {
+    font-size: 0.6rem !important;
+  }
+  .mockup-culture-pillars {
+    gap: 0.75rem !important;
+    justify-content: space-between !important;
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+  }
+  .pillar-num {
+    font-size: 1.1rem !important;
+  }
+  .pillar-text {
+    font-size: 0.6rem !important;
+  }
+
+  /* 7. CRAFT & DETAIL */
+  .mockup-craft-section {
+    padding-block: 3.5rem !important;
+  }
+  .mockup-craft-grid {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 2rem !important;
+  }
+  .mockup-craft-title {
+    font-size: 2rem !important;
+    margin-bottom: 0.85rem !important;
+  }
+  .mockup-craft-text {
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .mockup-craft-cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .mockup-craft-card {
+    border-radius: 6px !important;
+  }
+  .mockup-craft-card-info {
+    padding: 0.55rem 0.4rem !important;
+  }
+  .craft-card-title {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.04em !important;
+  }
+  .craft-card-desc {
+    font-size: 0.58rem !important;
+  }
+
+  /* 8. COMMUNITY LOOKBOOK */
+  .mockup-community-section {
+    padding-block: 3rem !important;
+  }
+  .mockup-community-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .mockup-community-tile {
+    border-radius: 6px !important;
+  }
+  .community-cta-eyebrow {
+    font-size: 0.58rem !important;
+  }
+  .community-cta-tag {
+    font-size: 1.05rem !important;
+  }
+  .community-cta-desc {
+    display: none !important;
+  }
+
+  /* 9. NEWSLETTER */
+  .mockup-newsletter-section {
+    padding-block: 3.5rem !important;
+  }
+  .mockup-newsletter-title {
+    font-size: 1.85rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .mockup-newsletter-desc {
+    font-size: 0.85rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .mockup-newsletter-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+  }
+  .mockup-newsletter-input {
+    width: 100% !important;
+  }
+  .mockup-newsletter-btn {
+    width: 100% !important;
+  }
+
+  /* 10. COMPACT MOBILE FOOTER */
+  .mockup-footer {
+    padding-block: 2rem 1.25rem !important;
+  }
+  .mockup-footer-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .mockup-footer-brand-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .mockup-footer-logo {
+    font-size: 1.35rem !important;
+    margin-bottom: 0.35rem !important;
+  }
+  .mockup-footer-desc {
+    max-width: 260px !important;
+    margin-inline: auto !important;
+    margin-bottom: 0.65rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+  .mockup-footer-socials {
+    justify-content: center !important;
+    gap: 0.5rem !important;
+  }
+  .mockup-social-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .mockup-footer-links-group {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+  .mockup-footer-col-title {
+    font-size: 0.68rem !important;
+    margin-bottom: 0.45rem !important;
+  }
+  .mockup-footer-links {
+    gap: 0.35rem !important;
+  }
+  .mockup-footer-links a {
+    font-size: 0.72rem !important;
+  }
+  .mockup-footer-slogan-col {
+    display: none !important;
+  }
+  .mockup-footer-bottom {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.6rem !important;
+    text-align: center !important;
+    padding-top: 1rem !important;
+    font-size: 0.7rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  }
+  .mockup-footer-currency-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+  }
 }

@@ -5,7 +5,6 @@
     "name": "La Pulga Signature Hoodie",
     "description": "Heavyweight loopback fleece hoodie with premium embroidery and contemporary football silhouette.",
     "longDescription": "Crafted from 500gsm custom-milled loopback fleece. Features relaxed dropped shoulders, deep double-layer hood, heavy ribbing at cuffs and hem, and tonal Triple Z crest. Signature football-inspired back embroidery and authentic gold badge details.",
-    "price": 149,
     "currency": "USD",
     "images": [
       {
@@ -33,7 +32,8 @@
     "collection": "argentina",
     "sizes": ["S", "M", "L", "XL", "XXL"],
     "colors": ["#4a7c9d", "#0a0a0a", "#b59b6c"],
-    "availability": "in-stock",
+    "availability": "coming-soon",
+    "isBlurred": true,
     "featured": true,
     "isPlaceholder": false
   },
@@ -43,7 +43,6 @@
     "name": "Portugal Heritage Hoodie",
     "description": "Deep crimson and forest green block construction with metallic gold crest.",
     "longDescription": "500gsm heavyweight brushed fleece. Contrast color-block paneling inspired by Portuguese football heritage. Custom gold hardware and embroidered heritage crest.",
-    "price": 149,
     "currency": "USD",
     "images": [
       {
@@ -59,7 +58,8 @@
     "collection": "portugal",
     "sizes": ["S", "M", "L", "XL", "XXL"],
     "colors": ["#8b1e28", "#1c4a2b", "#0a0a0a"],
-    "availability": "in-stock",
+    "availability": "coming-soon",
+    "isBlurred": true,
     "featured": true,
     "isPlaceholder": false
   },
@@ -69,7 +69,6 @@
     "name": "Stadium Track Jacket",
     "description": "Technical matte shell with structured contrast panels and custom matte hardware.",
     "longDescription": "The next evolution of pitch outerwear. High-density weather-resistant technical shell, custom gold two-way zip, embroidered sun emblem, and tailored ergonomic sleeves.",
-    "price": 169,
     "currency": "USD",
     "images": [
       {
@@ -84,8 +83,9 @@
     "category": "outerwear",
     "collection": "stadium",
     "sizes": ["S", "M", "L", "XL"],
-    "colors": ["#162332", "#c9a96e"],
-    "availability": "in-stock",
+    "colors": ["#162332", "#c9a96e", "#0a0a0a"],
+    "availability": "coming-soon",
+    "isBlurred": true,
     "featured": true,
     "isPlaceholder": false
   },
@@ -95,7 +95,6 @@
     "name": "Pitch Black Tee",
     "description": "Heavyweight 240gsm cotton tee with golden Triple Z chest embroidery.",
     "longDescription": "Premium 240gsm combed organic cotton tee. Pre-shrunk relaxed boxy fit. Subtle tonal & gold embroidery at center chest. Ribbed collar.",
-    "price": 79,
     "currency": "USD",
     "images": [
       {
@@ -110,8 +109,9 @@
     "category": "tops",
     "collection": "core",
     "sizes": ["S", "M", "L", "XL", "XXL"],
-    "colors": ["#0a0a0a", "#c9a96e"],
-    "availability": "in-stock",
+    "colors": ["#0a0a0a", "#c9a96e", "#2a2a2a"],
+    "availability": "coming-soon",
+    "isBlurred": true,
     "featured": true,
     "isPlaceholder": false
   },
@@ -121,7 +121,6 @@
     "name": "Messi 10 Hoodie",
     "description": "Signature statement piece with golden embroidered 10 and national sun crest.",
     "longDescription": "Commemorative heavyweight hoodie featuring 3D puff embroidery, golden thread details, and signature Argentine sky blue and gold back numbering.",
-    "price": 149,
     "currency": "USD",
     "images": [
       {
@@ -141,7 +140,8 @@
     "collection": "argentina",
     "sizes": ["S", "M", "L", "XL", "XXL"],
     "colors": ["#68a6d6", "#fafafa", "#0a0a0a"],
-    "availability": "in-stock",
+    "availability": "coming-soon",
+    "isBlurred": true,
     "featured": true,
     "isPlaceholder": false
   }

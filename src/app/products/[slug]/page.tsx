@@ -7,8 +7,6 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export const instant = false;
-
 export function generateStaticParams() {
   const products = getAllProducts();
   return products.map((product) => ({

@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
-import AnnouncementBar from "./AnnouncementBar";
 import SearchModal from "./SearchModal";
 import CartDrawer from "./CartDrawer";
 
@@ -19,15 +19,8 @@ const NAV_LINKS = [
 export default function Header() {
   const pathname = usePathname();
   const { totalItems, openDrawer } = useCart();
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
@@ -42,15 +35,20 @@ export default function Header() {
 
   return (
     <>
-      {/* 1. Announcement Bar */}
-      <AnnouncementBar />
-
-      {/* 2. Main Site Header */}
-      <header className={`site-header${scrolled ? " scrolled" : ""}`} role="banner">
+      {/* Main Site Header */}
+      <header className="site-header" role="banner">
         <div className="header-inner">
-          {/* Logo */}
+          {/* Logo Image */}
           <Link href="/" className="header-logo" aria-label="Triple Z — Home">
-            TRIPLE Z
+            <Image
+              src="/brand-logo.png"
+              alt="Triple Z"
+              width={160}
+              height={56}
+              priority
+              unoptimized
+              className="header-brand-logo-img"
+            />
           </Link>
 
           {/* Desktop nav */}

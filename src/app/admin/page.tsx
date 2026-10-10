@@ -26,6 +26,8 @@ interface ProductFormData {
   description: string;
   longDescription: string;
   sizes: string[];
+  colors: string[];
+  isBlurred: boolean;
   images: { src: string; alt: string }[];
   featured: boolean;
 }
@@ -36,10 +38,12 @@ const INITIAL_FORM: ProductFormData = {
   category: "tops",
   collection: "core",
   price: "120",
-  availability: "in-stock",
+  availability: "coming-soon",
   description: "",
   longDescription: "",
   sizes: ["S", "M", "L", "XL"],
+  colors: ["#0a0a0a", "#4a7c9d", "#c9a96e"],
+  isBlurred: true,
   images: [{ src: "/hero.jpg", alt: "Product Preview" }],
   featured: false,
 };
@@ -139,6 +143,8 @@ export default function AdminPage() {
       description: product.description,
       longDescription: product.longDescription || "",
       sizes: product.sizes || [],
+      colors: product.colors && product.colors.length > 0 ? product.colors : ["#0a0a0a", "#4a7c9d", "#c9a96e"],
+      isBlurred: Boolean(product.isBlurred || product.availability === "coming-soon"),
       images: product.images && product.images.length > 0 ? product.images : [{ src: "/hero.jpg", alt: product.name }],
       featured: Boolean(product.featured),
     });
@@ -420,7 +426,21 @@ export default function AdminPage() {
                                 </span>
                               )}
                             </div>
-                            <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>ID: {p.id}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.2rem" }}>
+                              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>ID: {p.id}</span>
+                              {p.colors && p.colors.length > 0 && (
+                                <div style={{ display: "inline-flex", gap: "3px" }}>
+                                  {p.colors.map((c, i) => (
+                                    <span key={i} style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: c, border: "1px solid rgba(255,255,255,0.3)", display: "inline-block" }} />
+                                  ))}
+                                </div>
+                              )}
+                              {p.isBlurred && (
+                                <span style={{ fontSize: "0.65rem", padding: "0.1rem 0.35rem", borderRadius: "3px", background: "rgba(106,183,234,0.15)", color: "#6ab7ea", fontWeight: 700 }}>
+                                  BLURRED TEASER
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -612,6 +632,69 @@ export default function AdminPage() {
                   )}
                 </div>
               </div>
+
+              {/* Coming Soon Teaser Drop Settings */}
+              {(formData.availability === "coming-soon" || formData.isBlurred) && (
+                <div style={{ background: "rgba(201, 169, 110, 0.08)", border: "1px solid rgba(201, 169, 110, 0.35)", borderRadius: "var(--radius-md)", padding: "1.25rem", marginBottom: "1.25rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <span style={{ fontSize: "1.1rem" }}>🔒</span>
+                      <span style={{ fontWeight: 700, color: "var(--clr-accent)", fontSize: "0.88rem" }}>
+                        وضع التشويق (Coming Soon Teaser Drop)
+                      </span>
+                    </div>
+                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.8rem", color: "var(--clr-white)" }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.isBlurred}
+                        onChange={(e) => setFormData({ ...formData, isBlurred: e.target.checked })}
+                      />
+                      <span>تطبيق بلور على الصورة (Blur Image)</span>
+                    </label>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)", margin: "0 0 1rem 0", lineHeight: 1.5 }}>
+                    ✨ في هذا الوضع: يتم تعتيم/بلور صورة المنتج وإظهار شارة <strong>COMING SOON</strong>، وإخفاء الاسم والسعر من الكارت تماماً، مع عرض ألوان التشويق الثلاثة فقط بالأسفل لجذب الجمهور.
+                  </p>
+
+                  {/* 3 Teaser Colors */}
+                  <div>
+                    <label className="form-label" style={{ marginBottom: "0.5rem", display: "block" }}>
+                      ألوان التشويق الثلاثة (3 Teaser Colors):
+                    </label>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
+                      {[0, 1, 2].map((idx) => {
+                        const currentColor = formData.colors?.[idx] || (idx === 0 ? "#0a0a0a" : idx === 1 ? "#4a7c9d" : "#c9a96e");
+                        return (
+                          <div key={idx} style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "var(--clr-surface-3)", padding: "0.5rem", borderRadius: "var(--radius-sm)", border: "1px solid var(--clr-border)" }}>
+                            <input
+                              type="color"
+                              value={currentColor}
+                              onChange={(e) => {
+                                const newColors = [...(formData.colors || ["#0a0a0a", "#4a7c9d", "#c9a96e"])];
+                                newColors[idx] = e.target.value;
+                                setFormData({ ...formData, colors: newColors });
+                              }}
+                              style={{ width: "28px", height: "28px", padding: 0, border: "none", borderRadius: "50%", cursor: "pointer", background: "transparent" }}
+                              title={`اختر اللون ${idx + 1}`}
+                            />
+                            <input
+                              type="text"
+                              value={currentColor}
+                              onChange={(e) => {
+                                const newColors = [...(formData.colors || ["#0a0a0a", "#4a7c9d", "#c9a96e"])];
+                                newColors[idx] = e.target.value;
+                                setFormData({ ...formData, colors: newColors });
+                              }}
+                              className="form-input"
+                              style={{ padding: "0.3rem 0.5rem", fontSize: "0.75rem", fontFamily: "monospace" }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Category & Collection */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>

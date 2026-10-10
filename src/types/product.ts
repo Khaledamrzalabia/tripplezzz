@@ -25,6 +25,8 @@ export interface Product {
   colors?: string[];
   availability: ProductAvailability;
   featured?: boolean;
+  /** True if image should be blurred in teaser mode for Coming Soon drops */
+  isBlurred?: boolean;
   /** True = verified real product data; False = placeholder demo data */
   isPlaceholder?: boolean;
 }
