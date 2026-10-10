@@ -4919,65 +4919,66 @@ select {
   }
 
   .mockup-craft-cards-grid {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    gap: 0.85rem !important;
-    padding-bottom: 0.75rem !important;
-    padding-inline: 0.25rem !important;
-    margin-inline: -1.15rem !important;
-    padding-inline: 1.15rem !important;
-  }
-
-  .mockup-craft-cards-grid::-webkit-scrollbar {
-    display: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
   }
 
   .mockup-craft-card {
-    flex: 0 0 76% !important;
-    max-width: 290px !important;
-    min-width: 240px !important;
-    width: 76% !important;
-    scroll-snap-align: start !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     background: #111419 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 6px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }
 
   .mockup-craft-img-wrap {
-    height: 175px !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
     width: 100% !important;
     position: relative !important;
     background: #181c24 !important;
   }
 
   .mockup-craft-card-info {
-    padding: 0.9rem 0.85rem !important;
+    padding: 0.5rem 0.35rem !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.2rem !important;
+    gap: 0.15rem !important;
+    text-align: center !important;
   }
 
   .craft-card-title {
-    font-size: 0.85rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.06em !important;
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.02em !important;
+    line-height: 1.2 !important;
     color: var(--clr-accent, #c9a96e) !important;
     margin: 0 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
   }
 
   .craft-card-desc {
-    font-size: 0.78rem !important;
+    font-size: 0.58rem !important;
     color: var(--clr-text-secondary) !important;
     margin: 0 !important;
+    line-height: 1.25 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
   }
 
   /* 10. COMMUNITY LOOKBOOK */
