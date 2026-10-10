@@ -59,10 +59,8 @@ export default function AdminPage() {
   // Admin Auth State
   const [authChecking, setAuthChecking] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [dbMode, setDbMode] = useState<string>("Local Store");
-  const [isDbConnected, setIsDbConnected] = useState(false);
+  const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
-  const [adminEmail, setAdminEmail] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginSubmitting, setLoginSubmitting] = useState(false);
 
@@ -130,10 +128,6 @@ export default function AdminPage() {
     fetch("/api/admin/auth")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        const connected = Boolean(data?.postgresConnected || data?.supabaseConnected);
-        setIsDbConnected(connected);
-        setDbMode(data?.dbMode || (connected ? "PostgreSQL Pooler Active" : "Local Data Store"));
-
         if (data?.authenticated) {
           setIsAuthenticated(true);
           fetchProducts();
@@ -154,8 +148,8 @@ export default function AdminPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!adminPassword.trim()) {
-      setLoginError("يرجى إدخال كلمة سر الأدمن.");
+    if (!adminUsername.trim() || !adminPassword.trim()) {
+      setLoginError("يرجى إدخال اسم المستخدم وكلمة المرور.");
       return;
     }
     setLoginSubmitting(true);
@@ -166,20 +160,18 @@ export default function AdminPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          username: adminUsername.trim(),
           password: adminPassword,
-          email: adminEmail.trim() || undefined,
         }),
       });
 
       const data = await res.json();
       if (res.ok && data.success) {
         setIsAuthenticated(true);
-        setIsDbConnected(Boolean(data.postgresConnected || data.supabaseConnected));
-        setDbMode(data.dbMode || (data.postgresConnected ? "Direct PostgreSQL Pooler Active" : "Local Data Store"));
         fetchProducts();
         fetchOrders();
       } else {
-        setLoginError(data.error || "كلمة السر غير صحيحة، يرجى المحاولة ثانية.");
+        setLoginError(data.error || "اسم المستخدم أو كلمة المرور غير صحيحة.");
       }
     } catch (err) {
       setLoginError("فشل الاتصال بالخادم، يرجى إعادة المحاولة.");
@@ -192,6 +184,7 @@ export default function AdminPage() {
     try {
       await fetch("/api/admin/auth", { method: "DELETE" });
       setIsAuthenticated(false);
+      setAdminUsername("");
       setAdminPassword("");
     } catch (err) {
       console.error("Logout error:", err);
@@ -417,45 +410,38 @@ export default function AdminPage() {
             </p>
           </div>
 
-          {/* Database Engine Status */}
-          <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 8, padding: "0.75rem 1rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-            <span style={{ fontSize: "0.78rem", color: "var(--clr-text-muted)" }}>Database Engine:</span>
-            <span style={{ fontSize: "0.78rem", fontWeight: 700, color: isDbConnected ? "#10b981" : "#f59e0b", display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: isDbConnected ? "#10b981" : "#f59e0b" }} />
-              {dbMode}
-            </span>
-          </div>
-
           {/* Login Form */}
           <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
             <div>
+              <label htmlFor="admin-user-input" style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--clr-text-muted)", marginBottom: "0.45rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Username / اسم المستخدم:
+              </label>
+              <input
+                id="admin-user-input"
+                type="text"
+                value={adminUsername}
+                onChange={(e) => setAdminUsername(e.target.value)}
+                placeholder="أدخل اسم المستخدم..."
+                autoFocus
+                required
+                autoComplete="username"
+                style={{ width: "100%", height: 46, background: "#0a0c10", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: 6, color: "#fff", padding: "0 1rem", fontSize: "0.95rem", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            <div>
               <label htmlFor="admin-pass-input" style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--clr-text-muted)", marginBottom: "0.45rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                Admin Password / كلمة المرور:
+                Password / كلمة المرور:
               </label>
               <input
                 id="admin-pass-input"
                 type="password"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="أدخل كلمة سر الأدمن..."
-                autoFocus
+                placeholder="أدخل كلمة المرور..."
                 required
-                style={{ width: "100%", height: 46, background: "#0a0c10", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: 6, color: "#fff", padding: "0 1rem", fontSize: "0.95rem", outline: "none" }}
-              />
-            </div>
-
-            {/* Optional Email input */}
-            <div>
-              <label htmlFor="admin-email-input" style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--clr-text-muted)", marginBottom: "0.45rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                Admin Email (اختياري لسوبابيز):
-              </label>
-              <input
-                id="admin-email-input"
-                type="email"
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="admin@triple-z.com (اختياري)"
-                style={{ width: "100%", height: 44, background: "#0a0c10", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: 6, color: "#fff", padding: "0 1rem", fontSize: "0.85rem", outline: "none" }}
+                autoComplete="current-password"
+                style={{ width: "100%", height: 46, background: "#0a0c10", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: 6, color: "#fff", padding: "0 1rem", fontSize: "0.95rem", outline: "none", boxSizing: "border-box" }}
               />
             </div>
 
@@ -473,12 +459,6 @@ export default function AdminPage() {
             >
               {loginSubmitting ? "جاري التحقق..." : "دخول الاستوديو (ENTER STUDIO) →"}
             </button>
-
-            <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>
-                Default Master Key: <strong style={{ color: "var(--clr-accent)" }}>triplez2026</strong>
-              </span>
-            </div>
           </form>
         </div>
       </div>
@@ -497,10 +477,6 @@ export default function AdminPage() {
               </span>
               <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>•</span>
               <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", textTransform: "uppercase" }}>لوحة تحكم المنتجات</span>
-              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>•</span>
-              <span style={{ fontSize: "0.72rem", padding: "2px 8px", borderRadius: 100, background: isDbConnected ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)", color: isDbConnected ? "#10b981" : "#f59e0b", border: isDbConnected ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(245, 158, 11, 0.3)", fontWeight: 700 }}>
-                {dbMode}
-              </span>
             </div>
             <h1 style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", fontWeight: 800, letterSpacing: "-0.02em", margin: 0 }}>
               Product Inventory & Studio

@@ -4,7 +4,8 @@ import crypto from "crypto";
 import { supabase, isSupabaseConfigured } from "../../../../lib/supabase";
 import { isPostgresConfigured } from "../../../../lib/db";
 
-// Default admin password if not defined in .env
+// Admin credentials from environment variables
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "triplez2026";
 const SESSION_COOKIE_NAME = "tz_admin_session";
 
@@ -18,13 +19,6 @@ export async function GET() {
 
   return NextResponse.json({
     authenticated: isAuthenticated,
-    postgresConnected: isPostgresConfigured,
-    supabaseConnected: isSupabaseConfigured,
-    dbMode: isPostgresConfigured
-      ? "Direct PostgreSQL Pooler"
-      : isSupabaseConfigured
-      ? "Supabase API"
-      : "Local JSON Store",
   });
 }
 
@@ -46,41 +40,38 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { password, email } = body;
+    const { username, password } = body;
+
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: "يرجى إدخال اسم المستخدم وكلمة المرور." },
+        { status: 400 }
+      );
+    }
 
     let success = false;
     let authUser = null;
 
-    // Check 1: If user provided email & password and Supabase is configured
-    if (email && password && isSupabaseConfigured && supabase) {
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password: password,
-        });
+    // Check credentials against configured ADMIN_USERNAME & ADMIN_PASSWORD
+    const inputUser = String(username).trim();
+    const inputPass = String(password);
 
-        if (!error && data.user) {
-          success = true;
-          authUser = data.user.email;
-        }
-      } catch (err) {
-        console.warn("Supabase auth check failed:", err);
-      }
-    }
+    const uBuf = Buffer.from(inputUser);
+    const expectedUBuf = Buffer.from(ADMIN_USERNAME);
+    const pBuf = Buffer.from(inputPass);
+    const expectedPBuf = Buffer.from(ADMIN_PASSWORD);
 
-    // Check 2: Master Admin Passcode (Works with ADMIN_PASSWORD in .env or default fallback)
-    if (!success && password) {
-      const pBuf = Buffer.from(password);
-      const aBuf = Buffer.from(ADMIN_PASSWORD);
-      if (pBuf.length === aBuf.length && crypto.timingSafeEqual(pBuf, aBuf)) {
-        success = true;
-        authUser = "Master Admin";
-      }
+    const userMatches = uBuf.length === expectedUBuf.length && crypto.timingSafeEqual(uBuf, expectedUBuf);
+    const passMatches = pBuf.length === expectedPBuf.length && crypto.timingSafeEqual(pBuf, expectedPBuf);
+
+    if (userMatches && passMatches) {
+      success = true;
+      authUser = ADMIN_USERNAME;
     }
 
     if (!success) {
       return NextResponse.json(
-        { error: "كلمة السر غير صحيحة، يرجى التأكد من كلمة المرور والمحاولة مجدداً." },
+        { error: "اسم المستخدم أو كلمة المرور غير صحيحة." },
         { status: 401 }
       );
     }
@@ -100,8 +91,6 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       user: authUser,
-      postgresConnected: isPostgresConfigured,
-      supabaseConnected: isSupabaseConfigured,
     });
   } catch (error) {
     console.error("Admin login error:", error);
