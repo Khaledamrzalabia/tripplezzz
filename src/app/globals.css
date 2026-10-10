@@ -4844,59 +4844,128 @@ select {
     border-radius: 50% !important;
   }
 
-  /* 8. CULTURE SECTION */
+  /* 8. CULTURE SECTION - MERGED INTEGRATED COMPACT CARD ON MOBILE */
   .mockup-culture-section {
-    padding-block: 2.75rem !important;
+    padding-block: 1.75rem 1rem !important;
   }
 
   .mockup-culture-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1.75rem !important;
+    display: block !important;
+    position: relative !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: #0d0f12 !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45) !important;
+    margin-inline: auto !important;
   }
 
-  .mockup-culture-title {
-    font-size: 2.1rem !important;
-    line-height: 1.02 !important;
-    margin-bottom: 0.85rem !important;
-  }
-
-  .mockup-culture-desc {
-    font-size: 0.9rem !important;
-    line-height: 1.6 !important;
-    margin-bottom: 1.25rem !important;
+  .mockup-culture-right {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
   }
 
   .mockup-culture-img-container {
-    height: 360px !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
-    position: relative !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .mockup-culture-img-container img {
+    object-position: center 25% !important;
+    filter: brightness(0.42) saturate(1.15) !important;
+  }
+
+  .mockup-culture-img-container::after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.45) 0%,
+      rgba(10, 10, 10, 0.78) 45%,
+      rgba(10, 10, 10, 0.96) 100%
+    ) !important;
+    pointer-events: none !important;
   }
 
   .mockup-culture-floating-quote {
     display: none !important;
   }
 
+  .mockup-culture-left {
+    position: relative !important;
+    z-index: 2 !important;
+    padding: 1.75rem 1.25rem 1.25rem 1.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .mockup-culture-title {
+    font-size: 1.85rem !important;
+    line-height: 1.05 !important;
+    letter-spacing: 0.03em !important;
+    margin-bottom: 0.65rem !important;
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .mockup-culture-desc {
+    font-size: 0.85rem !important;
+    line-height: 1.55 !important;
+    color: rgba(250, 250, 250, 0.78) !important;
+    margin-bottom: 1.15rem !important;
+    max-width: 100% !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .mockup-culture-btn {
+    align-self: flex-start !important;
+    margin-bottom: 1.25rem !important;
+    padding: 0.55rem 1.25rem !important;
+    font-size: 0.75rem !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    color: #fafafa !important;
+  }
+
   .mockup-culture-pillars {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 0.5rem !important;
-    margin-top: 1.5rem !important;
-    padding-top: 1.5rem !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-top: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+    margin-inline: -1.25rem !important;
+    margin-bottom: -1.25rem !important;
+    padding: 0.9rem 1.25rem !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
   }
 
   .pillar-num {
-    font-size: 1.25rem !important;
+    font-size: 1.15rem !important;
     color: var(--clr-accent, #c9a96e) !important;
   }
 
   .pillar-text {
-    font-size: 0.65rem !important;
+    font-size: 0.6rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.06em !important;
-    line-height: 1.2 !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1.25 !important;
+    color: rgba(250, 250, 250, 0.7) !important;
+    word-break: break-word !important;
   }
 
   /* 9. CRAFT & DETAIL (MODERN SWIPEABLE STORY RAIL) */
