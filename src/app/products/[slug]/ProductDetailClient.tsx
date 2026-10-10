@@ -287,6 +287,22 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         )}
       </div>
 
+      {/* Mobile Sticky Add to Bag Bar */}
+      <div className="tz-mobile-sticky-buy-bar">
+        <div className="tz-sticky-buy-info">
+          <span className="tz-sticky-buy-name">{product.name}</span>
+          <span className="tz-sticky-buy-price">{formatPrice(product.price)}</span>
+        </div>
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={isOutOfStock || isComingSoon}
+          className={`btn btn-primary tz-sticky-buy-btn ${added ? "added" : ""}`}
+        >
+          {added ? "ADDED ✓" : isComingSoon ? "COMING SOON" : isOutOfStock ? "SOLD OUT" : "ADD TO BAG"}
+        </button>
+      </div>
+
       {/* Size Guide Modal */}
       <SizeGuideModal
         isOpen={sizeGuideOpen}

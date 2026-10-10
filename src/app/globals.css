@@ -270,15 +270,19 @@ select {
 
 /* Header */
 .site-header {
-  position: absolute;
-  inset-block-start: 0;
+  position: sticky;
+  top: 0;
   inset-inline: 0;
   z-index: 100;
-  height: 80px;
+  height: 74px;
   display: flex;
   align-items: center;
-  background: transparent;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   pointer-events: auto;
+  transition: all var(--transition-base);
 }
 
 .header-inner {
@@ -288,7 +292,7 @@ select {
   width: 100%;
   max-width: 100%;
   margin-inline: auto;
-  padding-inline: clamp(1.5rem, 4vw, 4.5rem);
+  padding-inline: clamp(1rem, 3.5vw, 4rem);
 }
 
 .header-logo {
@@ -298,9 +302,9 @@ select {
 }
 
 .header-brand-logo-img {
-  height: 52px;
+  height: 48px;
   width: auto;
-  max-width: 170px;
+  max-width: 160px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.7));
@@ -308,11 +312,11 @@ select {
 
 @media (max-width: 768px) {
   .site-header {
-    height: 68px;
+    height: 64px;
   }
   .header-brand-logo-img {
-    height: 40px;
-    max-width: 130px;
+    height: 38px;
+    max-width: 120px;
   }
 }
 
@@ -3971,32 +3975,394 @@ select {
 }
 
 /* ========================================================== */
-/* MOBILE APP EXPERIENCE MASTER STYLES (@media (max-width: 768px)) */
+/* TRIPLE Z — MASTER MOBILE APP RESPONSIVE EXPERIENCE       */
 /* ========================================================== */
+
+/* Mobile Bottom Nav Bar (hidden by default on desktop) */
+.tz-mobile-bottom-nav {
+  display: none;
+}
+.tz-mobile-sticky-buy-bar {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  /* Prevent horizontal blowout */
+  /* 0. BASE MOBILE RESETS & OVERFLOW PREVENTION */
   html, body {
     overflow-x: hidden !important;
     width: 100% !important;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .site-container {
     padding-inline: 1.15rem !important;
+    max-width: 100% !important;
   }
 
-  /* 1. HERO SECTION */
+  /* 1. SLIM & SLEEK STICKY HEADER */
+  .site-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 120 !important;
+    height: 58px !important;
+    background: rgba(10, 10, 10, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-top: env(safe-area-inset-top, 0) !important;
+  }
+
+  .header-inner {
+    padding-inline: 1rem !important;
+    height: 58px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .header-brand-logo-img {
+    height: 32px !important;
+    width: auto !important;
+    max-width: 110px !important;
+    object-fit: contain !important;
+  }
+
+  .header-nav {
+    display: none !important;
+  }
+
+  .header-admin-btn {
+    display: none !important; /* Easily reached in mobile menu drawer */
+  }
+
+  .header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+  }
+
+  .icon-btn {
+    width: 38px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #fafafa !important;
+    transition: background 0.15s ease !important;
+  }
+
+  .icon-btn:active {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: scale(0.95) !important;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .cart-badge {
+    top: 4px !important;
+    right: 4px !important;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 0.6rem !important;
+    font-weight: 800 !important;
+    border-radius: 50% !important;
+    background: var(--clr-accent, #c9a96e) !important;
+    color: #0a0a0a !important;
+  }
+
+  /* 2. REFINED MOBILE NAV DRAWER */
+  .mobile-nav {
+    display: none;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 250 !important;
+    background: rgba(0, 0, 0, 0.78) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  .mobile-nav.open {
+    display: flex !important;
+  }
+
+  .mobile-nav-drawer {
+    width: min(340px, 86vw) !important;
+    height: 100% !important;
+    background: #0c0f14 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: calc(1.25rem + env(safe-area-inset-top, 0px)) 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px)) 1.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.1rem !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow-y: auto !important;
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .mobile-nav.open .mobile-nav-drawer {
+    transform: translateX(0) !important;
+  }
+
+  .mobile-nav-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-bottom: 0.85rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .mobile-nav-close {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fafafa !important;
+    border: none !important;
+    font-size: 1.1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+  }
+
+  .mobile-nav-search-trigger {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    padding: 0.75rem 1rem !important;
+    min-height: 44px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--clr-text-secondary) !important;
+    font-size: 0.85rem !important;
+    text-align: left !important;
+    width: 100% !important;
+    cursor: pointer !important;
+  }
+
+  .mobile-nav-links {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.25rem !important;
+  }
+
+  .mobile-nav-link-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.75rem 0.25rem !important;
+    font-family: var(--font-display) !important;
+    font-size: 1.5rem !important;
+    letter-spacing: 0.04em !important;
+    color: #fafafa !important;
+    text-transform: uppercase !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: color 0.15s ease !important;
+  }
+
+  .mobile-nav-link-row:hover,
+  .mobile-nav-link-row[aria-current="page"] {
+    color: var(--clr-accent) !important;
+  }
+
+  .mobile-nav-arrow {
+    font-size: 1.1rem !important;
+    color: var(--clr-accent) !important;
+  }
+
+  .mobile-nav-quick-group {
+    margin-top: 0.25rem !important;
+  }
+
+  .mobile-nav-group-title {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.14em !important;
+    color: var(--clr-accent) !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.6rem !important;
+    display: block !important;
+  }
+
+  .mobile-nav-pills {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
+  }
+
+  .mobile-nav-pill {
+    padding: 0.4rem 0.75rem !important;
+    border-radius: 100px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #fafafa !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+  }
+
+  .mobile-nav-footer {
+    margin-top: auto !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  .mobile-nav-currency-wrap {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.5rem !important;
+  }
+
+  .mobile-nav-currency-label {
+    font-size: 0.72rem !important;
+    color: var(--clr-text-muted) !important;
+    font-weight: 600 !important;
+  }
+
+  .mobile-nav-currency-select {
+    background: #141720 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fafafa !important;
+    font-size: 0.78rem !important;
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 4px !important;
+    outline: none !important;
+  }
+
+  .mobile-nav-bottom-links {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .mobile-nav-admin-link {
+    font-size: 0.75rem !important;
+    color: var(--clr-accent) !important;
+    font-weight: 600 !important;
+  }
+
+  .mobile-nav-bag-btn {
+    font-size: 0.75rem !important;
+    color: #0a0a0a !important;
+    background: #fafafa !important;
+    border: none !important;
+    padding: 0.35rem 0.8rem !important;
+    border-radius: 100px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+  }
+
+  /* 3. MOBILE BOTTOM APP DOCK (FIXED, ULTRA CLEAN) */
+  .tz-mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    min-height: 56px !important;
+    z-index: 150 !important;
+    background: rgba(12, 15, 20, 0.96) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7) !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    padding-top: 4px !important;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .tz-bottom-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    color: rgba(250, 250, 250, 0.55) !important;
+    font-size: 0.62rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    padding: 4px 8px !important;
+    min-width: 54px !important;
+    min-height: 46px !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .tz-bottom-nav-item:active {
+    transform: scale(0.92) !important;
+  }
+
+  .tz-bottom-nav-item.active,
+  .tz-bottom-nav-item:hover {
+    color: var(--clr-accent, #c9a96e) !important;
+  }
+
+  .tz-bottom-bag-wrap {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .tz-bottom-nav-badge {
+    position: absolute !important;
+    top: -4px !important;
+    right: -8px !important;
+    background: var(--clr-accent, #c9a96e) !important;
+    color: #0a0a0a !important;
+    font-size: 0.6rem !important;
+    font-weight: 800 !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* 4. HERO SECTION - BALANCED VERTICAL BREATHING */
   .hero {
-    min-height: 94svh !important;
-    height: 94svh !important;
-    padding-top: calc(var(--nav-height, 65px) + 1.25rem) !important;
-    padding-bottom: 2rem !important;
+    min-height: calc(100svh - 58px) !important;
+    height: auto !important;
+    margin-top: 0 !important;
+    padding-top: 2rem !important;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)) !important;
     display: flex !important;
     align-items: flex-end !important;
+    position: relative !important;
   }
+
+  .hero-bg img {
+    object-position: center 25% !important;
+  }
+
   .hero-overlay {
     background: 
-      linear-gradient(180deg, rgba(8, 10, 14, 0.55) 0%, rgba(8, 10, 14, 0.2) 35%, rgba(8, 10, 14, 0.88) 100%) !important;
+      linear-gradient(180deg, rgba(8, 10, 14, 0.65) 0%, rgba(8, 10, 14, 0.25) 40%, rgba(8, 10, 14, 0.94) 100%) !important;
   }
+
   .hero-content {
     position: relative !important;
     z-index: 2 !important;
@@ -4004,369 +4370,942 @@ select {
     max-width: 100% !important;
     margin: 0 !important;
     padding-inline: 0 !important;
-    display: flex !important;
-    justify-content: flex-start !important;
-    align-items: flex-start !important;
   }
+
   .hero-text-block {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
     transform: none !important;
   }
-  .hero-headline {
-    font-size: clamp(2.4rem, 10vw, 3.5rem) !important;
-    line-height: 0.94 !important;
+
+  .hero-top-eyebrow {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
     margin-bottom: 0.65rem !important;
+  }
+
+  .hero-gold-dash {
+    width: 20px !important;
+    height: 1px !important;
+    background: var(--clr-accent) !important;
+  }
+
+  .hero-eyebrow-text {
+    font-size: 0.72rem !important;
+    letter-spacing: 0.16em !important;
+    font-weight: 700 !important;
+    color: var(--clr-accent) !important;
+  }
+
+  .hero-headline {
+    font-size: clamp(2.35rem, 10vw, 3.2rem) !important;
+    line-height: 0.98 !important;
+    margin-bottom: 0.75rem !important;
     letter-spacing: 0.02em !important;
   }
+
   .hero-subline {
     font-size: 0.85rem !important;
     line-height: 1.45 !important;
-    margin-bottom: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
     max-width: 320px !important;
     color: rgba(255, 255, 255, 0.85) !important;
   }
+
   .hero-actions {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.55rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
     width: 100% !important;
-    max-width: 360px !important;
+    max-width: 100% !important;
     margin-bottom: 0 !important;
   }
-  .hero-btn-primary,
+
+  .hero-btn-primary {
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 0.85rem 1.25rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-align: center !important;
+    border-radius: 6px !important;
+    background: #fafafa !important;
+    color: #0a0a0a !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: 0 4px 15px rgba(250, 250, 250, 0.15) !important;
+  }
+
   .hero-btn-secondary {
     width: 100% !important;
-    padding: 0.82rem 0.5rem !important;
-    font-size: 0.68rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.06em !important;
-    white-space: nowrap !important;
+    min-height: 46px !important;
+    padding: 0.8rem 1.25rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
     text-align: center !important;
+    border-radius: 6px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fafafa !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px) !important;
+    display: flex !important;
     justify-content: center !important;
+    align-items: center !important;
   }
+
   .hero-bottom-indicators {
     display: none !important;
   }
 
-  /* 2. SECTION HEADERS */
+  /* 5. SECTION HEADERS & EYEBROWS */
   .mockup-section-header {
     margin-bottom: 1.25rem !important;
+    display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: flex-end !important;
-    gap: 0.75rem !important;
+    gap: 0.5rem !important;
   }
+
+  .mockup-eyebrow {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.14em !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .mockup-gold-dash {
+    width: 16px !important;
+  }
+
   .mockup-section-title {
-    font-size: 1.65rem !important;
-    line-height: 1.1 !important;
+    font-size: 1.75rem !important;
+    line-height: 1 !important;
   }
+
   .mockup-section-subtitle {
     font-size: 0.78rem !important;
     margin-top: 0.2rem !important;
+    color: var(--clr-text-secondary) !important;
   }
+
   .mockup-view-all-link {
-    font-size: 0.7rem !important;
+    font-size: 0.72rem !important;
     white-space: nowrap !important;
+    color: var(--clr-accent) !important;
+    font-weight: 700 !important;
   }
 
-  /* 3. FEATURED PIECES (Swipeable Rail on Mobile) */
+  /* 6. FEATURED PIECES (2-COLUMN RESPONSIVE MOBILE GRID WITH PROPER 2-LINE TITLES) */
   .mockup-featured-section {
-    padding-block: 3.5rem 2.5rem !important;
-  }
-  .mockup-featured-grid {
-    display: flex !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    gap: 0.85rem !important;
-    padding-bottom: 0.85rem !important;
-    padding-inline: 1.15rem !important;
-    margin-inline: -1.15rem !important;
-    scrollbar-width: none !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-  .mockup-featured-grid::-webkit-scrollbar {
-    display: none !important;
-  }
-  .mockup-featured-grid .mockup-product-card {
-    flex: 0 0 190px !important;
-    width: 190px !important;
-    min-width: 190px !important;
-    scroll-snap-align: start !important;
+    padding-block: 2.75rem 2rem !important;
   }
 
-  /* 4. COLLECTIONS BANNERS (Swipeable Rail on Mobile) */
-  .mockup-collections-section {
-    padding-block: 3rem !important;
+  .mockup-featured-grid,
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+    overflow-x: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
+
+  .mockup-featured-grid .mockup-product-card,
+  .products-grid .mockup-product-card {
+    flex: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .mockup-product-card {
+    border-radius: 8px !important;
+    background: #111419 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    transition: transform 0.15s ease, border-color 0.15s ease !important;
+  }
+
+  .mockup-product-card:active {
+    transform: scale(0.98) !important;
+  }
+
+  .mockup-card-image-wrap {
+    aspect-ratio: 1/1 !important;
+    position: relative !important;
+    background: #151921 !important;
+    overflow: hidden !important;
+  }
+
+  .mockup-card-body {
+    padding: 0.75rem 0.65rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    flex: 1 !important;
+  }
+
+  /* Solves awkward truncation: Displays full product title across 2 clear lines */
+  .mockup-card-title {
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    line-height: 1.25 !important;
+    margin-bottom: 0.45rem !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    line-clamp: 2 !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+    min-height: 2.1em !important;
+    color: #fafafa !important;
+  }
+
+  .mockup-card-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    margin-top: auto !important;
+  }
+
+  .mockup-card-price {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: var(--clr-accent, #c9a96e) !important;
+  }
+
+  .mockup-card-cart-btn {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fafafa !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mockup-card-cart-btn:active {
+    transform: scale(0.9) !important;
+  }
+
+  .mockup-card-cart-btn.added {
+    background: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #fafafa !important;
+  }
+
+  .mockup-card-heart {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background: rgba(10, 12, 16, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.95rem !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+
+  /* 7. NATION STORIES BANNERS & APPAREL CATEGORIES */
+  .mockup-collections-section {
+    padding-block: 2.75rem 2rem !important;
+  }
+
   .mockup-banners-grid {
     display: flex !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    gap: 0.85rem !important;
-    padding-bottom: 0.5rem !important;
-    padding-inline: 1.15rem !important;
-    margin-inline: -1.15rem !important;
-    scrollbar-width: none !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-  .mockup-banners-grid::-webkit-scrollbar {
-    display: none !important;
-  }
-  .mockup-banner-card {
-    flex: 0 0 85% !important;
-    width: 85% !important;
-    min-width: 270px !important;
-    max-width: 320px !important;
-    height: 220px !important;
-    border-radius: 8px !important;
-    scroll-snap-align: start !important;
-  }
-  .mockup-banner-content {
-    padding: 1.25rem 1rem !important;
-  }
-  .mockup-banner-title {
-    font-size: 1.35rem !important;
-    line-height: 1.05 !important;
-    margin-bottom: 0.25rem !important;
-  }
-  .mockup-banner-desc {
-    font-size: 0.78rem !important;
-    margin-bottom: 0.75rem !important;
-  }
-  .mockup-banner-content .btn {
-    padding: 0.5rem 1rem !important;
-    font-size: 0.72rem !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    overflow-x: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  /* 5. SHOP BY APPAREL (2x2 Compact Grid) */
+  .mockup-banner-card {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: 230px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .mockup-banner-content {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .mockup-banner-title {
+    font-size: 1.6rem !important;
+    line-height: 1 !important;
+    letter-spacing: 0.03em !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .mockup-banner-desc {
+    font-size: 0.82rem !important;
+    margin-bottom: 1rem !important;
+    color: rgba(250, 250, 250, 0.8) !important;
+  }
+
+  .mockup-banner-content .btn {
+    padding: 0.5rem 1.1rem !important;
+    font-size: 0.75rem !important;
+    border-radius: 100px !important;
+  }
+
+  /* Shop by Apparel */
   .mockup-apparel-header {
-    margin-top: 3.5rem !important;
+    margin-top: 3rem !important;
     padding-top: 2rem !important;
   }
+
   .mockup-categories-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .mockup-cat-card {
+    height: 180px !important;
+    min-height: 180px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .mockup-cat-content {
+    padding: 1rem 0.85rem !important;
+  }
+
+  .mockup-cat-title {
+    font-size: 1.35rem !important;
+    line-height: 1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .mockup-cat-desc {
+    font-size: 0.72rem !important;
+    color: rgba(250, 250, 250, 0.7) !important;
+  }
+
+  .mockup-cat-arrow {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem !important;
+    border-radius: 50% !important;
+  }
+
+  /* 8. CULTURE SECTION */
+  .mockup-culture-section {
+    padding-block: 2.75rem !important;
+  }
+
+  .mockup-culture-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.75rem !important;
+  }
+
+  .mockup-culture-title {
+    font-size: 2.1rem !important;
+    line-height: 1.02 !important;
+    margin-bottom: 0.85rem !important;
+  }
+
+  .mockup-culture-desc {
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .mockup-culture-img-container {
+    height: 360px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .mockup-culture-floating-quote {
+    position: absolute !important;
+    bottom: 1rem !important;
+    left: 1rem !important;
+    right: 1rem !important;
+    max-width: 100% !important;
+    background: rgba(10, 12, 16, 0.92) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 8px !important;
+    padding: 0.85rem 1rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .quote-text {
+    font-size: 0.85rem !important;
+    line-height: 1.25 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .mockup-culture-pillars {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+    margin-top: 1.5rem !important;
+    padding-top: 1.5rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .pillar-num {
+    font-size: 1.25rem !important;
+    color: var(--clr-accent, #c9a96e) !important;
+  }
+
+  .pillar-text {
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+    line-height: 1.2 !important;
+  }
+
+  /* 9. CRAFT & DETAIL (SMOOTH SWIPEABLE RAIL) */
+  .mockup-craft-section {
+    padding-block: 2.75rem !important;
+  }
+
+  .mockup-craft-grid {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 1.75rem !important;
+  }
+
+  .mockup-craft-title {
+    font-size: 2.1rem !important;
+    margin-bottom: 0.85rem !important;
+  }
+
+  .mockup-craft-text {
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .mockup-craft-cards-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 0.85rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-inline: -1.15rem !important;
+    padding-inline: 1.15rem !important;
+  }
+
+  .mockup-craft-cards-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mockup-craft-card {
+    flex: 0 0 240px !important;
+    min-width: 240px !important;
+    scroll-snap-align: start !important;
+    background: #111419 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .mockup-craft-img-wrap {
+    height: 155px !important;
+    position: relative !important;
+  }
+
+  .mockup-craft-card-info {
+    padding: 0.85rem 0.75rem !important;
+  }
+
+  .craft-card-title {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .craft-card-desc {
+    font-size: 0.75rem !important;
+    color: var(--clr-text-secondary) !important;
+  }
+
+  /* 10. COMMUNITY LOOKBOOK */
+  .mockup-community-section {
+    padding-block: 2.5rem !important;
+  }
+
+  .mockup-community-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.65rem !important;
   }
-  .mockup-cat-card {
-    height: 155px !important;
-    min-height: 155px !important;
+
+  .mockup-community-tile {
+    height: 165px !important;
     border-radius: 8px !important;
-  }
-  .mockup-cat-content {
-    padding: 0.95rem 0.85rem !important;
-  }
-  .mockup-cat-title {
-    font-size: 1.2rem !important;
-  }
-  .mockup-cat-desc {
-    font-size: 0.68rem !important;
-  }
-  .mockup-cat-arrow {
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 0.8rem !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
 
-  /* 6. CULTURE SECTION */
-  .mockup-culture-section {
-    padding-block: 3.5rem !important;
-  }
-  .mockup-culture-grid {
-    gap: 2rem !important;
-  }
-  .mockup-culture-title {
-    font-size: 2rem !important;
-    margin-bottom: 0.85rem !important;
-  }
-  .mockup-culture-desc {
-    font-size: 0.88rem !important;
-    line-height: 1.6 !important;
-    margin-bottom: 1.25rem !important;
-  }
-  .mockup-culture-img-container {
-    height: 260px !important;
-    border-radius: 8px !important;
-  }
-  .mockup-culture-floating-quote {
-    padding: 0.85rem 1rem !important;
-    top: 1rem !important;
-    right: 1rem !important;
-    max-width: 170px !important;
-  }
-  .quote-text {
-    font-size: 0.88rem !important;
-  }
-  .quote-author {
-    font-size: 0.6rem !important;
-  }
-  .mockup-culture-pillars {
-    gap: 0.75rem !important;
-    justify-content: space-between !important;
-    margin-top: 1rem !important;
-    padding-top: 1rem !important;
-  }
-  .pillar-num {
-    font-size: 1.1rem !important;
-  }
-  .pillar-text {
-    font-size: 0.6rem !important;
-  }
-
-  /* 7. CRAFT & DETAIL */
-  .mockup-craft-section {
-    padding-block: 3.5rem !important;
-  }
-  .mockup-craft-grid {
+  .mockup-community-cta {
+    background: #111419 !important;
+    border: 1px solid rgba(201, 169, 110, 0.3) !important;
     display: flex !important;
-    flex-direction: column-reverse !important;
-    gap: 2rem !important;
-  }
-  .mockup-craft-title {
-    font-size: 2rem !important;
-    margin-bottom: 0.85rem !important;
-  }
-  .mockup-craft-text {
-    font-size: 0.88rem !important;
-    line-height: 1.6 !important;
-    margin-bottom: 1.25rem !important;
-  }
-  .mockup-craft-cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
-  }
-  .mockup-craft-card {
-    border-radius: 6px !important;
-  }
-  .mockup-craft-card-info {
-    padding: 0.55rem 0.4rem !important;
-  }
-  .craft-card-title {
-    font-size: 0.62rem !important;
-    letter-spacing: 0.04em !important;
-  }
-  .craft-card-desc {
-    font-size: 0.58rem !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 1rem !important;
   }
 
-  /* 8. COMMUNITY LOOKBOOK */
-  .mockup-community-section {
+  .community-cta-eyebrow {
+    font-size: 0.62rem !important;
+  }
+
+  .community-cta-tag {
+    font-size: 1.45rem !important;
+    color: var(--clr-accent, #c9a96e) !important;
+  }
+
+  .community-cta-desc {
+    display: block !important;
+    font-size: 0.72rem !important;
+    color: var(--clr-text-secondary) !important;
+    margin-top: 0.25rem !important;
+  }
+
+  /* 11. NEWSLETTER */
+  .mockup-newsletter-section {
     padding-block: 3rem !important;
   }
-  .mockup-community-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
-  }
-  .mockup-community-tile {
-    border-radius: 6px !important;
-  }
-  .community-cta-eyebrow {
-    font-size: 0.58rem !important;
-  }
-  .community-cta-tag {
-    font-size: 1.05rem !important;
-  }
-  .community-cta-desc {
-    display: none !important;
-  }
 
-  /* 9. NEWSLETTER */
-  .mockup-newsletter-section {
-    padding-block: 3.5rem !important;
-  }
   .mockup-newsletter-title {
     font-size: 1.85rem !important;
+    line-height: 1.05 !important;
     margin-bottom: 0.5rem !important;
   }
+
   .mockup-newsletter-desc {
-    font-size: 0.85rem !important;
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
     margin-bottom: 1.25rem !important;
   }
+
   .mockup-newsletter-form {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.65rem !important;
-    width: 100% !important;
-  }
-  .mockup-newsletter-input {
-    width: 100% !important;
-  }
-  .mockup-newsletter-btn {
+    gap: 0.75rem !important;
     width: 100% !important;
   }
 
-  /* 10. COMPACT MOBILE FOOTER */
-  .mockup-footer {
-    padding-block: 2rem 1.25rem !important;
+  .mockup-newsletter-input {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 0.92rem !important;
+    border-radius: 6px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    padding-inline: 1rem !important;
+    color: #fafafa !important;
   }
+
+  .mockup-newsletter-btn {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 6px !important;
+    background: #fafafa !important;
+    color: #0a0a0a !important;
+  }
+
+  /* 12. COMPACT MOBILE FOOTER WITH DOCK CLEARANCE */
+  .mockup-footer {
+    padding-block: 2.75rem 1.75rem !important;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
   .mockup-footer-grid {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1.25rem !important;
-    margin-bottom: 1.25rem !important;
+    gap: 1.75rem !important;
+    margin-bottom: 1.5rem !important;
   }
+
   .mockup-footer-brand-col {
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
+    align-items: flex-start !important;
+    text-align: left !important;
   }
+
   .mockup-footer-logo {
-    font-size: 1.35rem !important;
+    font-size: 1.6rem !important;
     margin-bottom: 0.35rem !important;
   }
+
   .mockup-footer-desc {
-    max-width: 260px !important;
-    margin-inline: auto !important;
-    margin-bottom: 0.65rem !important;
-    font-size: 0.75rem !important;
-    line-height: 1.4 !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    margin-bottom: 0.85rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
   }
+
   .mockup-footer-socials {
-    justify-content: center !important;
-    gap: 0.5rem !important;
+    justify-content: flex-start !important;
+    gap: 0.65rem !important;
   }
+
   .mockup-social-icon {
-    width: 28px !important;
-    height: 28px !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
   }
+
   .mockup-footer-links-group {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem 1rem !important;
     width: 100% !important;
-    text-align: center !important;
+    text-align: left !important;
   }
+
   .mockup-footer-col-title {
-    font-size: 0.68rem !important;
-    margin-bottom: 0.45rem !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.1em !important;
+    margin-bottom: 0.65rem !important;
+    color: var(--clr-accent) !important;
   }
+
   .mockup-footer-links {
-    gap: 0.35rem !important;
+    gap: 0.45rem !important;
   }
+
   .mockup-footer-links a {
-    font-size: 0.72rem !important;
+    font-size: 0.85rem !important;
+    padding: 0.3rem 0 !important;
+    color: var(--clr-text-secondary) !important;
+    display: inline-block !important;
   }
+
   .mockup-footer-slogan-col {
     display: none !important;
   }
+
   .mockup-footer-bottom {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    gap: 0.6rem !important;
+    gap: 0.75rem !important;
     text-align: center !important;
-    padding-top: 1rem !important;
-    font-size: 0.7rem !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding-top: 1.25rem !important;
+    font-size: 0.75rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
+
   .mockup-footer-currency-row {
     display: flex !important;
     align-items: center !important;
-    gap: 0.4rem !important;
+    gap: 0.5rem !important;
   }
-}
+
+  /* 13. SHOP PAGE MOBILE OPTIMIZATIONS */
+  .shop-header {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .shop-controls {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    padding-block: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .shop-search {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 46px !important;
+    font-size: 0.9rem !important;
+    border-radius: 8px !important;
+  }
+
+  .shop-select {
+    width: 100% !important;
+    height: 46px !important;
+    font-size: 0.88rem !important;
+    border-radius: 8px !important;
+  }
+
+  .filter-chips {
+    display: flex !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-inline: -1.15rem !important;
+    padding-inline: 1.15rem !important;
+    flex-wrap: nowrap !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .filter-chips::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .filter-chip {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-size: 0.78rem !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 100px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* 14. PRODUCT DETAIL PAGE & DEDICATED MOBILE BOTTOM BAR */
+  .product-detail {
+    padding-top: 1rem !important;
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .product-detail-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  .product-gallery {
+    position: static !important;
+  }
+
+  .product-gallery-main {
+    aspect-ratio: 1/1 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .product-name {
+    font-size: 1.75rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .product-price {
+    font-size: 1.35rem !important;
+  }
+
+  .size-btn {
+    min-width: 46px !important;
+    height: 46px !important;
+    font-size: 0.85rem !important;
+    border-radius: 6px !important;
+  }
+
+  .product-add-btn {
+    min-height: 50px !important;
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 6px !important;
+  }
+
+  /* Sticky Mobile Buy Bar - Perfectly anchored at the bottom edge */
+  .tz-mobile-sticky-buy-bar {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 150 !important;
+    background: rgba(12, 15, 20, 0.96) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom, 0px)) 1.25rem !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.7) !important;
+  }
+
+  .tz-sticky-buy-info {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .tz-sticky-buy-name {
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    color: #fafafa !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .tz-sticky-buy-price {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: var(--clr-accent, #c9a96e) !important;
+  }
+
+  .tz-sticky-buy-btn {
+    padding: 0.75rem 1.4rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    border-radius: 6px !important;
+    background: #fafafa !important;
+    color: #0a0a0a !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    letter-spacing: 0.05em !important;
+    flex-shrink: 0 !important;
+  }
+
+  .tz-sticky-buy-btn.added {
+    background: #10b981 !important;
+    color: #fafafa !important;
+  }
+
+  /* 15. CART & CHECKOUT MOBILE */
+  .cart-grid,
+  .checkout-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.75rem !important;
+  }
+
+  .cart-item {
+    display: grid !important;
+    grid-template-columns: 74px 1fr !important;
+    grid-template-rows: auto auto !important;
+    gap: 0.75rem 1rem !important;
+    padding: 1rem !important;
+    background: var(--clr-surface-2) !important;
+    border-radius: 8px !important;
+    position: relative !important;
+  }
+
+  .cart-item-image {
+    grid-row: 1 / span 2 !important;
+    width: 74px !important;
+    height: 74px !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+
+  .cart-item-name {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    padding-right: 2rem !important;
+  }
+
+  .cart-item-price {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: var(--clr-accent) !important;
+  }
+
+  .cart-summary,
+  .checkout-summary {
+    position: static !important;
+    background: #111419 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    padding: 1.25rem !important;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .form-input {
+    height: 48px !important;
+    font-size: 0.92rem !important;
+    border-radius: 6px !important;
+  }
+
+  /* 16. MODALS ON MOBILE (FULL-SCREEN SEARCH & FULL-WIDTH SLIDE DRAWER) */
+  .tz-search-overlay {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+
+  .tz-search-modal {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .tz-search-input-wrap {
+    padding: 1rem !important;
+    padding-top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .tz-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .tz-drawer-header {
+    padding-top: calc(1.25rem + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .tz-drawer-footer {
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .tz-modal-overlay {
+    padding: 0.75rem !important;
+    align-items: flex-end !important;
+  }
+
+  .tz-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+
+  .tz-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}

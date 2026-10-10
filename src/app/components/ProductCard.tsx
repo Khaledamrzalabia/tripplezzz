@@ -78,20 +78,26 @@ export default function ProductCard({ product }: Props) {
 
       {/* Card Body */}
       {isComingSoon ? (
-        /* Teaser Mode: NO name, NO price, ONLY the 3 suspense color dots centered */
-        <div className="mockup-card-teaser-body">
-          {product.colors && product.colors.length > 0 && (
-            <div className="mockup-card-colors teaser-colors-centered">
-              {product.colors.slice(0, 3).map((c, i) => (
-                <span
-                  key={i}
-                  className="mockup-color-dot teaser-dot"
-                  style={{ backgroundColor: c }}
-                  title={`Teaser color ${i + 1}`}
-                />
-              ))}
-            </div>
-          )}
+        /* Teaser Mode: Name and Coming Soon status with suspense color dots */
+        <div className="mockup-card-body mockup-card-teaser-body">
+          <Link href={`/products/${product.slug}`} className="mockup-product-title-link">
+            <h3 className="mockup-card-title">{product.name}</h3>
+          </Link>
+          <div className="mockup-card-footer mockup-teaser-footer">
+            <span className="mockup-teaser-status">COMING SOON</span>
+            {product.colors && product.colors.length > 0 && (
+              <div className="mockup-card-colors">
+                {product.colors.slice(0, 3).map((c, i) => (
+                  <span
+                    key={i}
+                    className="mockup-color-dot teaser-dot"
+                    style={{ backgroundColor: c }}
+                    title={`Color ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         /* Regular Product Card */

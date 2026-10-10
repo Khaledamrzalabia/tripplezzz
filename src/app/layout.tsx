@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import { CartProvider } from "../context/CartContext";
 import { CurrencyProvider } from "../context/CurrencyContext";
+import { CustomerAuthProvider } from "../context/CustomerAuthContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -14,10 +15,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://triple-z.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://triplezzz.vercel.app"),
   title: {
     template: "%s | Triple Z",
     default: "Triple Z — Football Streetwear",
@@ -89,8 +91,8 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "ClothingStore",
   name: "Triple Z",
-  url: "https://triple-z.com",
-  logo: "https://triple-z.com/brand-logo.png",
+  url: "https://triplezzz.vercel.app",
+  logo: "https://triplezzz.vercel.app/brand-logo.png",
   description: "Premium football streetwear inspired by football culture.",
   priceRange: "$$$",
   sameAs: [
@@ -101,7 +103,7 @@ const organizationJsonLd = {
   ],
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://triple-z.com/shop?query={search_term_string}",
+    target: "https://triplezzz.vercel.app/shop?query={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 };
@@ -118,11 +120,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CurrencyProvider>
           <CartProvider>
-            <Suspense fallback={null}>
-              <Header />
-            </Suspense>
-            <main id="main-content">{children}</main>
-            <Footer />
+            <CustomerAuthProvider>
+              <Suspense fallback={null}>
+                <Header />
+              </Suspense>
+              <main id="main-content">{children}</main>
+              <Footer />
+            </CustomerAuthProvider>
           </CartProvider>
         </CurrencyProvider>
       </body>

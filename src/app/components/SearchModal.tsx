@@ -85,7 +85,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
             </button>
           )}
           <button type="button" onClick={onClose} className="tz-search-close-btn" aria-label="Close search">
-            ESC
+            ✕
           </button>
         </div>
 

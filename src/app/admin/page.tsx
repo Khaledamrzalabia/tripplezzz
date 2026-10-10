@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Product, ProductCategory, ProductAvailability } from "../../types/product";
+import type { Order, OrderStatus } from "../../types/order";
 
 const CATEGORIES: ProductCategory[] = ["tops", "bottoms", "outerwear", "accessories", "footwear"];
 const AVAILABILITIES: { value: ProductAvailability; label: string; labelAr: string; color: string }[] = [
@@ -55,6 +56,22 @@ export default function AdminPage() {
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
+  // Admin Auth State
+  const [authChecking, setAuthChecking] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [dbMode, setDbMode] = useState<string>("Local Store");
+  const [isDbConnected, setIsDbConnected] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginSubmitting, setLoginSubmitting] = useState(false);
+
+  // Active View Tab: 'products' | 'orders'
+  const [activeTab, setActiveTab] = useState<"products" | "orders">("orders");
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [selectedProof, setSelectedProof] = useState<string | null>(null);
+
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -62,6 +79,36 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [customImageUrl, setCustomImageUrl] = useState("");
+
+  const fetchOrders = async () => {
+    try {
+      setOrdersLoading(true);
+      const res = await fetch("/api/orders");
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus) => {
+    try {
+      const res = await fetch("/api/orders", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: orderId, status }),
+      });
+      if (res.ok) {
+        fetchOrders();
+      }
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -78,25 +125,78 @@ export default function AdminPage() {
     }
   };
 
+  // Verify Auth on mount
   useEffect(() => {
-    let isMounted = true;
-    fetch("/api/products")
-      .then((res) => (res.ok ? res.json() : []))
+    fetch("/api/admin/auth")
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (isMounted) {
-          setProducts(data);
+        const connected = Boolean(data?.postgresConnected || data?.supabaseConnected);
+        setIsDbConnected(connected);
+        setDbMode(data?.dbMode || (connected ? "PostgreSQL Pooler Active" : "Local Data Store"));
+
+        if (data?.authenticated) {
+          setIsAuthenticated(true);
+          fetchProducts();
+          fetchOrders();
+        } else {
+          setIsAuthenticated(false);
           setLoading(false);
         }
       })
-      .catch((err) => {
-        console.error("Failed to fetch products:", err);
-        if (isMounted) setLoading(false);
+      .catch(() => {
+        setIsAuthenticated(false);
+        setLoading(false);
+      })
+      .finally(() => {
+        setAuthChecking(false);
+      });
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminPassword.trim()) {
+      setLoginError("يرجى إدخال كلمة سر الأدمن.");
+      return;
+    }
+    setLoginSubmitting(true);
+    setLoginError("");
+
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: adminPassword,
+          email: adminEmail.trim() || undefined,
+        }),
       });
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setIsAuthenticated(true);
+        setIsDbConnected(Boolean(data.postgresConnected || data.supabaseConnected));
+        setDbMode(data.dbMode || (data.postgresConnected ? "Direct PostgreSQL Pooler Active" : "Local Data Store"));
+        fetchProducts();
+        fetchOrders();
+      } else {
+        setLoginError(data.error || "كلمة السر غير صحيحة، يرجى المحاولة ثانية.");
+      }
+    } catch (err) {
+      setLoginError("فشل الاتصال بالخادم، يرجى إعادة المحاولة.");
+    } finally {
+      setLoginSubmitting(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/auth", { method: "DELETE" });
+      setIsAuthenticated(false);
+      setAdminPassword("");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
 
   // Stats
   const stats = useMemo(() => {
@@ -282,32 +382,147 @@ export default function AdminPage() {
     }
   };
 
+  // 1. Loading Auth Check
+  if (authChecking) {
+    return (
+      <div className="admin-page" style={{ minHeight: "80vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
+        <div style={{ width: 40, height: 40, border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--clr-accent)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <p style={{ color: "var(--clr-text-secondary)", fontSize: "0.9rem" }}>Checking studio authorization...</p>
+      </div>
+    );
+  }
+
+  // 2. Unauthenticated Gatekeeper Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="admin-page" style={{ minHeight: "88vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2.5rem 1rem" }}>
+        <div style={{ maxWidth: 460, width: "100%", background: "#111419", border: "1px solid rgba(255, 255, 255, 0.12)", borderRadius: 14, padding: "2.75rem 2.25rem", boxShadow: "0 25px 60px rgba(0, 0, 0, 0.85)" }}>
+          {/* Logo & Header */}
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <Image
+              src="/brand-logo.png"
+              alt="Triple Z"
+              width={150}
+              height={50}
+              unoptimized
+              style={{ height: 40, width: "auto", objectFit: "contain", margin: "0 auto 1.25rem" }}
+            />
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.85rem", borderRadius: 100, background: "rgba(201, 169, 110, 0.1)", border: "1px solid rgba(201, 169, 110, 0.3)", marginBottom: "0.85rem" }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--clr-accent)" }} />
+              <span style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.14em", color: "var(--clr-accent)", textTransform: "uppercase" }}>STUDIO SECURITY GATE</span>
+            </div>
+            <h1 style={{ fontSize: "1.45rem", fontWeight: 800, margin: "0 0 0.5rem", color: "#fafafa" }}>لوحة تحكم الأدمن (Admin Studio)</h1>
+            <p style={{ fontSize: "0.85rem", color: "var(--clr-text-secondary)", margin: 0, lineHeight: 1.5 }}>
+              منطقة إدارة المنتجات والمخزون — يرجى إدخال كلمة المرور للمتابعة
+            </p>
+          </div>
+
+          {/* Database Engine Status */}
+          <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 8, padding: "0.75rem 1rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+            <span style={{ fontSize: "0.78rem", color: "var(--clr-text-muted)" }}>Database Engine:</span>
+            <span style={{ fontSize: "0.78rem", fontWeight: 700, color: isDbConnected ? "#10b981" : "#f59e0b", display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: isDbConnected ? "#10b981" : "#f59e0b" }} />
+              {dbMode}
+            </span>
+          </div>
+
+          {/* Login Form */}
+          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+            <div>
+              <label htmlFor="admin-pass-input" style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--clr-text-muted)", marginBottom: "0.45rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Admin Password / كلمة المرور:
+              </label>
+              <input
+                id="admin-pass-input"
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="أدخل كلمة سر الأدمن..."
+                autoFocus
+                required
+                style={{ width: "100%", height: 46, background: "#0a0c10", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: 6, color: "#fff", padding: "0 1rem", fontSize: "0.95rem", outline: "none" }}
+              />
+            </div>
+
+            {/* Optional Email input */}
+            <div>
+              <label htmlFor="admin-email-input" style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "var(--clr-text-muted)", marginBottom: "0.45rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Admin Email (اختياري لسوبابيز):
+              </label>
+              <input
+                id="admin-email-input"
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@triple-z.com (اختياري)"
+                style={{ width: "100%", height: 44, background: "#0a0c10", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: 6, color: "#fff", padding: "0 1rem", fontSize: "0.85rem", outline: "none" }}
+              />
+            </div>
+
+            {loginError && (
+              <div style={{ background: "rgba(239, 68, 68, 0.15)", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: 6, padding: "0.75rem 1rem", color: "#ef4444", fontSize: "0.82rem" }}>
+                {loginError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loginSubmitting}
+              className="btn btn-primary"
+              style={{ height: 48, fontSize: "0.92rem", fontWeight: 800, letterSpacing: "0.06em", borderRadius: 6, width: "100%", marginTop: "0.5rem" }}
+            >
+              {loginSubmitting ? "جاري التحقق..." : "دخول الاستوديو (ENTER STUDIO) →"}
+            </button>
+
+            <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>
+                Default Master Key: <strong style={{ color: "var(--clr-accent)" }}>triplez2026</strong>
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="admin-page">
       <div className="site-container">
         {/* Header Bar */}
         <div className="admin-header-bar">
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
               <span style={{ fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--clr-accent)", fontWeight: 700 }}>
                 Triple Z Studio
               </span>
               <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>•</span>
               <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", textTransform: "uppercase" }}>لوحة تحكم المنتجات</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>•</span>
+              <span style={{ fontSize: "0.72rem", padding: "2px 8px", borderRadius: 100, background: isDbConnected ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)", color: isDbConnected ? "#10b981" : "#f59e0b", border: isDbConnected ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(245, 158, 11, 0.3)", fontWeight: 700 }}>
+                {dbMode}
+              </span>
             </div>
             <h1 style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", fontWeight: 800, letterSpacing: "-0.02em", margin: 0 }}>
               Product Inventory & Studio
             </h1>
           </div>
 
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            <Link href="/shop" className="btn btn-outline" style={{ padding: "0.6rem 1.25rem", fontSize: "0.85rem" }}>
-              View Storefront ↗
+          <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+            <Link href="/shop" className="btn btn-outline" style={{ padding: "0.6rem 1.15rem", fontSize: "0.85rem" }}>
+              Storefront ↗
             </Link>
+            <button
+              onClick={handleLogout}
+              className="btn btn-outline"
+              style={{ padding: "0.6rem 1rem", fontSize: "0.82rem", borderColor: "rgba(239, 68, 68, 0.3)", color: "#ef4444" }}
+              title="خروج من لوحة الأدمن"
+            >
+              خروج (Sign Out)
+            </button>
             <button
               onClick={handleOpenCreate}
               className="btn btn-primary"
-              style={{ padding: "0.65rem 1.5rem", fontSize: "0.875rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+              style={{ padding: "0.65rem 1.35rem", fontSize: "0.875rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
             >
               <span>+</span>
               <span>إضافة منتج جديد (Add Product)</span>
@@ -315,8 +530,59 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Stats Row */}
-        <div className="admin-stats-grid">
+        {/* Tab Switcher: Orders vs Products */}
+        <div style={{ display: "flex", gap: "1rem", marginBlock: "2rem 1.5rem", borderBottom: "1px solid var(--clr-border)", paddingBottom: "0.5rem" }}>
+          <button
+            type="button"
+            onClick={() => setActiveTab("orders")}
+            style={{
+              padding: "0.75rem 1.75rem",
+              borderRadius: "var(--radius-pill)",
+              border: "none",
+              background: activeTab === "orders" ? "var(--clr-accent)" : "rgba(255, 255, 255, 0.05)",
+              color: activeTab === "orders" ? "#000" : "#fff",
+              fontWeight: 800,
+              fontSize: "0.95rem",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <span>📦 طلبات العملاء (Orders)</span>
+            <span style={{ background: activeTab === "orders" ? "#000" : "rgba(255,255,255,0.2)", color: activeTab === "orders" ? "#fff" : "#fff", padding: "2px 8px", borderRadius: "100px", fontSize: "0.75rem" }}>
+              {orders.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("products")}
+            style={{
+              padding: "0.75rem 1.75rem",
+              borderRadius: "var(--radius-pill)",
+              border: "none",
+              background: activeTab === "products" ? "var(--clr-accent)" : "rgba(255, 255, 255, 0.05)",
+              color: activeTab === "products" ? "#000" : "#fff",
+              fontWeight: 800,
+              fontSize: "0.95rem",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <span>👕 مخزون المنتجات (Products)</span>
+            <span style={{ background: activeTab === "products" ? "#000" : "rgba(255,255,255,0.2)", color: activeTab === "products" ? "#fff" : "#fff", padding: "2px 8px", borderRadius: "100px", fontSize: "0.75rem" }}>
+              {products.length}
+            </span>
+          </button>
+        </div>
+
+        {activeTab === "products" ? (
+          <>
+            {/* Stats Row */}
+            <div className="admin-stats-grid">
           <div className="admin-stat-card">
             <p className="admin-stat-label">Total Products (الإجمالي)</p>
             <p className="admin-stat-value">{stats.total}</p>
@@ -548,7 +814,191 @@ export default function AdminPage() {
             </table>
           )}
         </div>
+      </>
+    ) : (
+      /* Orders Management View */
+      <div style={{ marginTop: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, margin: 0 }}>
+              طلبات العملاء (Customer Orders)
+            </h2>
+            <p style={{ color: "var(--clr-text-muted)", fontSize: "0.85rem", marginTop: "0.25rem" }}>
+              متابعة تفاصيل الشحن داخل مصر، إثباتات الدفع (ديبوزيت 30% / كاش)، وتحديث حالة الطلب.
+            </p>
+          </div>
+          <button
+            onClick={fetchOrders}
+            className="btn btn-outline"
+            style={{ fontSize: "0.85rem", padding: "0.5rem 1.25rem" }}
+          >
+            تحديث الطلبات ⟳
+          </button>
+        </div>
+
+        <div className="admin-table-wrapper">
+          {ordersLoading ? (
+            <div style={{ padding: "4rem", textAlign: "center", color: "var(--clr-text-muted)" }}>
+              جاري تحميل الطلبات...
+            </div>
+          ) : orders.length === 0 ? (
+            <div style={{ padding: "4rem", textAlign: "center", color: "var(--clr-text-muted)" }}>
+              لا توجد طلبات مسجلة بعد. عند إتمام أول عميل لطلبه ستظهر كامل بياناته هنا فوراً.
+            </div>
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>رقم الطلب والتاريخ</th>
+                  <th>بيانات العميل</th>
+                  <th>العنوان (مصر)</th>
+                  <th>القطع والكمية</th>
+                  <th>طريقة الدفع والعربون</th>
+                  <th>إجمالي الفاتورة</th>
+                  <th>حالة الطلب</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((o) => (
+                  <tr key={o.id}>
+                    <td>
+                      <strong style={{ color: "var(--clr-accent)", fontSize: "0.95rem", display: "block" }}>#{o.id}</strong>
+                      <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>
+                        {new Date(o.createdAt).toLocaleString("ar-EG", { dateStyle: "short", timeStyle: "short" })}
+                      </span>
+                    </td>
+                    <td>
+                      <strong style={{ color: "#fff", display: "block" }}>{o.customerName}</strong>
+                      <div style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>
+                        📞 {o.phone}
+                      </div>
+                      {o.whatsapp && (
+                        <div style={{ fontSize: "0.8rem", color: "#10b981" }}>
+                          💬 {o.whatsapp}
+                        </div>
+                      )}
+                      <div style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>
+                        ✉️ {o.email}
+                      </div>
+                    </td>
+                    <td>
+                      <strong style={{ fontSize: "0.85rem", color: "var(--clr-text-primary)", display: "block" }}>
+                        {o.governorate}
+                      </strong>
+                      <div style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>
+                        {o.city}
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", maxWidth: "200px", lineHeight: "1.3" }}>
+                        {o.address}
+                      </div>
+                      {o.notes && (
+                        <div style={{ fontSize: "0.75rem", color: "#f59e0b", marginTop: "0.25rem" }}>
+                          📝 {o.notes}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", maxWidth: "200px" }}>
+                        {o.items.map((it, idx) => (
+                          <div key={idx} style={{ fontSize: "0.8rem" }}>
+                            <span>{it.quantity}× {it.productName}</span>
+                            {it.selectedSize && <span style={{ color: "var(--clr-accent)", marginLeft: "4px" }}>({it.selectedSize})</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      <span style={{ fontSize: "0.85rem", fontWeight: 700, display: "block" }}>
+                        {o.paymentMethod === "instapay" ? "⚡ انستاباي" : o.paymentMethod === "vodafone_cash" ? "📱 فودافون كاش" : o.paymentMethod === "paypal" ? "🌐 PayPal" : "💵 الدفع عند الاستلام"}
+                      </span>
+                      {o.paymentType === "deposit" ? (
+                        <div style={{ fontSize: "0.78rem", color: "var(--clr-accent)", marginTop: "0.2rem" }}>
+                          ديبوزيت (30%): <strong>{o.depositAmount} ج.م</strong>
+                          <div style={{ color: "var(--clr-text-muted)" }}>متبقي: {o.remainingAmount} ج.م</div>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: "0.75rem", color: "#10b981" }}>مدفوع بالكامل (100%)</span>
+                      )}
+                      {o.paymentReference && (
+                        <div style={{ fontSize: "0.72rem", color: "var(--clr-text-secondary)", marginTop: "0.25rem" }}>
+                          مرجع: {o.paymentReference}
+                        </div>
+                      )}
+                      {o.paymentProofUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProof(o.paymentProofUrl || null)}
+                          style={{
+                            marginTop: "0.35rem",
+                            padding: "2px 8px",
+                            fontSize: "0.72rem",
+                            borderRadius: "4px",
+                            border: "1px solid #10b981",
+                            background: "rgba(16, 185, 129, 0.15)",
+                            color: "#10b981",
+                            cursor: "pointer",
+                          }}
+                        >
+                          👁️ عرض إثبات التحويل
+                        </button>
+                      )}
+                    </td>
+                    <td>
+                      <strong style={{ color: "var(--clr-accent)", fontSize: "1.05rem" }}>
+                        {o.total} ج.م
+                      </strong>
+                      <div style={{ fontSize: "0.72rem", color: "var(--clr-text-muted)" }}>
+                        (شحن: {o.shippingFee} ج.م)
+                      </div>
+                    </td>
+                    <td>
+                      <select
+                        value={o.status}
+                        onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value as OrderStatus)}
+                        className="admin-status-select"
+                        style={{
+                          fontSize: "0.8rem",
+                          padding: "0.35rem 0.6rem",
+                          borderColor:
+                            o.status === "delivered" ? "#10b981" :
+                            o.status === "confirmed" ? "#3b82f6" :
+                            o.status === "preparing" ? "#8b5cf6" :
+                            o.status === "shipped" ? "#06b6d4" :
+                            o.status === "cancelled" ? "#ef4444" : "#f59e0b",
+                        }}
+                      >
+                        <option value="pending">قيد المراجعة (Pending)</option>
+                        <option value="confirmed">تم التأكيد (Confirmed)</option>
+                        <option value="preparing">جاري التجهيز (Preparing)</option>
+                        <option value="shipped">تم الشحن (Shipped)</option>
+                        <option value="delivered">تم التسليم (Delivered)</option>
+                        <option value="cancelled">ملغي (Cancelled)</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
+    )}
+  </div>
+
+  {/* Modal: View Payment Proof Screenshot */}
+  {selectedProof && (
+    <div className="admin-modal-backdrop" onClick={() => setSelectedProof(null)}>
+      <div style={{ background: "#0a0c10", padding: "1.5rem", borderRadius: "12px", border: "1px solid var(--clr-border)", maxWidth: "500px", width: "90%", textAlign: "center" }}>
+        <h3 style={{ margin: "0 0 1rem", fontSize: "1.1rem" }}>إثبات التحويل (Payment Screenshot)</h3>
+        <div style={{ position: "relative", width: "100%", height: "400px", marginBottom: "1rem" }}>
+          <Image src={selectedProof} alt="Proof" fill style={{ objectFit: "contain" }} unoptimized />
+        </div>
+        <button onClick={() => setSelectedProof(null)} className="btn btn-pill-white" style={{ padding: "0.5rem 1.5rem" }}>
+          إغلاق
+        </button>
+      </div>
+    </div>
+  )}
 
       {/* Modal: Add / Edit Product */}
       {modalOpen && (

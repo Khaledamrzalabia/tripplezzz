@@ -1,16 +1,27 @@
-import { NextResponse } from "next/server";
-import { getServerProducts, saveServerProducts } from "../../../lib/products.server";
+import { NextRequest, NextResponse } from "next/server";
+import {
+  getAsyncServerProducts,
+  createServerProduct,
+} from "../../../lib/products.server";
 import type { Product } from "../../../types/product";
 
 export async function GET() {
-  const products = getServerProducts();
+  const products = await getAsyncServerProducts();
   return NextResponse.json(products);
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    // 1. Security Check: Admin Authentication required to create products
+    const adminSession = request.cookies.get("tz_admin_session")?.value;
+    if (!adminSession) {
+      return NextResponse.json(
+        { error: "غير مصرح لك بإضافة منتجات. يجب تسجيل الدخول كأدمن أولاً." },
+        { status: 401 }
+      );
+    }
     const body = await request.json();
-    const current = getServerProducts();
+    const current = await getAsyncServerProducts();
 
     if (!body.name || !body.category) {
       return NextResponse.json(
@@ -33,8 +44,8 @@ export async function POST(request: Request) {
       name: body.name.trim(),
       description: body.description?.trim() || "",
       longDescription: body.longDescription?.trim() || "",
-      // If coming soon, omit or don't set price
-      price: body.availability === "coming-soon" ? undefined : Number(body.price) || 0,
+      // If coming soon, omit price
+      price: body.availability === "coming-soon" ? undefined : (body.price !== undefined && body.price !== "" ? Number(body.price) || 0 : undefined),
       currency: body.currency || "USD",
       images: Array.isArray(body.images) && body.images.length > 0
         ? body.images
@@ -49,8 +60,7 @@ export async function POST(request: Request) {
       isPlaceholder: false,
     };
 
-    const updated = [newProduct, ...current];
-    saveServerProducts(updated);
+    await createServerProduct(newProduct);
 
     return NextResponse.json({ success: true, product: newProduct }, { status: 201 });
   } catch (error) {

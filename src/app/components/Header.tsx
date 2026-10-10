@@ -5,8 +5,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
+import { useCurrency, CURRENCIES, type CurrencyCode } from "../../context/CurrencyContext";
 import SearchModal from "./SearchModal";
 import CartDrawer from "./CartDrawer";
+import MobileBottomNav from "./MobileBottomNav";
 
 const NAV_LINKS = [
   { label: "SHOP", href: "/shop" },
@@ -16,9 +18,18 @@ const NAV_LINKS = [
   { label: "CONTACT", href: "/contact" },
 ];
 
+const QUICK_COLLECTIONS = [
+  { label: "Argentina", href: "/collections/argentina" },
+  { label: "Portugal", href: "/collections/portugal" },
+  { label: "Hoodies", href: "/shop?search=hoodie" },
+  { label: "Jackets", href: "/shop?search=jacket" },
+  { label: "Tees", href: "/shop?search=tee" },
+];
+
 export default function Header() {
   const pathname = usePathname();
   const { totalItems, openDrawer } = useCart();
+  const { currency, setCurrency } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -64,41 +75,52 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Actions: Search, Admin Studio, Bag */}
+          {/* Actions: Search, Admin Studio (Desktop), Bag, Mobile Hamburger */}
           <div className="header-actions">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="icon-btn"
+              className="icon-btn header-search-btn"
               aria-label="Search catalogue"
               title="Search (Click or press Esc)"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </button>
 
-            <Link href="/admin" className="icon-btn" aria-label="Admin studio" title="Admin Studio">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+            <Link href="/account" className="icon-btn header-account-btn" aria-label="Customer account" title="حسابي / My Account">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                 <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </Link>
+
+            <Link href="/admin" className="icon-btn header-admin-btn" aria-label="Admin studio" title="Admin Studio">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
               </svg>
             </Link>
 
             <button
               type="button"
               onClick={openDrawer}
-              className="icon-btn"
+              className="icon-btn header-cart-btn"
               aria-label={`Shopping bag — ${totalItems} items`}
               title="Shopping Bag"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                 <line x1="3" y1="6" x2="21" y2="6"/>
-                <path d="M16 10a4 4 0 01-8 0"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
               </svg>
-              <span className="cart-badge" aria-hidden="true">{totalItems}</span>
+              {totalItems > 0 && (
+                <span className="cart-badge" aria-hidden="true">{totalItems}</span>
+              )}
             </button>
 
             {/* Mobile hamburger */}
@@ -109,7 +131,7 @@ export default function Header() {
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="3" y1="6" x2="21" y2="6"/>
                 <line x1="3" y1="12" x2="21" y2="12"/>
                 <line x1="3" y1="18" x2="21" y2="18"/>
@@ -119,7 +141,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile nav drawer */}
+      {/* Modern High-End Mobile Nav Drawer */}
       <div
         id="mobile-nav"
         className={`mobile-nav${mobileOpen ? " open" : ""}`}
@@ -129,13 +151,44 @@ export default function Header() {
         onClick={(e) => { if (e.target === e.currentTarget) setMobileOpen(false); }}
       >
         <div className="mobile-nav-drawer">
+          {/* Drawer Top Header */}
+          <div className="mobile-nav-header">
+            <Link href="/" onClick={() => setMobileOpen(false)} className="mobile-drawer-logo">
+              <Image
+                src="/brand-logo.png"
+                alt="Triple Z"
+                width={120}
+                height={42}
+                unoptimized
+                style={{ height: "36px", width: "auto", objectFit: "contain" }}
+              />
+            </Link>
+            <button
+              className="mobile-nav-close"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close navigation menu"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Quick Search Action */}
           <button
-            className="mobile-nav-close"
-            onClick={() => setMobileOpen(false)}
-            aria-label="Close navigation menu"
+            type="button"
+            className="mobile-nav-search-trigger"
+            onClick={() => {
+              setMobileOpen(false);
+              setSearchOpen(true);
+            }}
           >
-            ✕
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Search products, collections...</span>
           </button>
+
+          {/* Primary Navigation Links */}
           <nav className="mobile-nav-links" aria-label="Mobile navigation">
             {NAV_LINKS.map((l) => (
               <Link
@@ -143,18 +196,76 @@ export default function Header() {
                 href={l.href}
                 onClick={() => setMobileOpen(false)}
                 aria-current={pathname === l.href ? "page" : undefined}
+                className="mobile-nav-link-row"
               >
-                {l.label}
+                <span>{l.label}</span>
+                <span className="mobile-nav-arrow">→</span>
               </Link>
             ))}
-            <Link
-              href="/admin"
-              onClick={() => setMobileOpen(false)}
-              style={{ color: "var(--clr-accent)", marginTop: "1rem" }}
-            >
-              Admin Studio
-            </Link>
           </nav>
+
+          {/* Quick Collections Pills */}
+          <div className="mobile-nav-quick-group">
+            <span className="mobile-nav-group-title">QUICK COLLECTIONS</span>
+            <div className="mobile-nav-pills">
+              {QUICK_COLLECTIONS.map((c) => (
+                <Link
+                  key={c.href}
+                  href={c.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="mobile-nav-pill"
+                >
+                  {c.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Drawer Bottom Controls: Currency & Admin & Bag */}
+          <div className="mobile-nav-footer">
+            <div className="mobile-nav-currency-wrap">
+              <label htmlFor="mobile-drawer-currency" className="mobile-nav-currency-label">CURRENCY:</label>
+              <select
+                id="mobile-drawer-currency"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+                className="mobile-nav-currency-select"
+              >
+                {Object.values(CURRENCIES).map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code} ({c.symbol.trim()})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mobile-nav-bottom-links">
+              <Link
+                href="/account"
+                onClick={() => setMobileOpen(false)}
+                className="mobile-nav-admin-link"
+              >
+                👤 حسابي / My Account
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setMobileOpen(false)}
+                className="mobile-nav-admin-link"
+              >
+                ⚙ Admin Studio
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  openDrawer();
+                }}
+                className="mobile-nav-bag-btn"
+              >
+                Bag ({totalItems})
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -163,6 +274,12 @@ export default function Header() {
 
       {/* Slide-out Cart Drawer */}
       <CartDrawer />
+
+      {/* Mobile Bottom Dock / Quick Nav */}
+      <MobileBottomNav
+        onOpenSearch={() => setSearchOpen(true)}
+        onOpenMenu={() => setMobileOpen(true)}
+      />
     </>
   );
 }

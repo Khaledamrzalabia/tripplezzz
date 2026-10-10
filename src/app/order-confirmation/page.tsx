@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function OrderConfirmationPage() {
-  const [orderId] = useState(() => "TZ-" + Math.floor(10000 + Math.random() * 90000));
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId") || "TZ-" + Math.floor(10000 + Math.random() * 90000);
 
   return (
     <div className="page-padding">
