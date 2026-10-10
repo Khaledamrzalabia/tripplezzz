@@ -268,21 +268,27 @@ select {
   transform: none !important;
 }
 
-/* Header */
+/* Header — Fixed Floating Always Visible */
 .site-header {
-  position: sticky;
-  top: 0;
-  inset-inline: 0;
-  z-index: 100;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 999 !important;
   height: 74px;
   display: flex;
   align-items: center;
-  background: rgba(10, 10, 10, 0.88);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(10, 10, 10, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   pointer-events: auto;
   transition: all var(--transition-base);
+}
+
+#main-content {
+  padding-top: 74px;
 }
 
 .header-inner {
@@ -4022,17 +4028,24 @@ select {
     max-width: 100% !important;
   }
 
-  /* 1. SLIM & SLEEK STICKY HEADER */
+  /* 1. SLIM & SLEEK FIXED FLOATING HEADER */
   .site-header {
-    position: sticky !important;
+    position: fixed !important;
     top: 0 !important;
-    z-index: 120 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 999 !important;
     height: 58px !important;
     background: rgba(10, 10, 10, 0.95) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     padding-top: env(safe-area-inset-top, 0) !important;
+  }
+
+  #main-content {
+    padding-top: 58px !important;
   }
 
   .header-inner {
