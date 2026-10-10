@@ -292,10 +292,22 @@ export default function AccountPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ background: "var(--clr-bg-surface)", border: "1px solid var(--clr-border)", borderRadius: "var(--radius-lg)", padding: "2rem" }}>
+        <form
+          onSubmit={handleSubmit}
+          className="account-card-form"
+          style={{
+            background: "var(--clr-bg-surface)",
+            border: "1px solid var(--clr-border)",
+            borderRadius: "var(--radius-lg)",
+            padding: "2rem",
+            boxSizing: "border-box",
+            width: "100%",
+            maxWidth: "100%",
+          }}
+        >
           {mode === "register" && (
             <>
-              <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+              <div className="form-group" style={{ marginBottom: "1.25rem", width: "100%" }}>
                 <label className="form-label">الاسم بالكامل *</label>
                 <input
                   type="text"
@@ -304,11 +316,12 @@ export default function AccountPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   className="form-input"
                   placeholder="محمد أحمد"
+                  style={{ width: "100%", boxSizing: "border-box" }}
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
-                <div className="form-group">
+              <div className="account-grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem", width: "100%" }}>
+                <div className="form-group" style={{ width: "100%" }}>
                   <label className="form-label">رقم الهاتف *</label>
                   <input
                     type="tel"
@@ -317,9 +330,10 @@ export default function AccountPage() {
                     onChange={(e) => setPhone(e.target.value)}
                     className="form-input"
                     placeholder="01012345678"
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
-                <div className="form-group">
+                <div className="form-group" style={{ width: "100%" }}>
                   <label className="form-label">رقم الواتساب (اختياري)</label>
                   <input
                     type="tel"
@@ -327,17 +341,19 @@ export default function AccountPage() {
                     onChange={(e) => setWhatsapp(e.target.value)}
                     className="form-input"
                     placeholder="01012345678"
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
-                <div className="form-group">
+              <div className="account-grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem", width: "100%" }}>
+                <div className="form-group" style={{ width: "100%" }}>
                   <label className="form-label">المحافظة (مصر) *</label>
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value)}
                     className="form-input"
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   >
                     {EGYPT_GOVERNORATES.map((g) => (
                       <option key={g.en} value={g.en}>
@@ -346,7 +362,7 @@ export default function AccountPage() {
                     ))}
                   </select>
                 </div>
-                <div className="form-group">
+                <div className="form-group" style={{ width: "100%" }}>
                   <label className="form-label">المدينة / الحي *</label>
                   <input
                     type="text"
@@ -354,6 +370,7 @@ export default function AccountPage() {
                     onChange={(e) => setCity(e.target.value)}
                     className="form-input"
                     placeholder="المعادي / مدينة نصر / الدقي"
+                    style={{ width: "100%", boxSizing: "border-box" }}
                   />
                 </div>
               </div>
