@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function OrderConfirmationPage() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId") || "TZ-" + Math.floor(10000 + Math.random() * 90000);
+  const orderId = searchParams.get("orderId") || "TZ-CONFIRMED";
 
   return (
     <div className="page-padding">

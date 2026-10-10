@@ -65,8 +65,6 @@ function ShopContent() {
     return result;
   }, [products, query, category, sort]);
 
-  const categories = ["all", ...Array.from(new Set(products.map((p) => p.category)))];
-
   return (
     <>
       <div className="shop-header" aria-labelledby="shop-heading">
@@ -82,18 +80,8 @@ function ShopContent() {
       </div>
 
       <div className="site-container" style={{ paddingBlock: "2rem 5rem" }}>
-        {/* Controls */}
-        <div className="shop-controls" role="search" aria-label="Filter and sort products">
-          <label htmlFor="shop-search" className="sr-only">Search products</label>
-          <input
-            id="shop-search"
-            type="search"
-            className="shop-search"
-            placeholder="Search products…"
-            value={query}
-            onChange={(e) => setUserQuery(e.target.value)}
-            aria-label="Search products"
-          />
+        {/* Sort Controls */}
+        <div className="shop-controls" style={{ display: "flex", justifyContent: "flex-end", marginBottom: "2rem" }}>
           <label htmlFor="shop-sort" className="sr-only">Sort by</label>
           <select
             id="shop-sort"
@@ -105,35 +93,6 @@ function ShopContent() {
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-        </div>
-
-        {/* Category chips */}
-        <div className="filter-chips" role="group" aria-label="Filter by category" style={{ marginBottom: "2rem" }}>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`filter-chip${category === cat && !query ? " active" : ""}`}
-              onClick={() => {
-                setUserCategory(cat as "all" | ProductCategory);
-                setUserQuery("");
-              }}
-              aria-pressed={category === cat && !query}
-            >
-              {CATEGORY_LABELS[cat] ?? cat}
-            </button>
-          ))}
-          {query && (
-            <button
-              className="filter-chip active"
-              onClick={() => {
-                setUserQuery("");
-                setUserCategory("all");
-              }}
-              style={{ background: "var(--clr-accent)", color: "var(--clr-black)" }}
-            >
-              Clear filter: &ldquo;{query}&rdquo; ✕
-            </button>
-          )}
         </div>
 
         {/* Grid */}

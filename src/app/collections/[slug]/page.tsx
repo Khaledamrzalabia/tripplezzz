@@ -6,10 +6,10 @@ import ProductCard from "../../components/ProductCard";
 import { getProductsByCollection } from "../../../lib/products";
 
 const COLLECTION_META: Record<string, { name: string; description: string; image: string }> = {
-  argentina: { name: "Argentina", description: "Heritage in every detail. Inspired by the champions of the world.", image: "/campaign/banner-argentina.png" },
-  portugal: { name: "Portugal", description: "Passion beyond borders. Crafted with iconic crimson and emerald tones.", image: "/campaign/banner-portugal.png" },
-  stadium: { name: "Stadium", description: "Match day energy you can wear anywhere. Technical meets streetwear.", image: "/products/stadium-track-jacket.png" },
-  core: { name: "Core", description: "The essentials refined. Timeless pieces with Triple Z attitude.", image: "/products/pitch-black-tee.png" },
+  argentina: { name: "Argentina", description: "Heritage in every detail. Inspired by the champions of the world.", image: "/campaign/banner-argentina.webp" },
+  portugal: { name: "Portugal", description: "Passion beyond borders. Crafted with iconic crimson and emerald tones.", image: "/campaign/banner-portugal.webp" },
+  stadium: { name: "Stadium", description: "Match day energy you can wear anywhere. Technical meets streetwear.", image: "/products/stadium-track-jacket.webp" },
+  core: { name: "Core", description: "The essentials refined. Timeless pieces with Triple Z attitude.", image: "/products/pitch-black-tee.webp" },
 };
 
 type Params = { slug: string };

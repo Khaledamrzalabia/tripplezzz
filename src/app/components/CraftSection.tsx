@@ -5,17 +5,17 @@ const CRAFT_ITEMS = [
   {
     title: "PREMIUM EMBROIDERY",
     desc: "Details that last.",
-    image: "/craft/craft-embroidery.png",
+    image: "/craft/craft-embroidery.webp",
   },
   {
     title: "LEGACY IN DETAILS",
     desc: "Inspired by heritage.",
-    image: "/craft/craft-crest.png",
+    image: "/craft/craft-crest.webp",
   },
   {
     title: "REFINED CONSTRUCTION",
     desc: "Built for everyday.",
-    image: "/craft/craft-stripe.png",
+    image: "/craft/craft-stripe.webp",
   },
 ];
 

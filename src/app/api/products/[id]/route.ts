@@ -19,7 +19,11 @@ export async function GET(request: NextRequest, { params }: RouteProps) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
 
-  return NextResponse.json(product);
+  return NextResponse.json(product, {
+    headers: {
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+    },
+  });
 }
 
 export async function PUT(request: NextRequest, { params }: RouteProps) {

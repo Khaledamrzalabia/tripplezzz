@@ -7,7 +7,11 @@ import type { Product } from "../../../types/product";
 
 export async function GET() {
   const products = await getAsyncServerProducts();
-  return NextResponse.json(products);
+  return NextResponse.json(products, {
+    headers: {
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+    },
+  });
 }
 
 export async function POST(request: NextRequest) {

@@ -48,7 +48,7 @@ export default function CultureSection() {
           <div className="mockup-culture-right">
             <div className="mockup-culture-img-container">
               <Image
-                src="/campaign/culture-seated-model.png"
+                src="/campaign/culture-seated-model.webp"
                 alt="Triple Z Football Culture Lifestyle"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"

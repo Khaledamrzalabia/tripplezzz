@@ -11,7 +11,7 @@ const LOOKBOOK_ENTRIES = [
   {
     title: "THE CHAMPIONS OF THE WORLD",
     subtitle: "Argentina Series — Buenos Aires Terrace Editorial",
-    image: "/campaign/banner-argentina.png",
+    image: "/campaign/banner-argentina.webp",
     aspect: "landscape",
     productLink: "/collections/argentina",
     desc: "Shot on location against the dramatic sky and monument stone. Featuring the 500gsm La Pulga Signature Hoodie with golden embroidery and authentic AFA 3-star insignia.",
@@ -19,7 +19,7 @@ const LOOKBOOK_ENTRIES = [
   {
     title: "PASSION BEYOND BORDERS",
     subtitle: "Portugal Heritage — Lisbon Streetwear Vision",
-    image: "/campaign/banner-portugal.png",
+    image: "/campaign/banner-portugal.webp",
     aspect: "landscape",
     productLink: "/collections/portugal",
     desc: "A clash of crimson and forest green block paneling. An homage to golden generations and relentless football culture.",
@@ -27,7 +27,7 @@ const LOOKBOOK_ENTRIES = [
   {
     title: "THE CITADEL OF FOOTBALL",
     subtitle: "Street Silhouette & Contemplation",
-    image: "/campaign/culture-seated-model.png",
+    image: "/campaign/culture-seated-model.webp",
     aspect: "panoramic",
     productLink: "/shop?category=bottoms",
     desc: "Capturing the calm between the storm. The full Triple Z tracksuit sitting upon neoclassical stone steps in dusk illumination.",
@@ -35,7 +35,7 @@ const LOOKBOOK_ENTRIES = [
   {
     title: "THREAD BY THREAD",
     subtitle: "Gold Ingot Embroidery Macro",
-    image: "/craft/craft-embroidery.png",
+    image: "/craft/craft-embroidery.webp",
     aspect: "square",
     productLink: "/shop",
     desc: "Extreme close-up revealing over 45,000 dense golden stitches across custom-textured heavyweight fleece.",
@@ -43,7 +43,7 @@ const LOOKBOOK_ENTRIES = [
   {
     title: "THE THREE STARS",
     subtitle: "AFA Crest & Sun of May Detailing",
-    image: "/craft/craft-crest.png",
+    image: "/craft/craft-crest.webp",
     aspect: "square",
     productLink: "/products/triple-z-la-pulga-hoodie",
     desc: "Precision metallic thread crest commemorating football immortality.",
@@ -51,7 +51,7 @@ const LOOKBOOK_ENTRIES = [
   {
     title: "STADIUM PITCH OUTERWEAR",
     subtitle: "Weatherproof Technical Shell",
-    image: "/products/stadium-track-jacket.png",
+    image: "/products/stadium-track-jacket.webp",
     aspect: "tall",
     productLink: "/products/triple-z-stadium-track-jacket",
     desc: "Two-way golden zipper, tailored aerodynamic sleeves, and signature Argentine blue and gold piping.",

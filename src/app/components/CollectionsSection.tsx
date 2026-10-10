@@ -5,25 +5,25 @@ const CATEGORIES = [
   {
     title: "HOODIES",
     subtitle: "Everyday cuts & oversized drops.",
-    image: "/products/product-front-hoodie-pedestal.jpg",
+    image: "/products/product-front-hoodie-pedestal.webp",
     href: "/shop?search=hoodie",
   },
   {
     title: "JACKETS",
     subtitle: "Technical pitch & matchday outerwear.",
-    image: "/products/stadium-track-jacket.png",
+    image: "/products/stadium-track-jacket.webp",
     href: "/shop?search=jacket",
   },
   {
     title: "TEES",
     subtitle: "Heavyweight combed cotton essentials.",
-    image: "/products/pitch-black-tee.png",
+    image: "/products/pitch-black-tee.webp",
     href: "/shop?search=tee",
   },
   {
     title: "TRACKSUITS",
     subtitle: "Pitch & street engineered fit.",
-    image: "/campaign/culture-seated-model.png",
+    image: "/campaign/culture-seated-model.webp",
     href: "/shop?search=tracksuit",
   },
 ];
@@ -57,7 +57,7 @@ export default function CollectionsSection() {
           <div className="mockup-banner-card">
             <div className="mockup-banner-bg">
               <Image
-                src="/campaign/banner-argentina.png"
+                src="/campaign/banner-argentina.webp"
                 alt="Argentina Collection"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -79,7 +79,7 @@ export default function CollectionsSection() {
           <div className="mockup-banner-card">
             <div className="mockup-banner-bg">
               <Image
-                src="/campaign/banner-portugal.png"
+                src="/campaign/banner-portugal.webp"
                 alt="Portugal Collection"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"

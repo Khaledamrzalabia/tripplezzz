@@ -23,19 +23,38 @@ interface CustomerAuthContextType {
 
 const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(undefined);
 
+const SESSION_FLAG_KEY = "tz_has_session";
+
 export function CustomerAuthProvider({ children }: { children: React.ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
 
   const checkAuth = async () => {
+    // Skip roundtrip HTTP fetch on anonymous visits unless session flag exists or on auth-related pages
+    if (typeof window !== "undefined") {
+      const hasSession = localStorage.getItem(SESSION_FLAG_KEY) === "1";
+      const isAuthPage = window.location.pathname.startsWith("/account") || window.location.pathname.startsWith("/checkout");
+      if (!hasSession && !isAuthPage) {
+        setLoading(false);
+        setCustomer(null);
+        return;
+      }
+    }
+
     try {
       const res = await fetch("/api/customer/auth");
       if (res.ok) {
         const data = await res.json();
         if (data.authenticated && data.customer) {
           setCustomer(data.customer);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(SESSION_FLAG_KEY, "1");
+          }
         } else {
           setCustomer(null);
+          if (typeof window !== "undefined") {
+            localStorage.removeItem(SESSION_FLAG_KEY);
+          }
         }
       }
     } catch {
@@ -61,6 +80,9 @@ export function CustomerAuthProvider({ children }: { children: React.ReactNode }
         return { success: false, error: data.error || "خطأ في تسجيل الدخول" };
       }
       setCustomer(data.customer);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(SESSION_FLAG_KEY, "1");
+      }
       return { success: true };
     } catch {
       return { success: false, error: "فشل الاتصال بالخادم" };
@@ -79,6 +101,9 @@ export function CustomerAuthProvider({ children }: { children: React.ReactNode }
         return { success: false, error: data.error || "خطأ في إنشاء الحساب" };
       }
       setCustomer(data.customer);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(SESSION_FLAG_KEY, "1");
+      }
       return { success: true };
     } catch {
       return { success: false, error: "فشل الاتصال بالخادم" };
@@ -93,6 +118,9 @@ export function CustomerAuthProvider({ children }: { children: React.ReactNode }
         body: JSON.stringify({ action: "logout" }),
       });
       setCustomer(null);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(SESSION_FLAG_KEY);
+      }
     } catch (e) {
       console.error(e);
     }

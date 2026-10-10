@@ -6,9 +6,11 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency, CURRENCIES, type CurrencyCode } from "../../context/CurrencyContext";
-import SearchModal from "./SearchModal";
-import CartDrawer from "./CartDrawer";
+import dynamic from "next/dynamic";
 import MobileBottomNav from "./MobileBottomNav";
+
+const SearchModal = dynamic(() => import("./SearchModal"), { ssr: false });
+const CartDrawer = dynamic(() => import("./CartDrawer"), { ssr: false });
 
 const NAV_LINKS = [
   { label: "SHOP", href: "/shop" },
@@ -28,7 +30,7 @@ const QUICK_COLLECTIONS = [
 
 export default function Header() {
   const pathname = usePathname();
-  const { totalItems, openDrawer } = useCart();
+  const { totalItems, openDrawer, isDrawerOpen } = useCart();
   const { currency, setCurrency } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -52,12 +54,11 @@ export default function Header() {
           {/* Logo Image */}
           <Link href="/" className="header-logo" aria-label="Triple Z — Home">
             <Image
-              src="/brand-logo.png"
+              src="/brand-logo.webp"
               alt="Triple Z"
               width={160}
               height={56}
               priority
-              unoptimized
               className="header-brand-logo-img"
             />
           </Link>
@@ -146,11 +147,10 @@ export default function Header() {
           <div className="mobile-nav-header">
             <Link href="/" onClick={() => setMobileOpen(false)} className="mobile-drawer-logo">
               <Image
-                src="/brand-logo.png"
+                src="/brand-logo.webp"
                 alt="Triple Z"
                 width={120}
                 height={42}
-                unoptimized
                 style={{ height: "36px", width: "auto", objectFit: "contain" }}
               />
             </Link>
@@ -253,11 +253,13 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Search Overlay Modal */}
-      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      {/* Search Overlay Modal — lazy chunk loaded only when triggered */}
+      {searchOpen && (
+        <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      )}
 
-      {/* Slide-out Cart Drawer */}
-      <CartDrawer />
+      {/* Slide-out Cart Drawer — lazy chunk loaded only when opened */}
+      {isDrawerOpen && <CartDrawer />}
 
       {/* Mobile Bottom Dock / Quick Nav */}
       <MobileBottomNav

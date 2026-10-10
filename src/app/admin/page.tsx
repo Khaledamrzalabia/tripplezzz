@@ -393,11 +393,10 @@ export default function AdminPage() {
           {/* Logo & Header */}
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <Image
-              src="/brand-logo.png"
+              src="/brand-logo.webp"
               alt="Triple Z"
               width={150}
               height={50}
-              unoptimized
               style={{ height: 40, width: "auto", objectFit: "contain", margin: "0 auto 1.25rem" }}
             />
             <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.85rem", borderRadius: 100, background: "rgba(201, 169, 110, 0.1)", border: "1px solid rgba(201, 169, 110, 0.3)", marginBottom: "0.85rem" }}>

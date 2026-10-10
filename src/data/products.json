@@ -8,23 +8,23 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/product-front-hoodie-pedestal.jpg",
+        "src": "/products/product-front-hoodie-pedestal.webp",
         "alt": "La Pulga Signature Hoodie — Front Pedestal View"
       },
       {
-        "src": "/products/triple-z-signature-hoodie.png",
+        "src": "/products/triple-z-signature-hoodie.webp",
         "alt": "La Pulga Signature Hoodie — Flatlay View"
       },
       {
-        "src": "/hero-hoodies-pair.jpg",
+        "src": "/hero-hoodies-pair.webp",
         "alt": "La Pulga Signature Hoodie — Pair Pedestal"
       },
       {
-        "src": "/craft/craft-crest.png",
+        "src": "/craft/craft-crest.webp",
         "alt": "La Pulga Signature Hoodie — AFA Gold Crest Detail"
       },
       {
-        "src": "/craft/craft-embroidery.png",
+        "src": "/craft/craft-embroidery.webp",
         "alt": "La Pulga Signature Hoodie — Triple Z Embroidery Detail"
       }
     ],
@@ -46,11 +46,11 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/portugal-heritage-hoodie.png",
+        "src": "/products/portugal-heritage-hoodie.webp",
         "alt": "Portugal Heritage Hoodie"
       },
       {
-        "src": "/campaign/banner-portugal.png",
+        "src": "/campaign/banner-portugal.webp",
         "alt": "Portugal Heritage Hoodie — Campaign Look"
       }
     ],
@@ -72,11 +72,11 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/stadium-track-jacket.png",
+        "src": "/products/stadium-track-jacket.webp",
         "alt": "Stadium Track Jacket"
       },
       {
-        "src": "/craft/craft-stripe.png",
+        "src": "/craft/craft-stripe.webp",
         "alt": "Stadium Track Jacket — Sun Emblem Detail"
       }
     ],
@@ -98,11 +98,11 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/pitch-black-tee.png",
+        "src": "/products/pitch-black-tee.webp",
         "alt": "Pitch Black Tee"
       },
       {
-        "src": "/craft/craft-embroidery.png",
+        "src": "/craft/craft-embroidery.webp",
         "alt": "Pitch Black Tee — Gold Thread Detail"
       }
     ],
@@ -124,15 +124,15 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/product-messi-back-pedestal.jpg",
+        "src": "/products/product-messi-back-pedestal.webp",
         "alt": "Messi 10 Hoodie — Back Numbering"
       },
       {
-        "src": "/products/argentina-hoodie-dark.png",
+        "src": "/products/argentina-hoodie-dark.webp",
         "alt": "Messi 10 Hoodie — Front View"
       },
       {
-        "src": "/craft/craft-crest.png",
+        "src": "/craft/craft-crest.webp",
         "alt": "Messi 10 Hoodie — AFA 3-Stars Crest"
       }
     ],

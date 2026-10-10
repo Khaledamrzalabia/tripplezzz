@@ -15,10 +15,13 @@ type CartAction =
   | { type: "ADD"; product: Product; quantity: number; selectedSize?: string; selectedColor?: string }
   | { type: "REMOVE"; productId: string; selectedSize?: string }
   | { type: "UPDATE_QTY"; productId: string; selectedSize?: string; quantity: number }
-  | { type: "CLEAR" };
+  | { type: "CLEAR" }
+  | { type: "HYDRATE"; payload: CartState };
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
+    case "HYDRATE":
+      return action.payload;
     case "ADD": {
       const existing = state.items.findIndex(
         (i) => i.product.id === action.product.id && i.selectedSize === action.selectedSize
@@ -85,18 +88,28 @@ const STORAGE_KEY = "tz_cart_v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [state, dispatch] = useReducer(cartReducer, { items: [] }, (initial) => {
-    if (typeof window === "undefined") return initial;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as CartState) : initial;
-    } catch {
-      return initial;
-    }
-  });
+  const [state, dispatch] = useReducer(cartReducer, { items: [] });
+  const isHydratedRef = React.useRef(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as CartState;
+        if (parsed?.items?.length) {
+          dispatch({ type: "HYDRATE", payload: parsed });
+        }
+      }
+    } catch {
+      // ignore parsing error
+    }
+    isHydratedRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (isHydratedRef.current) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
   }, [state]);
 
   const addItem = (product: Product, quantity: number, selectedSize?: string, selectedColor?: string) => {

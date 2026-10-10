@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 const COLLECTIONS = [
-  { slug: "argentina", name: "Argentina", description: "Heritage in every detail. Inspired by football champions.", image: "/campaign/banner-argentina.png" },
-  { slug: "portugal", name: "Portugal", description: "Passion beyond borders. Historic crimson & emerald details.", image: "/campaign/banner-portugal.png" },
-  { slug: "stadium", name: "Stadium", description: "Match day energy, everyday wearability and technical outerwear.", image: "/products/stadium-track-jacket.png" },
-  { slug: "core", name: "Core", description: "The essentials. Timeless basics with Triple Z attitude.", image: "/products/pitch-black-tee.png" },
+  { slug: "argentina", name: "Argentina", description: "Heritage in every detail. Inspired by football champions.", image: "/campaign/banner-argentina.webp" },
+  { slug: "portugal", name: "Portugal", description: "Passion beyond borders. Historic crimson & emerald details.", image: "/campaign/banner-portugal.webp" },
+  { slug: "stadium", name: "Stadium", description: "Match day energy, everyday wearability and technical outerwear.", image: "/products/stadium-track-jacket.webp" },
+  { slug: "core", name: "Core", description: "The essentials. Timeless basics with Triple Z attitude.", image: "/products/pitch-black-tee.webp" },
 ];
 
 export default function CollectionsPage() {

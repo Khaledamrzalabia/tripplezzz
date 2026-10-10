@@ -9,7 +9,7 @@ export default function Hero() {
       {/* Background image: The pair hoodies image from the reference mockup */}
       <div className="hero-bg" aria-hidden="true">
         <Image
-          src="/hero-hoodies-pair.jpg"
+          src="/hero-hoodies-pair.webp"
           alt="Triple Z Argentina Messi 10 Hoodies Campaign"
           fill
           priority

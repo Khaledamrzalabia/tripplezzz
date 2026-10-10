@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 const COMMUNITY_IMAGES = [
-  "/products/product-messi-back-pedestal.jpg",
-  "/campaign/banner-argentina.png",
-  "/craft/craft-stripe.png",
-  "/campaign/banner-portugal.png",
-  "/campaign/culture-seated-model.png",
+  "/products/product-messi-back-pedestal.webp",
+  "/campaign/banner-argentina.webp",
+  "/craft/craft-stripe.webp",
+  "/campaign/banner-portugal.webp",
+  "/campaign/culture-seated-model.webp",
 ];
 
 export default function CommunitySection() {

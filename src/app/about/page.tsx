@@ -24,7 +24,7 @@ export default function AboutPage() {
 
         {/* Campaign image */}
         <div style={{ position: "relative", height: "clamp(320px, 55vh, 600px)", borderRadius: "var(--radius-lg)", overflow: "hidden", marginBottom: "5rem" }}>
-          <Image src="/campaign/culture-seated-model.png" alt="Triple Z campaign" fill sizes="(max-width: 1024px) 100vw, 80vw" style={{ objectFit: "cover", objectPosition: "center 30%" }} />
+          <Image src="/campaign/culture-seated-model.webp" alt="Triple Z campaign" fill sizes="(max-width: 1024px) 100vw, 80vw" style={{ objectFit: "cover", objectPosition: "center 30%" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.6) 100%)" }} />
         </div>
 

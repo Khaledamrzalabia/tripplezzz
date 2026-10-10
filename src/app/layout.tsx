@@ -118,6 +118,16 @@ const organizationJsonLd = {
   },
 };
 
+function HeaderFallback() {
+  return (
+    <header className="site-header site-header-skeleton" aria-hidden="true" style={{ pointerEvents: "none" }}>
+      <div className="header-inner">
+        <div style={{ height: "48px", width: "140px", background: "rgba(255, 255, 255, 0.05)", borderRadius: "4px" }} />
+      </div>
+    </header>
+  );
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
@@ -131,7 +141,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CurrencyProvider>
           <CartProvider>
             <CustomerAuthProvider>
-              <Suspense fallback={null}>
+              <Suspense fallback={<HeaderFallback />}>
                 <Header />
               </Suspense>
               <main id="main-content">{children}</main>
