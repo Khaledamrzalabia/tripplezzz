@@ -35,10 +35,6 @@ export default function CollectionsSection() {
         {/* Part 1: Nation Collections (Argentina, Portugal, etc.) */}
         <div className="mockup-section-header">
           <div>
-            <div className="mockup-eyebrow">
-              <span className="mockup-gold-dash" />
-              <span>NATION STORIES</span>
-            </div>
             <h2 className="mockup-section-title" id="collections-heading">
               EXPLORE THE COLLECTIONS
             </h2>
@@ -108,10 +104,6 @@ export default function CollectionsSection() {
           }}
         >
           <div>
-            <div className="mockup-eyebrow">
-              <span className="mockup-gold-dash" />
-              <span>OUR CLOTHES GROUP</span>
-            </div>
             <h2 className="mockup-section-title" id="apparel-group-heading">
               SHOP BY APPAREL
             </h2>
@@ -145,7 +137,7 @@ export default function CollectionsSection() {
               </span>
               <div className="mockup-cat-content">
                 <div>
-                  <h4 className="mockup-cat-title">{cat.title}</h4>
+                  <h3 className="mockup-cat-title">{cat.title}</h3>
                   <p className="mockup-cat-desc">{cat.subtitle}</p>
                 </div>
                 <div className="mockup-cat-arrow" aria-hidden="true">

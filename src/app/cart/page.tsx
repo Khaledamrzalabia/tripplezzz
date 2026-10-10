@@ -14,7 +14,28 @@ export default function CartPage() {
     return (
       <div className="cart-page">
         <div className="site-container cart-empty" style={{ textAlign: "center", padding: "6rem 1rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚽</div>
+          <div
+            aria-hidden="true"
+            style={{
+              width: 76,
+              height: 76,
+              marginInline: "auto",
+              marginBottom: "1.5rem",
+              borderRadius: "50%",
+              background: "rgba(201, 169, 110, 0.08)",
+              border: "1px solid rgba(201, 169, 110, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--clr-accent)",
+            }}
+          >
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+          </div>
           <h1 className="display-md" style={{ marginBottom: "1rem" }}>YOUR BAG IS EMPTY</h1>
           <p style={{ color: "var(--clr-text-secondary)", marginBottom: "2rem" }}>
             Explore the new drops and add your favorite football streetwear pieces.
@@ -119,7 +140,7 @@ export default function CartPage() {
               PROCEED TO CHECKOUT →
             </Link>
             <p style={{ textAlign: "center", fontSize: "0.75rem", color: "var(--clr-text-muted)", marginTop: "1rem" }}>
-              Encrypted 256-bit SSL Checkout &bull; 14-Day Guarantee
+              Encrypted 256-bit SSL Checkout • 14-Day Guarantee
             </p>
           </div>
         </div>

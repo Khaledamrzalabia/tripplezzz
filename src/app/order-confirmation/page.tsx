@@ -51,22 +51,22 @@ export default function OrderConfirmationPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "1.5rem", position: "relative" }}>
             <div style={{ borderLeft: "2px solid #10b981", paddingLeft: "1rem" }}>
-              <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: 700 }}>STEP 1 &bull; COMPLETE</span>
+              <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: 700 }}>STEP 1 • COMPLETE</span>
               <p style={{ fontWeight: 600, marginTop: "0.25rem" }}>Order Confirmed</p>
               <span style={{ fontSize: "0.8rem", color: "var(--clr-text-muted)" }}>Payment verified</span>
             </div>
             <div style={{ borderLeft: "2px solid var(--clr-accent)", paddingLeft: "1rem" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--clr-accent)", fontWeight: 700 }}>STEP 2 &bull; IN PROGRESS</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-accent)", fontWeight: 700 }}>STEP 2 • IN PROGRESS</span>
               <p style={{ fontWeight: 600, marginTop: "0.25rem" }}>Quality Control</p>
               <span style={{ fontSize: "0.8rem", color: "var(--clr-text-muted)" }}>Garment inspection</span>
             </div>
             <div style={{ borderLeft: "2px solid var(--clr-border)", paddingLeft: "1rem" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", fontWeight: 700 }}>STEP 3 &bull; UPCOMING</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", fontWeight: 700 }}>STEP 3 • UPCOMING</span>
               <p style={{ fontWeight: 600, marginTop: "0.25rem", color: "var(--clr-text-muted)" }}>Courier Dispatch</p>
               <span style={{ fontSize: "0.8rem", color: "var(--clr-text-muted)" }}>Tracking number assigned</span>
             </div>
             <div style={{ borderLeft: "2px solid var(--clr-border)", paddingLeft: "1rem" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", fontWeight: 700 }}>STEP 4 &bull; UPCOMING</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)", fontWeight: 700 }}>STEP 4 • UPCOMING</span>
               <p style={{ fontWeight: 600, marginTop: "0.25rem", color: "var(--clr-text-muted)" }}>Delivered</p>
               <span style={{ fontSize: "0.8rem", color: "var(--clr-text-muted)" }}>At your doorstep</span>
             </div>

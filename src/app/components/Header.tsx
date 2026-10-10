@@ -167,6 +167,7 @@ export default function Header() {
           <button
             type="button"
             className="mobile-nav-search-trigger"
+            aria-label="Search products, collections"
             onClick={() => {
               setMobileOpen(false);
               setSearchOpen(true);

@@ -8,11 +8,6 @@ export default function CultureSection() {
         <div className="mockup-culture-grid">
           {/* Left Column: Narrative & Stats */}
           <div className="mockup-culture-left">
-            <div className="mockup-eyebrow">
-              <span className="mockup-gold-dash" />
-              <span>THE BRAND</span>
-            </div>
-
             <h2 className="mockup-culture-title" id="culture-heading">
               FOOTBALL CULTURE.<br />
               WORN YOUR WAY.

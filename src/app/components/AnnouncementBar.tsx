@@ -17,7 +17,7 @@ export default function AnnouncementBar() {
         <div className="tz-announcement-left">
           <span className="tz-announcement-badge">LIMITED DROP</span>
           <span className="tz-announcement-msg">
-            NEW SEASON LIVE &bull; FREE SHIPPING ON ORDERS OVER $150
+            NEW SEASON LIVE • FREE SHIPPING ON ORDERS OVER $150
           </span>
         </div>
 

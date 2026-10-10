@@ -192,23 +192,44 @@ export default function CheckoutPage() {
 
   if (state.items.length === 0 && status !== "success") {
     return (
-      <div className="checkout-page">
+      <div className="checkout-page" dir="rtl" lang="ar">
         <div className="site-container" style={{ textAlign: "center", paddingTop: "6rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚽</div>
+          <div
+            aria-hidden="true"
+            style={{
+              width: 76,
+              height: 76,
+              marginInline: "auto",
+              marginBottom: "1.5rem",
+              borderRadius: "50%",
+              background: "rgba(201, 169, 110, 0.08)",
+              border: "1px solid rgba(201, 169, 110, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--clr-accent)",
+            }}
+          >
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+          </div>
           <h1 className="display-md" style={{ marginBottom: "1rem" }}>حقيبة التسوق فارغة</h1>
           <p style={{ color: "var(--clr-text-secondary)", marginBottom: "2rem" }}>أضف قطعك المفضلة أولاً قبل إتمام الطلب.</p>
-          <Link href="/shop" className="btn btn-pill-white">تصفح الكولكشن →</Link>
+          <Link href="/shop" className="btn btn-pill-white">تصفح الكولكشن ←</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="checkout-page">
+    <div className="checkout-page" dir="rtl" lang="ar">
       <div className="site-container">
         <div className="mockup-eyebrow">
           <span className="mockup-gold-dash" />
-          <span>CHECKOUT &bull; توصيل داخل مصر فقط</span>
+          <span>CHECKOUT • توصيل داخل مصر فقط</span>
         </div>
         <h1 className="display-md" style={{ marginBottom: "2.5rem" }}>إتمام الطلب (CHECKOUT)</h1>
 
@@ -628,7 +649,7 @@ export default function CheckoutPage() {
             >
               {status === "loading"
                 ? "جاري تأكيد وتسجيل الطلب..."
-                : `تأكيد الطلب الآن &bull; ${paymentType === "deposit" && paymentMethod !== "cod" ? `${depositAmount} ج.م (عربون)` : `${grandTotal} ج.م`}`}
+                : `تأكيد الطلب الآن • ${paymentType === "deposit" && paymentMethod !== "cod" ? `${depositAmount} ج.م (عربون)` : `${grandTotal} ج.م`}`}
             </button>
           </form>
 

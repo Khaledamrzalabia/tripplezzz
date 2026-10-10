@@ -93,11 +93,11 @@ export default function AccountPage() {
   // LOGGED IN DASHBOARD
   if (customer) {
     return (
-      <div className="page-padding">
+      <div className="page-padding" dir="rtl" lang="ar">
         <div className="site-container" style={{ maxWidth: "1000px" }}>
           <div className="mockup-eyebrow">
             <span className="mockup-gold-dash" />
-            <span>CUSTOMER DASHBOARD &bull; حساب العميل</span>
+            <span>CUSTOMER DASHBOARD • حساب العميل</span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "2.5rem" }}>
@@ -106,7 +106,7 @@ export default function AccountPage() {
                 أهلاً، {customer.fullName}
               </h1>
               <p style={{ color: "var(--clr-text-secondary)", marginTop: "0.5rem" }}>
-                {customer.email} &bull; {customer.phone} {customer.whatsapp ? `(واتساب: ${customer.whatsapp})` : ""}
+                {customer.email} • {customer.phone} {customer.whatsapp ? `(واتساب: ${customer.whatsapp})` : ""}
               </p>
             </div>
             <button
@@ -192,7 +192,7 @@ export default function AccountPage() {
                         <strong>{getPaymentMethodLabel(order.paymentMethod)}</strong>
                         {order.paymentType === "deposit" && (
                           <span style={{ color: "var(--clr-accent)", display: "block", fontSize: "0.85rem" }}>
-                            ديبوزيت (30%): {order.depositAmount} ج.م &bull; المتبقي: {order.remainingAmount} ج.م
+                            ديبوزيت (30%): {order.depositAmount} ج.م • المتبقي: {order.remainingAmount} ج.م
                           </span>
                         )}
                       </div>
@@ -232,11 +232,11 @@ export default function AccountPage() {
 
   // LOGIN / REGISTER FORM
   return (
-    <div className="page-padding">
+    <div className="page-padding" dir="rtl" lang="ar">
       <div className="site-container" style={{ maxWidth: "560px" }}>
         <div className="mockup-eyebrow" style={{ justifyContent: "center" }}>
           <span className="mockup-gold-dash" />
-          <span>TRIPLE Z MEMBERSHIP &bull; جمهورية مصر العربية</span>
+          <span>TRIPLE Z MEMBERSHIP • جمهورية مصر العربية</span>
         </div>
 
         <h1 className="section-title" style={{ textAlign: "center", fontSize: "clamp(2rem, 4vw, 2.8rem)", marginBottom: "1rem" }}>

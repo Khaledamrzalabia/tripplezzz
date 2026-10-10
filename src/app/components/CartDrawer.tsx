@@ -2,19 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 
 export default function CartDrawer() {
   const { state, isDrawerOpen, closeDrawer, updateQty, removeItem, totalItems, totalPrice } = useCart();
   const { formatPrice } = useCurrency();
-
-
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isDrawerOpen) {
       document.body.style.overflow = "hidden";
+      setTimeout(() => closeBtnRef.current?.focus(), 50);
     } else {
       document.body.style.overflow = "";
     }
@@ -23,13 +24,39 @@ export default function CartDrawer() {
     };
   }, [isDrawerOpen]);
 
-  // Handle ESC key to close
+  // Handle ESC key and focus trap
   useEffect(() => {
+    if (!isDrawerOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isDrawerOpen) {
+      if (e.key === "Escape") {
         closeDrawer();
+        return;
+      }
+
+      if (e.key === "Tab" && drawerRef.current) {
+        const focusables = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+
+        const firstEl = focusables[0];
+        const lastEl = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstEl) {
+            lastEl.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastEl) {
+            firstEl.focus();
+            e.preventDefault();
+          }
+        }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isDrawerOpen, closeDrawer]);
@@ -38,25 +65,45 @@ export default function CartDrawer() {
 
   return (
     <div className="tz-drawer-overlay" onClick={closeDrawer} role="dialog" aria-modal="true" aria-label="Shopping Bag">
-      <div className="tz-drawer" onClick={(e) => e.stopPropagation()}>
+      <div className="tz-drawer" ref={drawerRef} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="tz-drawer-header">
           <div className="tz-drawer-title-wrap">
             <h3 className="tz-drawer-title">SHOPPING BAG</h3>
             <span className="tz-drawer-count">({totalItems})</span>
           </div>
-          <button type="button" onClick={closeDrawer} className="tz-drawer-close" aria-label="Close Shopping Bag">
+          <button ref={closeBtnRef} type="button" onClick={closeDrawer} className="tz-drawer-close" aria-label="Close Shopping Bag">
             ✕
           </button>
         </div>
-
-
 
         {/* Items */}
         <div className="tz-drawer-body">
           {state.items.length === 0 ? (
             <div className="tz-drawer-empty">
-              <div className="tz-drawer-empty-icon">⚽</div>
+              <div
+                className="tz-drawer-empty-icon"
+                aria-hidden="true"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  background: "rgba(201, 169, 110, 0.08)",
+                  border: "1px solid rgba(201, 169, 110, 0.25)",
+                  color: "var(--clr-accent)",
+                  marginInline: "auto",
+                  marginBottom: "1rem",
+                }}
+              >
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+              </div>
               <p className="tz-drawer-empty-text">Your bag is empty.</p>
               <Link href="/shop" onClick={closeDrawer} className="btn btn-pill-white-sm">
                 EXPLORE COLLECTION →

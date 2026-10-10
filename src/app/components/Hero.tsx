@@ -70,11 +70,11 @@ export default function Hero() {
           <span className="hero-ticker-item">⚡ ARE YOU READY?</span>
           <span className="hero-ticker-item">TRIPLE Z STREETWEAR</span>
           <span className="hero-ticker-item">NEW SEASON DROPS</span>
-          <span className="hero-ticker-item">MESSI 10 &bull; CR7 HERITAGE</span>
+          <span className="hero-ticker-item">MESSI 10 • CR7 HERITAGE</span>
           <span className="hero-ticker-item">⚡ ARE YOU READY?</span>
           <span className="hero-ticker-item">TRIPLE Z STREETWEAR</span>
           <span className="hero-ticker-item">NEW SEASON DROPS</span>
-          <span className="hero-ticker-item">MESSI 10 &bull; CR7 HERITAGE</span>
+          <span className="hero-ticker-item">MESSI 10 • CR7 HERITAGE</span>
         </div>
       </div>
     </section>

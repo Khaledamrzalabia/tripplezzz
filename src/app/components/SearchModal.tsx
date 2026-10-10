@@ -15,6 +15,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
   const [query, setQuery] = useState("");
   const allProducts = getAllProducts();
   const inputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const { formatPrice } = useCurrency();
 
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
@@ -38,11 +39,37 @@ export default function SearchModal({ isOpen, onClose }: Props) {
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
+      if (e.key === "Escape") {
         onClose();
+        return;
+      }
+
+      if (e.key === "Tab" && modalRef.current) {
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+
+        const firstEl = focusables[0];
+        const lastEl = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstEl) {
+            lastEl.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastEl) {
+            firstEl.focus();
+            e.preventDefault();
+          }
+        }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
@@ -63,7 +90,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
 
   return (
     <div className="tz-search-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Search Catalogue">
-      <div className="tz-search-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="tz-search-modal" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         {/* Search Input Bar */}
         <div className="tz-search-input-wrap">
           <svg className="tz-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

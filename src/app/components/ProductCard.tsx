@@ -9,13 +9,16 @@ import { useCurrency } from "../../context/CurrencyContext";
 
 interface Props {
   product: Product;
+  headingLevel?: "h2" | "h3";
 }
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product, headingLevel = "h2" }: Props) {
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
+
+  const HeadingTag = headingLevel;
 
   const primaryImage = product.images[0];
   const isComingSoon = product.availability === "coming-soon" || Boolean(product.isBlurred);
@@ -81,7 +84,7 @@ export default function ProductCard({ product }: Props) {
         /* Teaser Mode: Name and Coming Soon status with suspense color dots */
         <div className="mockup-card-body mockup-card-teaser-body">
           <Link href={`/products/${product.slug}`} className="mockup-product-title-link">
-            <h3 className="mockup-card-title">{product.name}</h3>
+            <HeadingTag className="mockup-card-title">{product.name}</HeadingTag>
           </Link>
           <div className="mockup-card-footer mockup-teaser-footer">
             <span className="mockup-teaser-status">COMING SOON</span>
@@ -103,7 +106,7 @@ export default function ProductCard({ product }: Props) {
         /* Regular Product Card */
         <div className="mockup-card-body">
           <Link href={`/products/${product.slug}`} className="mockup-product-title-link">
-            <h3 className="mockup-card-title">{product.name}</h3>
+            <HeadingTag className="mockup-card-title">{product.name}</HeadingTag>
           </Link>
 
           {/* Price & Action Row */}

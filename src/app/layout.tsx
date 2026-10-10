@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Bebas_Neue } from "next/font/google";
+import { Inter, Bebas_Neue, Outfit } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { CartProvider } from "../context/CartContext";
@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
 const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
   weight: "400",
@@ -130,7 +131,7 @@ function HeaderFallback() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
+    <html lang="en" className={`${inter.variable} ${outfit.variable} ${bebasNeue.variable}`}>
       <head>
         <script
           type="application/ld+json"

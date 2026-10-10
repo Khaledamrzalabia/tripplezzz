@@ -27,10 +27,6 @@ export default function Newsletter() {
         <div className="mockup-newsletter-grid">
           {/* Left: Heading & Info */}
           <div>
-            <div className="mockup-eyebrow">
-              <span className="mockup-gold-dash" />
-              <span>STAY IN THE LOOP</span>
-            </div>
             <h2 className="mockup-newsletter-title">
               FIRST ACCESS. NO FILLER.
             </h2>

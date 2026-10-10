@@ -118,7 +118,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           {/* Product Info */}
           <div className="product-info" style={{ minWidth: 0, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem", flexWrap: "wrap", gap: "0.5rem" }}>
-              <span className="product-category">{product.collection ? `${product.collection.toUpperCase()} &bull; ` : ""}{product.category.toUpperCase()}</span>
+              <span className="product-category">{product.collection ? `${product.collection.toUpperCase()} • ` : ""}{product.category.toUpperCase()}</span>
               {product.featured && <span className="mockup-card-badge-new" style={{ position: "static" }}>FEATURED DROP</span>}
             </div>
 
@@ -135,7 +135,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
             {product.availability === "in-stock" && (
               <p className="availability-tag" style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
                 <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", display: "inline-block", flexShrink: 0 }} />
-                <span>In Stock &bull; Ships within 24–48 hours</span>
+                <span>In Stock • Ships within 24–48 hours</span>
               </p>
             )}
             {product.availability === "low-stock" && <p className="availability-tag" style={{ color: "#f0a500" }}>⚠️ Limited Stock Available</p>}
@@ -302,10 +302,6 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           <div style={{ marginTop: "6rem", paddingTop: "4rem", borderTop: "1px solid var(--clr-border)" }}>
             <div className="mockup-section-header">
               <div>
-                <div className="mockup-eyebrow">
-                  <span className="mockup-gold-dash" />
-                  <span>COMPLETE THE LOOK</span>
-                </div>
                 <h2 className="mockup-section-title">YOU MIGHT ALSO LIKE</h2>
               </div>
               <Link href="/shop" className="mockup-view-all-link">
@@ -313,7 +309,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               </Link>
             </div>
             <div className="mockup-featured-grid">
-              {related.map((p) => <ProductCard key={p.id} product={p} />)}
+              {related.map((p) => <ProductCard key={p.id} product={p} headingLevel="h3" />)}
             </div>
           </div>
         )}
@@ -323,7 +319,9 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
       <div className="tz-mobile-sticky-buy-bar">
         <div className="tz-sticky-buy-info">
           <span className="tz-sticky-buy-name">{product.name}</span>
-          <span className="tz-sticky-buy-price">{formatPrice(product.price)}</span>
+          <span className="tz-sticky-buy-price">
+            {isComingSoon ? "Drop Date TBA" : formatPrice(product.price)}
+          </span>
         </div>
         <button
           type="button"

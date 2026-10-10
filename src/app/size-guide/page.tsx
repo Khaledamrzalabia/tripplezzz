@@ -15,7 +15,7 @@ export default function SizeGuidePage() {
             <span className="mockup-gold-dash" />
             <span>AUTHENTIC MEASUREMENTS</span>
           </div>
-          <h1 className="section-title" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}>
+          <h1 className="section-title" style={{ fontSize: "clamp(1.85rem, 6vw, 3.8rem)", wordBreak: "break-word" }}>
             SIZE & FIT GUIDE
           </h1>
           <p style={{ color: "var(--clr-text-secondary)", fontSize: "1rem", marginTop: "1rem", maxWidth: "600px", marginInline: "auto" }}>
@@ -28,6 +28,7 @@ export default function SizeGuidePage() {
           <h2 style={{ fontSize: "1.35rem", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "1rem" }}>
             HOODIES & TEES (CM)
           </h2>
+          {/* Desktop Table View */}
           <div className="tz-table-wrap">
             <table className="tz-size-table">
               <thead>
@@ -78,6 +79,38 @@ export default function SizeGuidePage() {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Cards View */}
+          <div className="tz-size-cards-mobile">
+            {[
+              { size: "S", chest: 116, length: 70, shoulder: 58, height: "165 – 173 cm" },
+              { size: "M", chest: 122, length: 72, shoulder: 60, height: "172 – 180 cm" },
+              { size: "L", chest: 128, length: 74, shoulder: 62, height: "178 – 186 cm" },
+              { size: "XL", chest: 134, length: 76, shoulder: 64, height: "184 – 192 cm" },
+              { size: "XXL", chest: 140, length: 78, shoulder: 66, height: "190+ cm" },
+            ].map((s) => (
+              <div key={s.size} className="tz-size-card">
+                <div className="tz-size-card-header">
+                  <span className="tz-size-card-badge">SIZE {s.size}</span>
+                  <span className="tz-size-card-highlight">Height: {s.height}</span>
+                </div>
+                <div className="tz-size-card-grid">
+                  <div className="tz-size-card-stat">
+                    <span>Chest</span>
+                    <span>{s.chest} cm</span>
+                  </div>
+                  <div className="tz-size-card-stat">
+                    <span>Length</span>
+                    <span>{s.length} cm</span>
+                  </div>
+                  <div className="tz-size-card-stat">
+                    <span>Shoulder</span>
+                    <span>{s.shoulder} cm</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Outerwear Chart */}
@@ -85,6 +118,7 @@ export default function SizeGuidePage() {
           <h2 style={{ fontSize: "1.35rem", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "1rem" }}>
             STADIUM TRACK JACKETS (CM)
           </h2>
+          {/* Desktop Table View */}
           <div className="tz-table-wrap">
             <table className="tz-size-table">
               <thead>
@@ -127,6 +161,37 @@ export default function SizeGuidePage() {
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Cards View */}
+          <div className="tz-size-cards-mobile">
+            {[
+              { size: "S", chest: 118, length: 68, sleeve: 64, profile: "Regular Streetwear" },
+              { size: "M", chest: 124, length: 70, sleeve: 65.5, profile: "Relaxed Pitch Fit" },
+              { size: "L", chest: 130, length: 72, sleeve: 67, profile: "Boxy Dropped Shoulder" },
+              { size: "XL", chest: 136, length: 74, sleeve: 68.5, profile: "Oversized Layering" },
+            ].map((s) => (
+              <div key={s.size} className="tz-size-card">
+                <div className="tz-size-card-header">
+                  <span className="tz-size-card-badge">SIZE {s.size}</span>
+                  <span className="tz-size-card-highlight">{s.profile}</span>
+                </div>
+                <div className="tz-size-card-grid">
+                  <div className="tz-size-card-stat">
+                    <span>Chest</span>
+                    <span>{s.chest} cm</span>
+                  </div>
+                  <div className="tz-size-card-stat">
+                    <span>Length</span>
+                    <span>{s.length} cm</span>
+                  </div>
+                  <div className="tz-size-card-stat">
+                    <span>Sleeve</span>
+                    <span>{s.sleeve} cm</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

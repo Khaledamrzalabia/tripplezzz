@@ -12,14 +12,14 @@
   --clr-surface-3: #2a2a2a;
   --clr-border: rgba(255, 255, 255, 0.08);
   --clr-text-primary: #fafafa;
-  --clr-text-secondary: rgba(250, 250, 250, 0.55);
-  --clr-text-muted: rgba(250, 250, 250, 0.35);
+  --clr-text-secondary: rgba(250, 250, 250, 0.72);
+  --clr-text-muted: rgba(250, 250, 250, 0.60);
   --clr-error: #e05252;
   --clr-success: #52c45a;
 
   /* Typography */
   --font-display: var(--font-display), 'Bebas Neue', 'Arial Narrow', sans-serif;
-  --font-body: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: var(--font-outfit), var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Courier New', monospace;
 
   /* Spacing */
@@ -122,6 +122,16 @@ select {
   max-width: 100%;
   margin-inline: auto;
   padding-inline: clamp(1.5rem, 4vw, 4.5rem);
+}
+
+.page-padding {
+  padding-block: 3.5rem 5rem;
+}
+
+@media (max-width: 768px) {
+  .page-padding {
+    padding-block: 2rem calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 
 /* Typography */
@@ -2082,7 +2092,6 @@ select {
 }
 .hero-highlight-sky {
   color: #6ab7ea;
-  text-shadow: 0 0 25px rgba(106, 183, 234, 0.4);
 }
 .btn-pill-white {
   background: #fafafa;
@@ -2406,13 +2415,18 @@ select {
   padding: 0.85rem 0.75rem;
 }
 .mockup-card-title {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: #fafafa;
-  margin: 0 0 0.5rem 0;
-  white-space: nowrap;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 }
 .mockup-card-footer {
   display: flex;
@@ -2510,11 +2524,30 @@ select {
 }
 
 .mockup-card-teaser-body {
-  padding: 0.95rem 0.75rem;
+  padding: 0.85rem 0.75rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 0.35rem;
+  min-height: 54px;
+}
+
+.mockup-teaser-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--clr-accent, #c9a96e);
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.mockup-teaser-footer {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  min-height: 48px;
+  margin-top: 0.25rem;
+  gap: 0.5rem;
 }
 
 .teaser-colors-centered {
@@ -3881,13 +3914,17 @@ select {
 
 .tz-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
   margin-bottom: 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--clr-accent) transparent;
 }
 
 .tz-size-table {
   width: 100%;
+  min-width: 540px;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.85rem;
@@ -3915,6 +3952,67 @@ select {
 .tz-size-col-bold {
   font-weight: 800;
   color: #fff !important;
+}
+
+/* Responsive Size Guide Cards for Mobile */
+.tz-size-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 680px) {
+  .tz-table-wrap {
+    display: none;
+  }
+  .tz-size-cards-mobile {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 2rem;
+  }
+  .tz-size-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.15rem;
+  }
+  .tz-size-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.65rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 0.5rem;
+  }
+  .tz-size-card-badge {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--clr-accent);
+  }
+  .tz-size-card-highlight {
+    font-size: 0.8rem;
+    color: var(--clr-text-secondary);
+  }
+  .tz-size-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+  .tz-size-card-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .tz-size-card-stat span:first-child {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--clr-text-muted);
+    letter-spacing: 0.04em;
+  }
+  .tz-size-card-stat span:last-child {
+    font-weight: 600;
+    color: #fff;
+    margin-top: 2px;
+  }
 }
 
 .tz-measuring-guide {
@@ -4432,8 +4530,8 @@ select {
   }
 
   .hero-text-block {
-    width: 62% !important;
-    max-width: 250px !important;
+    width: 70% !important;
+    max-width: 290px !important;
     margin: 0 !important;
     transform: none !important;
   }
@@ -4466,16 +4564,13 @@ select {
   }
 
   .hero-subline {
-    font-size: 0.58rem !important;
-    line-height: 1.25 !important;
+    font-size: 0.66rem !important;
+    line-height: 1.32 !important;
     margin-bottom: 0.55rem !important;
     max-width: 100% !important;
-    color: rgba(255, 255, 255, 0.88) !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    display: block !important;
+    white-space: normal !important;
   }
 
   .hero-actions {
@@ -5432,6 +5527,10 @@ select {
     box-sizing: border-box !important;
   }
 
+  .product-detail {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
   /* Sticky Mobile Buy Bar - Perfectly anchored at the bottom edge */
   .tz-mobile-sticky-buy-bar {
     display: flex !important;
@@ -5440,14 +5539,14 @@ select {
     left: 0 !important;
     right: 0 !important;
     z-index: 150 !important;
-    background: rgba(12, 15, 20, 0.96) !important;
+    background: rgba(12, 15, 20, 0.98) !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
-    padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom, 0px)) 1.25rem !important;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px)) 1rem !important;
     justify-content: space-between !important;
     align-items: center !important;
-    gap: 1rem !important;
+    gap: 0.75rem !important;
     box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.7) !important;
   }
 
@@ -5457,32 +5556,35 @@ select {
     overflow: hidden !important;
     min-width: 0 !important;
     flex: 1 !important;
+    gap: 2px !important;
   }
 
   .tz-sticky-buy-name {
-    font-size: 0.82rem !important;
+    font-size: 0.8rem !important;
     font-weight: 600 !important;
     color: #fafafa !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    line-height: 1.2 !important;
   }
 
   .tz-sticky-buy-price {
-    font-size: 0.95rem !important;
+    font-size: 0.85rem !important;
     font-weight: 700 !important;
     color: var(--clr-accent, #c9a96e) !important;
+    line-height: 1.2 !important;
   }
 
   .tz-sticky-buy-btn {
-    padding: 0.75rem 1.4rem !important;
-    font-size: 0.82rem !important;
+    padding: 0.65rem 1.15rem !important;
+    font-size: 0.78rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     border-radius: 6px !important;
     background: #fafafa !important;
     color: #0a0a0a !important;
-    min-height: 44px !important;
+    min-height: 40px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;

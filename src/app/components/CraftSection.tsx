@@ -38,7 +38,7 @@ export default function CraftSection() {
                   />
                 </div>
                 <div className="mockup-craft-card-info">
-                  <h4 className="craft-card-title">{item.title}</h4>
+                  <h3 className="craft-card-title">{item.title}</h3>
                   <p className="craft-card-desc">{item.desc}</p>
                 </div>
               </div>
@@ -47,11 +47,6 @@ export default function CraftSection() {
 
           {/* Right: Narrative Block */}
           <div className="mockup-craft-narrative">
-            <div className="mockup-eyebrow">
-              <span className="mockup-gold-dash" />
-              <span>CRAFT & DETAIL</span>
-            </div>
-
             <h2 className="mockup-craft-title" id="craft-heading">
               MORE THAN<br />
               A HOODIE.

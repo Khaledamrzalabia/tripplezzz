@@ -34,10 +34,6 @@ export default function FeaturedSection({ products: initialProducts }: Props) {
         {/* Header */}
         <div className="mockup-section-header">
           <div>
-            <div className="mockup-eyebrow">
-              <span className="mockup-gold-dash" />
-              <span>FEATURED PIECES</span>
-            </div>
             <h2 className="mockup-section-title" id="featured-heading">
               FEATURED PIECES
             </h2>
@@ -53,7 +49,7 @@ export default function FeaturedSection({ products: initialProducts }: Props) {
         {/* 5-Column Grid */}
         <div className="mockup-featured-grid">
           {products.slice(0, 5).map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} headingLevel="h3" />
           ))}
         </div>
       </div>
