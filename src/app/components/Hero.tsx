@@ -63,6 +63,20 @@ export default function Hero() {
           <span className="hero-scroll-label">SCROLL</span>
         </div>
       </div>
+
+      {/* Mobile Animated Energy Strip: Ticker marquee and hype pill */}
+      <div className="hero-mobile-ticker" aria-hidden="true">
+        <div className="hero-ticker-track">
+          <span className="hero-ticker-item">⚡ ARE YOU READY?</span>
+          <span className="hero-ticker-item">TRIPLE Z STREETWEAR</span>
+          <span className="hero-ticker-item">NEW SEASON DROPS</span>
+          <span className="hero-ticker-item">MESSI 10 &bull; CR7 HERITAGE</span>
+          <span className="hero-ticker-item">⚡ ARE YOU READY?</span>
+          <span className="hero-ticker-item">TRIPLE Z STREETWEAR</span>
+          <span className="hero-ticker-item">NEW SEASON DROPS</span>
+          <span className="hero-ticker-item">MESSI 10 &bull; CR7 HERITAGE</span>
+        </div>
+      </div>
     </section>
   );
 }

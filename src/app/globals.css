@@ -2037,6 +2037,11 @@ select {
   font-weight: 600;
 }
 
+/* Mobile Ticker only visible on mobile */
+.hero-mobile-ticker {
+  display: none;
+}
+
 .hero-top-eyebrow {
   display: flex;
   align-items: center;
@@ -4361,18 +4366,20 @@ select {
     border: 1.5px solid #0e1118 !important;
   }
 
-  /* 4. HERO SECTION - COMPACT HEIGHT, FULL WIDTH VISUAL LIKE DESKTOP */
+  /* 4. HERO SECTION — EXACT DESKTOP EXPERIENCE ON MOBILE (FULL WIDTH IMAGE + ANIMATED ENERGY TICKER) */
   .hero {
     min-height: auto !important;
-    height: clamp(480px, 66vh, 560px) !important;
-    max-height: 560px !important;
+    height: auto !important;
+    max-height: none !important;
+    width: 100% !important;
+    aspect-ratio: 1024 / 682 !important;
     margin-top: 0 !important;
-    padding-top: 1.5rem !important;
-    padding-bottom: 2rem !important;
+    padding: 0 !important;
     display: flex !important;
-    align-items: flex-end !important;
+    align-items: center !important;
     position: relative !important;
     overflow: hidden !important;
+    background: #080a0e !important;
   }
 
   .hero-bg {
@@ -4384,14 +4391,17 @@ select {
 
   .hero-bg img {
     object-fit: cover !important;
-    object-position: center 30% !important;
+    object-position: center center !important;
     width: 100% !important;
     height: 100% !important;
   }
 
   .hero-overlay {
+    position: absolute !important;
+    inset: 0 !important;
     background: 
-      linear-gradient(180deg, rgba(8, 10, 14, 0.45) 0%, rgba(8, 10, 14, 0.15) 30%, rgba(8, 10, 14, 0.92) 100%) !important;
+      linear-gradient(90deg, rgba(8, 10, 14, 0.55) 0%, rgba(8, 10, 14, 0.35) 45%, rgba(8, 10, 14, 0.1) 100%),
+      linear-gradient(180deg, rgba(8, 10, 14, 0.3) 0%, transparent 40%, rgba(8, 10, 14, 0.5) 100%) !important;
   }
 
   .hero-content {
@@ -4400,12 +4410,15 @@ select {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
-    padding-inline: 0 !important;
+    padding-left: 1.15rem !important;
+    padding-right: 1.15rem !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
   .hero-text-block {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 62% !important;
+    max-width: 250px !important;
     margin: 0 !important;
     transform: none !important;
   }
@@ -4413,82 +4426,128 @@ select {
   .hero-top-eyebrow {
     display: flex !important;
     align-items: center !important;
-    gap: 0.4rem !important;
-    margin-bottom: 0.35rem !important;
+    gap: 0.3rem !important;
+    margin-bottom: 0.2rem !important;
   }
 
   .hero-gold-dash {
-    width: 18px !important;
+    width: 14px !important;
     height: 1px !important;
     background: var(--clr-accent) !important;
   }
 
   .hero-eyebrow-text {
-    font-size: 0.68rem !important;
-    letter-spacing: 0.14em !important;
+    font-size: 0.58rem !important;
+    letter-spacing: 0.12em !important;
     font-weight: 700 !important;
     color: var(--clr-accent) !important;
   }
 
   .hero-headline {
-    font-size: clamp(2rem, 8.5vw, 2.6rem) !important;
-    line-height: 0.95 !important;
-    margin-bottom: 0.5rem !important;
+    font-size: clamp(1.25rem, 5.4vw, 1.65rem) !important;
+    line-height: 0.94 !important;
+    margin-bottom: 0.3rem !important;
     letter-spacing: 0.02em !important;
   }
 
   .hero-subline {
-    font-size: 0.78rem !important;
-    line-height: 1.35 !important;
-    margin-bottom: 1rem !important;
-    max-width: 310px !important;
-    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.58rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 0.55rem !important;
+    max-width: 100% !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
   }
 
   .hero-actions {
     display: flex !important;
     flex-direction: row !important;
-    gap: 0.5rem !important;
+    gap: 0.35rem !important;
     width: 100% !important;
-    max-width: 100% !important;
     margin-bottom: 0 !important;
   }
 
   .hero-btn-primary {
-    flex: 1.2 !important;
+    flex: 1 !important;
     width: auto !important;
-    min-height: 42px !important;
-    padding: 0.65rem 0.85rem !important;
-    font-size: 0.75rem !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 0 0.5rem !important;
+    font-size: 0.58rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.04em !important;
     text-align: center !important;
-    border-radius: 6px !important;
+    border-radius: 4px !important;
     background: #fafafa !important;
     color: #0a0a0a !important;
-    display: flex !important;
+    display: inline-flex !important;
     justify-content: center !important;
     align-items: center !important;
-    box-shadow: 0 4px 15px rgba(250, 250, 250, 0.15) !important;
+    white-space: nowrap !important;
   }
 
   .hero-btn-secondary {
     flex: 1 !important;
     width: auto !important;
-    min-height: 42px !important;
-    padding: 0.65rem 0.85rem !important;
-    font-size: 0.75rem !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 0 0.5rem !important;
+    font-size: 0.58rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
     text-align: center !important;
-    border-radius: 6px !important;
-    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
     color: #fafafa !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     backdrop-filter: blur(8px) !important;
-    display: flex !important;
+    display: inline-flex !important;
     justify-content: center !important;
     align-items: center !important;
+    white-space: nowrap !important;
+  }
+
+  /* Animated "ARE YOU READY" Marquee Ticker Strip below Hero */
+  .hero-mobile-ticker {
+    display: flex !important;
+    width: 100% !important;
+    background: #0e1118 !important;
+    border-top: 1px solid rgba(201, 169, 110, 0.25) !important;
+    border-bottom: 1px solid rgba(201, 169, 110, 0.25) !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    padding-block: 0.55rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .hero-ticker-track {
+    display: inline-flex !important;
+    animation: heroTickerLoop 16s linear infinite !important;
+    gap: 1.5rem !important;
+    padding-left: 1rem !important;
+  }
+
+  .hero-ticker-item {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: var(--clr-accent, #c9a96e) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+  }
+
+  .hero-ticker-item:nth-child(even) {
+    color: #fafafa !important;
+  }
+
+  @keyframes heroTickerLoop {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
 
   .hero-bottom-indicators {
