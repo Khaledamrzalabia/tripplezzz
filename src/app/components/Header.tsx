@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency, CURRENCIES, type CurrencyCode } from "../../context/CurrencyContext";
 import dynamic from "next/dynamic";
@@ -35,6 +35,17 @@ export default function Header() {
   const { currency, setCurrency } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [badgeBump, setBadgeBump] = useState(false);
+  const prevItemsRef = useRef(totalItems);
+
+  useEffect(() => {
+    if (totalItems > prevItemsRef.current) {
+      setBadgeBump(true);
+      const timer = setTimeout(() => setBadgeBump(false), 450);
+      return () => clearTimeout(timer);
+    }
+    prevItemsRef.current = totalItems;
+  }, [totalItems]);
 
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
@@ -133,7 +144,7 @@ export default function Header() {
                 <path d="M16 10a4 4 0 0 1-8 0"/>
               </svg>
               {totalItems > 0 && (
-                <span className="cart-badge" aria-hidden="true">{totalItems}</span>
+                <span className={`cart-badge ${badgeBump ? "badge-bump" : ""}`} aria-hidden="true">{totalItems}</span>
               )}
             </button>
 

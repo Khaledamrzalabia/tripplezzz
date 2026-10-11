@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
 
 interface Props {
@@ -12,6 +13,17 @@ interface Props {
 export default function MobileBottomNav({ onOpenSearch, onOpenMenu }: Props) {
   const pathname = usePathname();
   const { totalItems, openDrawer } = useCart();
+  const [badgeBump, setBadgeBump] = useState(false);
+  const prevItemsRef = useRef(totalItems);
+
+  useEffect(() => {
+    if (totalItems > prevItemsRef.current) {
+      setBadgeBump(true);
+      const timer = setTimeout(() => setBadgeBump(false), 450);
+      return () => clearTimeout(timer);
+    }
+    prevItemsRef.current = totalItems;
+  }, [totalItems]);
 
   // Hide bottom nav on admin routes, checkout funnel, and single product pages (where sticky buy bar takes over)
   if (pathname?.startsWith("/admin") || pathname === "/checkout" || pathname?.startsWith("/products/")) {
@@ -75,7 +87,7 @@ export default function MobileBottomNav({ onOpenSearch, onOpenMenu }: Props) {
             <path d="M16 10a4 4 0 0 1-8 0"/>
           </svg>
           {totalItems > 0 && (
-            <span className="tz-bottom-nav-badge">{totalItems}</span>
+            <span className={`tz-bottom-nav-badge ${badgeBump ? "badge-bump" : ""}`}>{totalItems}</span>
           )}
         </div>
         <span>Bag</span>

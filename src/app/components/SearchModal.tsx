@@ -17,18 +17,38 @@ export default function SearchModal({ isOpen, onClose }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const { formatPrice } = useCurrency();
-
-  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
-  if (prevIsOpen !== isOpen) {
-    setPrevIsOpen(isOpen);
-    if (!isOpen) {
-      setQuery("");
-    }
-  }
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
+      setShouldRender(true);
+      setIsClosing(false);
+    } else if (shouldRender && !isClosing) {
+      setIsClosing(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+        setQuery("");
+      }, 220);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, shouldRender, isClosing]);
+
+  const handleClose = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setShouldRender(false);
+      setIsClosing(false);
+      setQuery("");
+    }, 220);
+  };
+
+  useEffect(() => {
+    if (shouldRender) {
+      setTimeout(() => inputRef.current?.focus(), 60);
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -36,14 +56,14 @@ export default function SearchModal({ isOpen, onClose }: Props) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [shouldRender]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!shouldRender || isClosing) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        handleClose();
         return;
       }
 
@@ -72,7 +92,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [shouldRender, isClosing]);
 
   const filtered = query.trim()
     ? allProducts.filter((p) => {
@@ -86,11 +106,17 @@ export default function SearchModal({ isOpen, onClose }: Props) {
       })
     : [];
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
 
   return (
-    <div className="tz-search-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Search Catalogue">
-      <div className="tz-search-modal" ref={modalRef} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`tz-search-overlay ${isClosing ? "closing" : ""}`}
+      onClick={handleClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search Catalogue"
+    >
+      <div className={`tz-search-modal ${isClosing ? "closing" : ""}`} ref={modalRef} onClick={(e) => e.stopPropagation()}>
         {/* Search Input Bar */}
         <div className="tz-search-input-wrap">
           <svg className="tz-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -111,7 +137,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
               ✕
             </button>
           )}
-          <button type="button" onClick={onClose} className="tz-search-close-btn" aria-label="Close search">
+          <button type="button" onClick={handleClose} className="tz-search-close-btn" aria-label="Close search">
             ✕
           </button>
         </div>

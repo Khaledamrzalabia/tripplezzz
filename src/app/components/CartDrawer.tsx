@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 
@@ -11,12 +11,48 @@ export default function CartDrawer() {
   const { formatPrice } = useCurrency();
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+  const [removingKey, setRemovingKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (isDrawerOpen) {
+      setShouldRender(true);
+      setIsClosing(false);
+    } else if (shouldRender && !isClosing) {
+      setIsClosing(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, 280);
+      return () => clearTimeout(timer);
+    }
+  }, [isDrawerOpen, shouldRender, isClosing]);
+
+  const handleClose = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      closeDrawer();
+      setShouldRender(false);
+      setIsClosing(false);
+    }, 280);
+  };
+
+  const handleRemove = (productId: string, selectedSize?: string) => {
+    const key = productId + (selectedSize ?? "");
+    setRemovingKey(key);
+    setTimeout(() => {
+      removeItem(productId, selectedSize);
+      setRemovingKey(null);
+    }, 220);
+  };
+
+  useEffect(() => {
+    if (shouldRender) {
       document.body.classList.add("drawer-open");
       document.body.style.overflow = "hidden";
-      setTimeout(() => closeBtnRef.current?.focus(), 50);
+      setTimeout(() => closeBtnRef.current?.focus(), 60);
     } else {
       document.body.classList.remove("drawer-open");
       document.body.style.overflow = "";
@@ -25,15 +61,15 @@ export default function CartDrawer() {
       document.body.classList.remove("drawer-open");
       document.body.style.overflow = "";
     };
-  }, [isDrawerOpen]);
+  }, [shouldRender]);
 
   // Handle ESC key and focus trap
   useEffect(() => {
-    if (!isDrawerOpen) return;
+    if (!shouldRender || isClosing) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        closeDrawer();
+        handleClose();
         return;
       }
 
@@ -62,20 +98,26 @@ export default function CartDrawer() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isDrawerOpen, closeDrawer]);
+  }, [shouldRender, isClosing]);
 
-  if (!isDrawerOpen) return null;
+  if (!shouldRender) return null;
 
   return (
-    <div className="tz-drawer-overlay" onClick={closeDrawer} role="dialog" aria-modal="true" aria-label="Shopping Bag">
-      <div className="tz-drawer" ref={drawerRef} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`tz-drawer-overlay ${isClosing ? "closing" : ""}`}
+      onClick={handleClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Shopping Bag"
+    >
+      <div className={`tz-drawer ${isClosing ? "closing" : ""}`} ref={drawerRef} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="tz-drawer-header">
           <div className="tz-drawer-title-wrap">
             <h3 className="tz-drawer-title">SHOPPING BAG</h3>
             <span className="tz-drawer-count">({totalItems})</span>
           </div>
-          <button ref={closeBtnRef} type="button" onClick={closeDrawer} className="tz-drawer-close" aria-label="Close Shopping Bag">
+          <button ref={closeBtnRef} type="button" onClick={handleClose} className="tz-drawer-close" aria-label="Close Shopping Bag">
             ✕
           </button>
         </div>
@@ -108,16 +150,22 @@ export default function CartDrawer() {
                 </svg>
               </div>
               <p className="tz-drawer-empty-text">Your bag is empty.</p>
-              <Link href="/shop" onClick={closeDrawer} className="btn btn-pill-white-sm">
+              <Link href="/shop" onClick={handleClose} className="btn btn-pill-white-sm">
                 EXPLORE COLLECTION →
               </Link>
             </div>
           ) : (
             <div className="tz-drawer-items">
-              {state.items.map((item) => {
+              {state.items.map((item, index) => {
                 const img = item.product.images[0]?.src || "/hero.jpg";
+                const itemKey = item.product.id + (item.selectedSize ?? "");
+                const isItemRemoving = removingKey === itemKey;
                 return (
-                  <div key={item.product.id + (item.selectedSize ?? "")} className="tz-drawer-item">
+                  <div
+                    key={itemKey}
+                    className={`tz-drawer-item ${isItemRemoving ? "removing" : ""}`}
+                    style={{ "--item-index": index } as React.CSSProperties}
+                  >
                     <div className="tz-drawer-item-img">
                       <Image
                         src={img}
@@ -131,14 +179,14 @@ export default function CartDrawer() {
                       <div className="tz-drawer-item-top">
                         <Link
                           href={`/products/${item.product.slug}`}
-                          onClick={closeDrawer}
+                          onClick={handleClose}
                           className="tz-drawer-item-name"
                         >
                           {item.product.name}
                         </Link>
                         <button
                           type="button"
-                          onClick={() => removeItem(item.product.id, item.selectedSize)}
+                          onClick={() => handleRemove(item.product.id, item.selectedSize)}
                           className="tz-drawer-item-remove"
                           aria-label="Remove item"
                         >
@@ -192,14 +240,14 @@ export default function CartDrawer() {
             <div className="tz-drawer-actions">
               <Link
                 href="/checkout"
-                onClick={closeDrawer}
+                onClick={handleClose}
                 className="btn btn-pill-white tz-drawer-checkout-btn"
               >
                 PROCEED TO CHECKOUT →
               </Link>
               <Link
                 href="/cart"
-                onClick={closeDrawer}
+                onClick={handleClose}
                 className="tz-drawer-viewcart-link"
               >
                 View Full Cart

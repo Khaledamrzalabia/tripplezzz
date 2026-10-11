@@ -33,10 +33,14 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
     setTimeout(() => setAdded(false), 1500);
   };
 
+  const [likeBump, setLikeBump] = useState(false);
+
   const handleToggleLike = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setLiked(!liked);
+    setLikeBump(true);
+    setTimeout(() => setLikeBump(false), 420);
   };
 
   return (
@@ -47,7 +51,7 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
         <button
           type="button"
           onClick={handleToggleLike}
-          className={`mockup-card-heart ${liked ? "active" : ""}`}
+          className={`mockup-card-heart ${liked ? "active" : ""} ${likeBump ? "heart-pop" : ""}`}
           aria-label="Save to wishlist"
         >
           {liked ? "♥" : "♡"}
