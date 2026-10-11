@@ -9,7 +9,7 @@ export async function GET() {
   const products = await getAsyncServerProducts();
   return NextResponse.json(products, {
     headers: {
-      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      "Cache-Control": "no-store, must-revalidate",
     },
   });
 }
@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
       );
     }
     const body = await request.json();
-    const current = await getAsyncServerProducts();
 
     if (!body.name || !body.category) {
       return NextResponse.json(
@@ -48,8 +47,10 @@ export async function POST(request: NextRequest) {
       name: body.name.trim(),
       description: body.description?.trim() || "",
       longDescription: body.longDescription?.trim() || "",
-      // If coming soon, omit price
-      price: body.availability === "coming-soon" ? undefined : (body.price !== undefined && body.price !== "" ? Number(body.price) || 0 : undefined),
+      craftSpecs: Array.isArray(body.craftSpecs) ? body.craftSpecs : [],
+      fitSilhouette: body.fitSilhouette?.trim() || "",
+      garmentCare: body.garmentCare?.trim() || "",
+      price: body.price !== undefined && body.price !== "" && Number(body.price) > 0 ? Number(body.price) : undefined,
       currency: body.currency || "USD",
       images: Array.isArray(body.images) && body.images.length > 0
         ? body.images

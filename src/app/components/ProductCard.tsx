@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import type { Product } from "../../types/product";
+import { isProductComingSoon } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 
@@ -21,7 +22,7 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
   const HeadingTag = headingLevel;
 
   const primaryImage = product.images[0];
-  const isComingSoon = product.availability === "coming-soon" || Boolean(product.isBlurred);
+  const isComingSoon = isProductComingSoon(product);
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();

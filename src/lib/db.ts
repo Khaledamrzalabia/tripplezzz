@@ -99,11 +99,17 @@ export async function ensureProductsTable(): Promise<void> {
         is_blurred BOOLEAN DEFAULT false,
         featured BOOLEAN DEFAULT false,
         is_placeholder BOOLEAN DEFAULT false,
+        craft_specs JSONB DEFAULT '[]'::jsonb,
+        fit_silhouette TEXT,
+        garment_care TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
       CREATE INDEX IF NOT EXISTS idx_products_slug ON products (slug);
       CREATE INDEX IF NOT EXISTS idx_products_category ON products (category);
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS craft_specs JSONB DEFAULT '[]'::jsonb;
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS fit_silhouette TEXT;
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS garment_care TEXT;
     `);
     tableInitialized = true;
   } catch (err) {
@@ -119,6 +125,13 @@ export function rowToProduct(row: any): Product {
     name: row.name,
     description: row.description || "",
     longDescription: row.long_description || row.description || "",
+    craftSpecs: Array.isArray(row.craft_specs)
+      ? row.craft_specs
+      : typeof row.craft_specs === "string"
+      ? JSON.parse(row.craft_specs)
+      : [],
+    fitSilhouette: row.fit_silhouette || "",
+    garmentCare: row.garment_care || "",
     price: row.price !== null && row.price !== undefined ? Number(row.price) : undefined,
     currency: row.currency || "USD",
     images: Array.isArray(row.images) ? row.images : (typeof row.images === "string" ? JSON.parse(row.images) : []),

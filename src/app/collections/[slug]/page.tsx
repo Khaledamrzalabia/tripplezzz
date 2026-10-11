@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "../../components/ProductCard";
-import { getProductsByCollection } from "../../../lib/products";
+import { getAsyncServerProducts } from "../../../lib/products.server";
 
 const COLLECTION_META: Record<string, { name: string; description: string; image: string }> = {
   argentina: { name: "Argentina", description: "Heritage in every detail. Inspired by the champions of the world.", image: "/campaign/banner-argentina.webp" },
@@ -13,10 +13,6 @@ const COLLECTION_META: Record<string, { name: string; description: string; image
 };
 
 type Params = { slug: string };
-
-export async function generateStaticParams() {
-  return Object.keys(COLLECTION_META).map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
@@ -29,7 +25,8 @@ export default async function CollectionPage({ params }: { params: Promise<Param
   const { slug } = await params;
   const meta = COLLECTION_META[slug];
   if (!meta) notFound();
-  const products = getProductsByCollection(slug);
+  const allProducts = await getAsyncServerProducts();
+  const products = allProducts.filter((p) => p.collection === slug);
 
   return (
     <div className="page-padding">

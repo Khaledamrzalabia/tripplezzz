@@ -477,9 +477,11 @@ select {
   display: none;
   position: fixed;
   inset: 0;
-  z-index: 200;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  justify-content: flex-end;
 }
 
 .mobile-nav.open {
@@ -487,16 +489,17 @@ select {
 }
 
 .mobile-nav-drawer {
-  width: min(340px, 85vw);
+  width: min(360px, 88vw);
   height: 100%;
-  background: var(--clr-surface);
-  border-right: 1px solid var(--clr-border);
+  background: #0c0f14;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  transform: translateX(-100%);
-  transition: transform var(--transition-slow);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.8);
 }
 
 .mobile-nav.open .mobile-nav-drawer {
@@ -3340,7 +3343,8 @@ select {
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
-  z-index: 1000;
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1100;
   display: flex;
   justify-content: flex-end;
   animation: fadeIn 0.25s ease-out;
@@ -4244,15 +4248,16 @@ select {
     color: #0a0a0a !important;
   }
 
-  /* 2. REFINED MOBILE NAV DRAWER */
+  /* 2. REFINED MOBILE NAV DRAWER (OPENING FROM RIGHT, CONSISTENT WITH CART DRAWER) */
   .mobile-nav {
     display: none;
     position: fixed !important;
     inset: 0 !important;
-    z-index: 250 !important;
+    z-index: 1100 !important;
     background: rgba(0, 0, 0, 0.78) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
+    justify-content: flex-end !important;
   }
 
   .mobile-nav.open {
@@ -4263,15 +4268,16 @@ select {
     width: min(340px, 86vw) !important;
     height: 100% !important;
     background: #0c0f14 !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-right: none !important;
     padding: calc(1.25rem + env(safe-area-inset-top, 0px)) 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px)) 1.25rem !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 1.1rem !important;
-    transform: translateX(-100%) !important;
+    transform: translateX(100%) !important;
     transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
     overflow-y: auto !important;
-    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.8) !important;
   }
 
   .mobile-nav.open .mobile-nav-drawer {
@@ -4449,6 +4455,13 @@ select {
     justify-content: space-around !important;
     padding-top: 6px !important;
     padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+  }
+
+  body.drawer-open .tz-mobile-bottom-nav {
+    transform: translateY(125%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   .tz-bottom-nav-item {
@@ -5781,5 +5794,206 @@ select {
   .tz-table-wrap {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ==========================================================================
+   GLOBAL DRAWER BODY LOCK & PREVENT SCROLL BLEED
+   ========================================================================== */
+body.drawer-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+/* ==========================================================================
+   TRIPLE Z — LUXURY CART TOAST NOTIFICATION
+   ========================================================================== */
+.tz-cart-toast {
+  position: fixed;
+  top: 86px;
+  right: 1.5rem;
+  z-index: 1050;
+  max-width: 380px;
+  width: calc(100vw - 2rem);
+  animation: toastSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateY(-16px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.tz-toast-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: rgba(14, 17, 24, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(201, 169, 110, 0.2);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+
+.tz-toast-thumb {
+  width: 48px;
+  height: 56px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #181c24;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tz-toast-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tz-toast-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tz-toast-headline {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tz-toast-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tz-toast-status {
+  font-family: var(--font-display, inherit);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #22c55e;
+  text-transform: uppercase;
+}
+
+.tz-toast-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fafafa;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tz-toast-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.tz-toast-size {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  color: #f1f5f9;
+}
+
+.tz-toast-qty {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tz-toast-price {
+  font-weight: 700;
+  color: var(--clr-gold, #c9a96e);
+}
+
+.tz-toast-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.tz-toast-view-btn {
+  background: #fafafa;
+  color: #0a0a0a;
+  border: none;
+  font-family: var(--font-display, inherit);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tz-toast-view-btn:hover {
+  background: var(--clr-gold, #c9a96e);
+  color: #000;
+  transform: translateY(-1px);
+}
+
+.tz-toast-close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  transition: color 0.15s ease;
+  line-height: 1;
+}
+
+.tz-toast-close-btn:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .tz-cart-toast {
+    top: calc(74px + 10px);
+    right: 50%;
+    transform: translateX(50%);
+    width: calc(100vw - 1.5rem);
+    max-width: 420px;
+  }
+
+  @keyframes toastSlideIn {
+    from {
+      transform: translate(50%, -16px) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: translate(50%, 0) scale(1);
+      opacity: 1;
+    }
   }
 }

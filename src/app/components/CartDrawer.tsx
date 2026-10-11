@@ -14,12 +14,15 @@ export default function CartDrawer() {
 
   useEffect(() => {
     if (isDrawerOpen) {
+      document.body.classList.add("drawer-open");
       document.body.style.overflow = "hidden";
       setTimeout(() => closeBtnRef.current?.focus(), 50);
     } else {
+      document.body.classList.remove("drawer-open");
       document.body.style.overflow = "";
     }
     return () => {
+      document.body.classList.remove("drawer-open");
       document.body.style.overflow = "";
     };
   }, [isDrawerOpen]);

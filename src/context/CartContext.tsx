@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import type { CartState } from "../types/cart";
 import type { Product } from "../types/product";
+import { isProductComingSoon } from "../types/product";
 
 type CartAction =
   | { type: "ADD"; product: Product; quantity: number; selectedSize?: string; selectedColor?: string }
@@ -68,6 +69,13 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   }
 }
 
+export interface CartToastItem {
+  product: Product;
+  quantity: number;
+  selectedSize?: string;
+  selectedColor?: string;
+}
+
 interface CartContextValue {
   state: CartState;
   addItem: (product: Product, quantity: number, selectedSize?: string, selectedColor?: string) => void;
@@ -80,6 +88,8 @@ interface CartContextValue {
   openDrawer: () => void;
   closeDrawer: () => void;
   toggleDrawer: () => void;
+  lastAddedItem: CartToastItem | null;
+  clearLastAddedItem: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -88,6 +98,8 @@ const STORAGE_KEY = "tz_cart_v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [lastAddedItem, setLastAddedItem] = useState<CartToastItem | null>(null);
+  const toastTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const [state, dispatch] = useReducer(cartReducer, { items: [] });
   const isHydratedRef = React.useRef(false);
 
@@ -112,10 +124,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state]);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
+
+  const clearLastAddedItem = () => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setLastAddedItem(null);
+  };
+
   const addItem = (product: Product, quantity: number, selectedSize?: string, selectedColor?: string) => {
-    if (product.availability === "coming-soon" || product.availability === "out-of-stock") return;
+    if (isProductComingSoon(product) || product.availability === "out-of-stock") return;
     dispatch({ type: "ADD", product, quantity, selectedSize, selectedColor });
-    setIsDrawerOpen(true); // Automatically open slide-out mini-cart for instant feedback
+    // Trigger lightweight toast notification without hijacking the viewport
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setLastAddedItem({ product, quantity, selectedSize, selectedColor });
+    toastTimeoutRef.current = setTimeout(() => {
+      setLastAddedItem(null);
+    }, 4000);
   };
 
   const removeItem = (productId: string, selectedSize?: string) =>
@@ -147,6 +175,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         openDrawer,
         closeDrawer,
         toggleDrawer,
+        lastAddedItem,
+        clearLastAddedItem,
       }}
     >
       {children}

@@ -26,6 +26,9 @@ interface ProductFormData {
   availability: ProductAvailability;
   description: string;
   longDescription: string;
+  craftSpecs: string;
+  fitSilhouette: string;
+  garmentCare: string;
   sizes: string[];
   colors: string[];
   isBlurred: boolean;
@@ -42,6 +45,9 @@ const INITIAL_FORM: ProductFormData = {
   availability: "coming-soon",
   description: "",
   longDescription: "",
+  craftSpecs: "",
+  fitSilhouette: "",
+  garmentCare: "",
   sizes: ["S", "M", "L", "XL"],
   colors: ["#0a0a0a", "#4a7c9d", "#c9a96e"],
   isBlurred: true,
@@ -231,10 +237,13 @@ export default function AdminPage() {
       slug: product.slug,
       category: product.category,
       collection: product.collection || "core",
-      price: product.price !== undefined ? String(product.price) : "",
+      price: product.price !== undefined && product.price !== null ? String(product.price) : "",
       availability: product.availability,
       description: product.description,
       longDescription: product.longDescription || "",
+      craftSpecs: Array.isArray(product.craftSpecs) ? product.craftSpecs.join("\n") : "",
+      fitSilhouette: product.fitSilhouette || "",
+      garmentCare: product.garmentCare || "",
       sizes: product.sizes || [],
       colors: product.colors && product.colors.length > 0 ? product.colors : ["#0a0a0a", "#4a7c9d", "#c9a96e"],
       isBlurred: Boolean(product.isBlurred || product.availability === "coming-soon"),
@@ -244,6 +253,24 @@ export default function AdminPage() {
     setIsEditing(true);
     setCustomImageUrl("");
     setModalOpen(true);
+  };
+
+  // Quick Featured Toggle from table
+  const handleQuickFeaturedToggle = async (productId: string, currentFeatured: boolean) => {
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ featured: !currentFeatured }),
+      });
+      if (res.ok) {
+        setProducts((prev) =>
+          prev.map((p) => (p.id === productId ? { ...p, featured: !currentFeatured } : p))
+        );
+      }
+    } catch (err) {
+      console.error("Featured toggle error:", err);
+    }
   };
 
   // Quick Status Change from table
@@ -346,9 +373,19 @@ export default function AdminPage() {
 
     try {
       setSaving(true);
+      const craftSpecsArray = formData.craftSpecs
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const parsedPrice = formData.price !== "" && Number(formData.price) > 0 ? Number(formData.price) : undefined;
+
       const payload = {
         ...formData,
-        price: formData.availability === "coming-soon" ? undefined : Number(formData.price) || 0,
+        craftSpecs: craftSpecsArray,
+        fitSilhouette: formData.fitSilhouette.trim(),
+        garmentCare: formData.garmentCare.trim(),
+        price: parsedPrice,
       };
 
       const url = isEditing && formData.id ? `/api/products/${formData.id}` : "/api/products";
@@ -640,6 +677,7 @@ export default function AdminPage() {
                   <th>Category</th>
                   <th>Collection</th>
                   <th>Price (السعر)</th>
+                  <th>Featured (المميز)</th>
                   <th>Sizes (المقاسات)</th>
                   <th>Status (الحالة)</th>
                   <th style={{ textAlign: "right" }}>Actions (إجراءات)</th>
@@ -661,11 +699,6 @@ export default function AdminPage() {
                           <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                               <span style={{ fontWeight: 700, color: "var(--clr-white)" }}>{p.name}</span>
-                              {p.featured && (
-                                <span style={{ fontSize: "0.65rem", padding: "0.15rem 0.4rem", borderRadius: "3px", background: "rgba(201,169,110,0.2)", color: "var(--clr-accent)", textTransform: "uppercase", fontWeight: 700 }}>
-                                  Featured
-                                </span>
-                              )}
                             </div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.2rem" }}>
                               <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>ID: {p.id}</span>
@@ -711,6 +744,32 @@ export default function AdminPage() {
                             ${p.price ?? 0}
                           </span>
                         )}
+                      </td>
+
+                      {/* Featured Quick Toggle Column */}
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => handleQuickFeaturedToggle(p.id, Boolean(p.featured))}
+                          title="Click to toggle featured status"
+                          style={{
+                            background: p.featured ? "rgba(201, 169, 110, 0.25)" : "rgba(255, 255, 255, 0.05)",
+                            color: p.featured ? "var(--clr-accent)" : "var(--clr-text-muted)",
+                            border: p.featured ? "1px solid var(--clr-accent)" : "1px solid var(--clr-border)",
+                            borderRadius: "20px",
+                            padding: "0.25rem 0.65rem",
+                            fontSize: "0.75rem",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.35rem",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <span style={{ fontSize: "0.85rem" }}>{p.featured ? "★" : "☆"}</span>
+                          <span>{p.featured ? "Featured" : "Regular"}</span>
+                        </button>
                       </td>
 
                       {/* Sizes */}
@@ -1040,20 +1099,18 @@ export default function AdminPage() {
 
                 <div className="form-group">
                   <label className="form-label">Price (السعر بالدولار $)</label>
-                  {formData.availability === "coming-soon" ? (
-                    <div className="admin-notice-box" style={{ margin: 0, padding: "0.75rem 0.9rem" }}>
-                      <span>🔒 <strong>Coming Soon:</strong> لن يتم عرض سعر على الموقع</span>
-                    </div>
-                  ) : (
-                    <input
-                      type="number"
-                      min="0"
-                      required
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                      placeholder="e.g. 149"
-                      className="form-input"
-                    />
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    placeholder="e.g. 149"
+                    className="form-input"
+                  />
+                  {formData.availability === "coming-soon" && (
+                    <span style={{ fontSize: "0.75rem", color: "var(--clr-accent)", display: "block", marginTop: "0.35rem" }}>
+                      🔒 <strong>Coming Soon:</strong> لن يتم عرض السعر أو السماح بشرائه للزبائن حتى يتم تحويل الحالة إلى In Stock
+                    </span>
                   )}
                 </div>
               </div>
@@ -1300,6 +1357,50 @@ export default function AdminPage() {
                   className="form-input"
                   style={{ resize: "vertical" }}
                 />
+              </div>
+
+              {/* Craft, Fit & Care Specifications */}
+              <div style={{ background: "var(--clr-surface-2)", border: "1px solid var(--clr-border)", borderRadius: "var(--radius-md)", padding: "1.25rem", marginBottom: "1.5rem" }}>
+                <h4 style={{ margin: "0 0 1rem 0", fontSize: "0.9rem", color: "var(--clr-white)", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span>✂️</span> تفاصيل المنتج الفاخرة (Craft, Fit & Care Specs)
+                </h4>
+
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label className="form-label">Craft & Specs (المواصفات والحِرفة — كل سطر نقطة منفصلة)</label>
+                  <textarea
+                    rows={3}
+                    value={formData.craftSpecs}
+                    onChange={(e) => setFormData({ ...formData, craftSpecs: e.target.value })}
+                    placeholder="500gsm custom-milled loopback cotton fleece.&#10;Over 45,000 stitches of high-density 3D embroidery.&#10;Tonal custom drawstrings with engraved aglets."
+                    className="form-input"
+                    style={{ resize: "vertical", fontFamily: "monospace", fontSize: "0.8rem" }}
+                  />
+                  <span style={{ fontSize: "0.72rem", color: "var(--clr-text-muted)" }}>اكتب كل ميزة في سطر منفصل لعرضها كنقاط في تفاصيل المنتج.</span>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: "1rem" }}>
+                  <label className="form-label">Fit & Silhouette (تفاصيل المقاس والقصّة)</label>
+                  <textarea
+                    rows={2}
+                    value={formData.fitSilhouette}
+                    onChange={(e) => setFormData({ ...formData, fitSilhouette: e.target.value })}
+                    placeholder="Cut with our signature dropped shoulder and relaxed boxy drape. Model is 185cm wearing size Large..."
+                    className="form-input"
+                    style={{ resize: "vertical", fontSize: "0.85rem" }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Garment Care (تعليمات الغسيل والعناية)</label>
+                  <textarea
+                    rows={2}
+                    value={formData.garmentCare}
+                    onChange={(e) => setFormData({ ...formData, garmentCare: e.target.value })}
+                    placeholder="Machine wash cold inside-out with like colours. Reshape and air dry flat in shade. Do not iron on crests..."
+                    className="form-input"
+                    style={{ resize: "vertical", fontSize: "0.85rem" }}
+                  />
+                </div>
               </div>
 
               {/* Featured toggle */}

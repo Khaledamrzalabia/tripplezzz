@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllProducts, getProductBySlug, getRelatedProducts } from "../../../lib/products";
+import { getAsyncServerProducts } from "../../../lib/products.server";
 import ProductDetailClient from "./ProductDetailClient";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  const products = getAllProducts();
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const products = await getAsyncServerProducts();
+  const product = products.find((p) => p.slug === slug || p.id === slug);
 
   if (!product) {
     return {
@@ -43,13 +37,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const products = await getAsyncServerProducts();
+  const product = products.find((p) => p.slug === slug || p.id === slug);
 
   if (!product) {
     notFound();
   }
 
-  const related = getRelatedProducts(product, 3);
+  const related = products
+    .filter((p) => p.id !== product.id && p.category === product.category)
+    .slice(0, 3);
 
   const productJsonLd = {
     "@context": "https://schema.org",

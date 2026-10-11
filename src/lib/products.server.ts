@@ -12,6 +12,7 @@ import {
   supabaseAdmin,
   isSupabaseConfigured,
   mapDbRecordToProduct,
+  mapProductToDbRecord,
 } from "./supabase";
 
 const DATA_FILE = path.join(process.cwd(), "src", "data", "products.json");
@@ -29,8 +30,13 @@ function getLocalProducts(): Product[] {
   return (defaultProducts as unknown) as Product[];
 }
 
-// Helper to save local JSON
+// Helper to save local JSON safely (respects serverless read-only filesystems)
 function saveLocalProducts(products: Product[]): boolean {
+  // Serverless environments (like Vercel / AWS Lambda) have read-only filesystems (EROFS)
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return false;
+  }
+
   try {
     const dir = path.dirname(DATA_FILE);
     if (!fs.existsSync(dir)) {
@@ -38,8 +44,10 @@ function saveLocalProducts(products: Product[]): boolean {
     }
     fs.writeFileSync(DATA_FILE, JSON.stringify(products, null, 2), "utf-8");
     return true;
-  } catch (err) {
-    console.error("Failed to save products to local disk:", err);
+  } catch (err: any) {
+    if (err?.code !== "EROFS") {
+      console.error("Failed to save products to local disk:", err);
+    }
     return false;
   }
 }
@@ -47,6 +55,66 @@ function saveLocalProducts(products: Product[]): boolean {
 // Check if any database (Direct Pooler or Supabase API) is configured
 export function isAnyDatabaseConfigured(): boolean {
   return isPostgresConfigured || isSupabaseConfigured;
+}
+
+// Helper to upsert product in PostgreSQL pool
+async function upsertProductInPostgres(pool: any, product: Product): Promise<void> {
+  const query = `
+    INSERT INTO products (
+      id, slug, name, description, long_description, price, currency,
+      images, category, collection, sizes, colors, availability,
+      is_blurred, featured, is_placeholder,
+      craft_specs, fit_silhouette, garment_care
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7,
+      $8, $9, $10, $11, $12, $13,
+      $14, $15, $16,
+      $17, $18, $19
+    )
+    ON CONFLICT (id) DO UPDATE SET
+      name = EXCLUDED.name,
+      slug = EXCLUDED.slug,
+      description = EXCLUDED.description,
+      long_description = EXCLUDED.long_description,
+      price = EXCLUDED.price,
+      currency = EXCLUDED.currency,
+      images = EXCLUDED.images,
+      category = EXCLUDED.category,
+      collection = EXCLUDED.collection,
+      sizes = EXCLUDED.sizes,
+      colors = EXCLUDED.colors,
+      availability = EXCLUDED.availability,
+      is_blurred = EXCLUDED.is_blurred,
+      featured = EXCLUDED.featured,
+      is_placeholder = EXCLUDED.is_placeholder,
+      craft_specs = EXCLUDED.craft_specs,
+      fit_silhouette = EXCLUDED.fit_silhouette,
+      garment_care = EXCLUDED.garment_care,
+      updated_at = NOW();
+  `;
+  const values = [
+    product.id,
+    product.slug,
+    product.name,
+    product.description || "",
+    product.longDescription || product.description || "",
+    product.price ?? null,
+    product.currency || "USD",
+    JSON.stringify(product.images || []),
+    product.category,
+    product.collection || "core",
+    JSON.stringify(product.sizes || []),
+    JSON.stringify(product.colors || []),
+    product.availability || "in-stock",
+    Boolean(product.isBlurred),
+    Boolean(product.featured),
+    Boolean(product.isPlaceholder),
+    JSON.stringify(product.craftSpecs || []),
+    product.fitSilhouette || "",
+    product.garmentCare || "",
+  ];
+
+  await pool.query(query, values);
 }
 
 // Async server getter: Uses Direct PostgreSQL Pooler if configured, else Supabase API, else local JSON
@@ -62,6 +130,12 @@ export async function getAsyncServerProducts(): Promise<Product[]> {
         );
         if (res.rows && res.rows.length > 0) {
           return res.rows.map(rowToProduct);
+        } else {
+          // Table exists but is empty; auto-seed with default products
+          for (const p of (defaultProducts as unknown as Product[])) {
+            await upsertProductInPostgres(pool, p);
+          }
+          return (defaultProducts as unknown as Product[]);
         }
       } catch (err) {
         console.warn("Direct PostgreSQL query error, trying fallback:", err);
@@ -94,7 +168,7 @@ export function getServerProducts(): Product[] {
   return getLocalProducts();
 }
 
-// Create Product: Direct PostgreSQL + Local sync
+// Create Product: Direct PostgreSQL + Supabase + Local sync
 export async function createServerProduct(product: Product): Promise<boolean> {
   // 1. Direct PostgreSQL Pooler
   if (isPostgresConfigured) {
@@ -102,59 +176,24 @@ export async function createServerProduct(product: Product): Promise<boolean> {
     if (pool) {
       try {
         await ensureProductsTable();
-        const query = `
-          INSERT INTO products (
-            id, slug, name, description, long_description, price, currency,
-            images, category, collection, sizes, colors, availability,
-            is_blurred, featured, is_placeholder
-          ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7,
-            $8, $9, $10, $11, $12, $13,
-            $14, $15, $16
-          )
-          ON CONFLICT (id) DO UPDATE SET
-            name = EXCLUDED.name,
-            slug = EXCLUDED.slug,
-            description = EXCLUDED.description,
-            long_description = EXCLUDED.long_description,
-            price = EXCLUDED.price,
-            images = EXCLUDED.images,
-            category = EXCLUDED.category,
-            collection = EXCLUDED.collection,
-            sizes = EXCLUDED.sizes,
-            colors = EXCLUDED.colors,
-            availability = EXCLUDED.availability,
-            is_blurred = EXCLUDED.is_blurred,
-            featured = EXCLUDED.featured,
-            updated_at = NOW();
-        `;
-        const values = [
-          product.id,
-          product.slug,
-          product.name,
-          product.description,
-          product.longDescription || product.description,
-          product.price ?? null,
-          product.currency || "USD",
-          JSON.stringify(product.images || []),
-          product.category,
-          product.collection || "core",
-          JSON.stringify(product.sizes || []),
-          JSON.stringify(product.colors || []),
-          product.availability || "in-stock",
-          Boolean(product.isBlurred),
-          Boolean(product.featured),
-          Boolean(product.isPlaceholder),
-        ];
-
-        await pool.query(query, values);
+        await upsertProductInPostgres(pool, product);
       } catch (err) {
         console.error("Direct PostgreSQL insert error:", err);
       }
     }
   }
 
-  // Keep local JSON updated
+  // 2. Supabase SDK
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const dbRecord = mapProductToDbRecord(product);
+      await supabaseAdmin.from("products").upsert(dbRecord);
+    } catch (err) {
+      console.error("Supabase insert error:", err);
+    }
+  }
+
+  // Keep local JSON updated if writable
   const localList = getLocalProducts();
   const updated = [product, ...localList.filter((p) => p.id !== product.id)];
   saveLocalProducts(updated);
@@ -162,17 +201,17 @@ export async function createServerProduct(product: Product): Promise<boolean> {
   return true;
 }
 
-// Update Product: Direct PostgreSQL + Local sync
+// Update Product: Direct PostgreSQL + Supabase + Local sync
 export async function updateServerProduct(
   id: string,
   updatedFields: Partial<Product>
 ): Promise<Product | null> {
-  const localList = getLocalProducts();
-  const index = localList.findIndex((p) => p.id === id);
+  const currentList = await getAsyncServerProducts();
+  const index = currentList.findIndex((p) => p.id === id);
   if (index === -1) return null;
 
   const mergedProduct: Product = {
-    ...localList[index],
+    ...currentList[index],
     ...updatedFields,
   };
 
@@ -182,57 +221,31 @@ export async function updateServerProduct(
     if (pool) {
       try {
         await ensureProductsTable();
-        const query = `
-          UPDATE products SET
-            name = COALESCE($1, name),
-            slug = COALESCE($2, slug),
-            description = COALESCE($3, description),
-            long_description = COALESCE($4, long_description),
-            price = $5,
-            currency = COALESCE($6, currency),
-            images = COALESCE($7, images),
-            category = COALESCE($8, category),
-            collection = COALESCE($9, collection),
-            sizes = COALESCE($10, sizes),
-            colors = COALESCE($11, colors),
-            availability = COALESCE($12, availability),
-            is_blurred = COALESCE($13, is_blurred),
-            featured = COALESCE($14, featured),
-            updated_at = NOW()
-          WHERE id = $15;
-        `;
-        const values = [
-          mergedProduct.name,
-          mergedProduct.slug,
-          mergedProduct.description,
-          mergedProduct.longDescription || mergedProduct.description,
-          mergedProduct.price ?? null,
-          mergedProduct.currency,
-          JSON.stringify(mergedProduct.images || []),
-          mergedProduct.category,
-          mergedProduct.collection,
-          JSON.stringify(mergedProduct.sizes || []),
-          JSON.stringify(mergedProduct.colors || []),
-          mergedProduct.availability,
-          mergedProduct.isBlurred,
-          mergedProduct.featured,
-          id,
-        ];
-
-        await pool.query(query, values);
+        await upsertProductInPostgres(pool, mergedProduct);
       } catch (err) {
         console.error("Direct PostgreSQL update error:", err);
       }
     }
   }
 
-  localList[index] = mergedProduct;
-  saveLocalProducts(localList);
+  // 2. Supabase SDK
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const dbRecord = mapProductToDbRecord(mergedProduct);
+      await supabaseAdmin.from("products").upsert(dbRecord);
+    } catch (err) {
+      console.error("Supabase update error:", err);
+    }
+  }
+
+  // Keep local JSON updated if writable
+  const updatedList = currentList.map((p) => (p.id === id ? mergedProduct : p));
+  saveLocalProducts(updatedList);
 
   return mergedProduct;
 }
 
-// Delete Product: Direct PostgreSQL + Local sync
+// Delete Product: Direct PostgreSQL + Supabase + Local sync
 export async function deleteServerProduct(id: string): Promise<boolean> {
   // 1. Direct PostgreSQL Pooler
   if (isPostgresConfigured) {
@@ -243,6 +256,15 @@ export async function deleteServerProduct(id: string): Promise<boolean> {
       } catch (err) {
         console.error("Direct PostgreSQL delete error:", err);
       }
+    }
+  }
+
+  // 2. Supabase SDK
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      await supabaseAdmin.from("products").delete().eq("id", id);
+    } catch (err) {
+      console.error("Supabase delete error:", err);
     }
   }
 

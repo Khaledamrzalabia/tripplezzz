@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: RouteProps) {
 
   return NextResponse.json(product, {
     headers: {
-      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      "Cache-Control": "no-store, must-revalidate",
     },
   });
 }
@@ -42,7 +42,9 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       ...(body.slug !== undefined && { slug: body.slug.trim() }),
       ...(body.description !== undefined && { description: body.description.trim() }),
       ...(body.longDescription !== undefined && { longDescription: body.longDescription.trim() }),
-      price: isComingSoon ? undefined : (body.price !== undefined && body.price !== "" ? Number(body.price) || 0 : undefined),
+      ...(body.price !== undefined && {
+        price: body.price !== "" && Number(body.price) > 0 ? Number(body.price) : undefined,
+      }),
       ...(body.currency !== undefined && { currency: body.currency }),
       ...(Array.isArray(body.images) && { images: body.images }),
       ...(body.category !== undefined && { category: body.category }),
@@ -52,6 +54,9 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       ...(body.availability !== undefined && { availability: body.availability }),
       isBlurred: body.isBlurred !== undefined ? Boolean(body.isBlurred) : (isComingSoon ? true : false),
       ...(body.featured !== undefined && { featured: Boolean(body.featured) }),
+      ...(Array.isArray(body.craftSpecs) && { craftSpecs: body.craftSpecs }),
+      ...(body.fitSilhouette !== undefined && { fitSilhouette: body.fitSilhouette.trim() }),
+      ...(body.garmentCare !== undefined && { garmentCare: body.garmentCare.trim() }),
     };
 
     const updated = await updateServerProduct(id, updateData);

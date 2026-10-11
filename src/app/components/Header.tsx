@@ -8,6 +8,7 @@ import { useCart } from "../../context/CartContext";
 import { useCurrency, CURRENCIES, type CurrencyCode } from "../../context/CurrencyContext";
 import dynamic from "next/dynamic";
 import MobileBottomNav from "./MobileBottomNav";
+import CartToast from "./CartToast";
 
 const SearchModal = dynamic(() => import("./SearchModal"), { ssr: false });
 const CartDrawer = dynamic(() => import("./CartDrawer"), { ssr: false });
@@ -30,7 +31,7 @@ const QUICK_COLLECTIONS = [
 
 export default function Header() {
   const pathname = usePathname();
-  const { totalItems, openDrawer, isDrawerOpen } = useCart();
+  const { totalItems, openDrawer, closeDrawer, isDrawerOpen } = useCart();
   const { currency, setCurrency } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -41,10 +42,31 @@ export default function Header() {
     setMobileOpen(false);
   }
 
+  // Prevent multiple open drawers and manage body lock
+  const handleOpenMobile = () => {
+    closeDrawer();
+    setMobileOpen(true);
+  };
+
+  const handleOpenCart = () => {
+    setMobileOpen(false);
+    openDrawer();
+  };
+
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [mobileOpen]);
+    const isAnyOpen = mobileOpen || isDrawerOpen;
+    if (isAnyOpen) {
+      document.body.classList.add("drawer-open");
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.classList.remove("drawer-open");
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.classList.remove("drawer-open");
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen, isDrawerOpen]);
 
   return (
     <>
@@ -100,7 +122,7 @@ export default function Header() {
 
             <button
               type="button"
-              onClick={openDrawer}
+              onClick={handleOpenCart}
               className="icon-btn header-cart-btn"
               aria-label={`Shopping bag — ${totalItems} items`}
               title="Shopping Bag"
@@ -118,7 +140,7 @@ export default function Header() {
             {/* Mobile hamburger */}
             <button
               className="mobile-menu-btn icon-btn"
-              onClick={() => setMobileOpen(true)}
+              onClick={handleOpenMobile}
               aria-label="Open navigation menu"
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav"
@@ -262,10 +284,13 @@ export default function Header() {
       {/* Slide-out Cart Drawer — lazy chunk loaded only when opened */}
       {isDrawerOpen && <CartDrawer />}
 
+      {/* Floating non-intrusive luxury Cart Toast */}
+      <CartToast />
+
       {/* Mobile Bottom Dock / Quick Nav */}
       <MobileBottomNav
         onOpenSearch={() => setSearchOpen(true)}
-        onOpenMenu={() => setMobileOpen(true)}
+        onOpenMenu={handleOpenMobile}
       />
     </>
   );

@@ -6,15 +6,16 @@ import CultureSection from "./components/CultureSection";
 import CraftSection from "./components/CraftSection";
 import CommunitySection from "./components/CommunitySection";
 import Newsletter from "./components/Newsletter";
-import { getFeaturedProducts } from "../lib/products";
+import { getAsyncServerProducts } from "../lib/products.server";
 
 export const metadata: Metadata = {
   title: "Triple Z — Football Streetwear",
   description: "Premium football streetwear. Football, worn differently. Shop the latest collections.",
 };
 
-export default function HomePage() {
-  const featured = getFeaturedProducts();
+export default async function HomePage() {
+  const allProducts = await getAsyncServerProducts();
+  const featured = allProducts.filter((p) => p.featured);
 
   return (
     <>

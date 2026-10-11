@@ -4,6 +4,7 @@ import path from "path";
 import crypto from "crypto";
 
 import { guardMultiSignalRateLimit } from "../../../lib/rateLimit";
+import { supabaseAdmin, isSupabaseConfigured } from "../../../lib/supabase";
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -67,8 +68,45 @@ export async function POST(request: Request) {
     // 4. Cryptographically safe random filename to prevent Path Traversal
     const safeHash = crypto.randomBytes(16).toString("hex");
     const filename = `${Date.now()}_${safeHash}${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
 
+    // 5. Try Supabase Storage first if configured
+    if (isSupabaseConfigured && supabaseAdmin) {
+      try {
+        const { data, error } = await supabaseAdmin.storage
+          .from("products")
+          .upload(filename, buffer, {
+            contentType: file.type,
+            upsert: true,
+          });
+
+        if (!error && data) {
+          const { data: publicUrlData } = supabaseAdmin.storage
+            .from("products")
+            .getPublicUrl(filename);
+
+          if (publicUrlData?.publicUrl) {
+            return NextResponse.json({
+              success: true,
+              url: publicUrlData.publicUrl,
+            });
+          }
+        }
+      } catch (storageErr) {
+        console.warn("Supabase storage upload fallback:", storageErr);
+      }
+    }
+
+    // 6. If running in serverless environment (Vercel) without external bucket, fallback to inline Data URL
+    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
+      return NextResponse.json({
+        success: true,
+        url: dataUri,
+      });
+    }
+
+    // 7. Local disk upload (for local development)
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -80,7 +118,7 @@ export async function POST(request: Request) {
       success: true,
       url: `/uploads/${filename}`,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Secure upload error:", error);
     return NextResponse.json({ error: "فشل رفع الملف" }, { status: 500 });
   }

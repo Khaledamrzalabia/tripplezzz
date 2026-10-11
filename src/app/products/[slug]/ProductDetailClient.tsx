@@ -8,6 +8,7 @@ import { useCurrency } from "../../../context/CurrencyContext";
 import dynamic from "next/dynamic";
 import ProductCard from "../../components/ProductCard";
 import type { Product } from "../../../types/product";
+import { isProductComingSoon } from "../../../types/product";
 
 const SizeGuideModal = dynamic(() => import("../../components/SizeGuideModal"), { ssr: false });
 
@@ -26,7 +27,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"specs" | "fit" | "care" | "shipping">("specs");
 
-  const isComingSoon = product.availability === "coming-soon";
+  const isComingSoon = isProductComingSoon(product);
   const isOutOfStock = product.availability === "out-of-stock";
 
   const handleAdd = () => {
@@ -271,20 +272,32 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               <div style={{ padding: "1.5rem 0", fontSize: "0.9rem", color: "var(--clr-text-secondary)", lineHeight: 1.7, width: "100%", maxWidth: "100%", boxSizing: "border-box", wordBreak: "break-word", overflowWrap: "break-word" }}>
                 {activeTab === "specs" && (
                   <ul style={{ paddingLeft: "1.25rem", paddingRight: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "100%", boxSizing: "border-box" }}>
-                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>500gsm custom-milled loopback cotton fleece.</li>
-                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Over 45,000 stitches of high-density 3D metallic embroidery.</li>
-                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Tonal custom drawstrings with heavy engraved aglets.</li>
-                    <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Double-layer structured hood engineered to sit upright.</li>
+                    {product.craftSpecs && product.craftSpecs.length > 0 ? (
+                      product.craftSpecs.map((spec, i) => (
+                        <li key={i} style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
+                          {spec}
+                        </li>
+                      ))
+                    ) : (
+                      <>
+                        <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>500gsm custom-milled loopback cotton fleece.</li>
+                        <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Over 45,000 stitches of high-density 3D metallic embroidery.</li>
+                        <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Tonal custom drawstrings with heavy engraved aglets.</li>
+                        <li style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>Double-layer structured hood engineered to sit upright.</li>
+                      </>
+                    )}
                   </ul>
                 )}
                 {activeTab === "fit" && (
                   <p style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
-                    Cut with our signature dropped shoulder and relaxed boxy drape. Model is 185cm (6&apos;1&quot;) wearing size Large. For a closer tailored fit, select one size smaller than your standard size.
+                    {product.fitSilhouette ||
+                      "Cut with our signature dropped shoulder and relaxed boxy drape. Model is 185cm (6'1\") wearing size Large. For a closer tailored fit, select one size smaller than your standard size."}
                   </p>
                 )}
                 {activeTab === "care" && (
                   <p style={{ wordBreak: "break-word", overflowWrap: "break-word" }}>
-                    Machine wash cold inside-out with like colours. Use mild detergent. Do not tumble dry. Reshape and air dry flat in shade. Cool iron on reverse; do not iron directly on embroidered crests.
+                    {product.garmentCare ||
+                      "Machine wash cold inside-out with like colours. Use mild detergent. Do not tumble dry. Reshape and air dry flat in shade. Cool iron on reverse; do not iron directly on embroidered crests."}
                   </p>
                 )}
                 {activeTab === "shipping" && (

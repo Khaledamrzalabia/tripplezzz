@@ -27,6 +27,13 @@ export function mapDbRecordToProduct(record: any): Product {
     name: record.name,
     description: record.description || "",
     longDescription: record.long_description || record.description || "",
+    craftSpecs: Array.isArray(record.craft_specs)
+      ? record.craft_specs
+      : typeof record.craft_specs === "string"
+      ? JSON.parse(record.craft_specs)
+      : [],
+    fitSilhouette: record.fit_silhouette || "",
+    garmentCare: record.garment_care || "",
     price: record.price !== null && record.price !== undefined ? Number(record.price) : undefined,
     currency: record.currency || "USD",
     images: Array.isArray(record.images) ? record.images : [],
@@ -49,6 +56,9 @@ export function mapProductToDbRecord(product: Product): any {
     name: product.name,
     description: product.description,
     long_description: product.longDescription,
+    craft_specs: product.craftSpecs || [],
+    fit_silhouette: product.fitSilhouette || "",
+    garment_care: product.garmentCare || "",
     price: product.price !== undefined ? product.price : null,
     currency: product.currency || "USD",
     images: product.images || [],
