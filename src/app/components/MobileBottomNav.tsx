@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
@@ -61,18 +62,34 @@ export default function MobileBottomNav({ onOpenSearch, onOpenMenu }: Props) {
         <span>Shop</span>
       </Link>
 
-      <button
-        type="button"
-        onClick={onOpenSearch}
-        className="tz-bottom-nav-item"
-        aria-label="Search"
+      {/* Center Brand Logo button — redirects to Home */}
+      <Link
+        href="/"
+        className="tz-bottom-nav-item tz-bottom-nav-logo-btn"
+        aria-label="Triple Z Home"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <span>Search</span>
-      </button>
+        <div style={{
+          width: "36px",
+          height: "36px",
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, rgba(226, 255, 76, 0.15) 0%, rgba(201, 169, 110, 0.25) 100%)",
+          border: "1px solid var(--clr-accent)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 0 12px rgba(226, 255, 76, 0.25)",
+          overflow: "hidden"
+        }}>
+          <Image
+            src="/brand-logo.webp"
+            alt="Triple Z"
+            width={30}
+            height={30}
+            style={{ objectFit: "contain", transform: "scale(1.2)" }}
+          />
+        </div>
+        <span style={{ fontSize: "0.62rem", color: "var(--clr-accent)", fontWeight: 800 }}>Triple Z</span>
+      </Link>
 
       <button
         type="button"
