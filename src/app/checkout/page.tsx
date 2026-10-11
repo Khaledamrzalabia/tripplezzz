@@ -182,6 +182,64 @@ export default function CheckoutPage() {
       }
 
       setStatus("success");
+
+      // Format Instagram order confirmation message
+      const itemsList = state.items
+        .map((it) => `• ${it.quantity}× ${it.product.name}${it.selectedSize ? ` (${it.selectedSize})` : ""}`)
+        .join("\n");
+
+      const paymentMethodArabic =
+        paymentMethod === "instapay"
+          ? "انستاباي (InstaPay)"
+          : paymentMethod === "vodafone_cash"
+          ? "فودافون كاش"
+          : paymentMethod === "paypal"
+          ? "PayPal"
+          : "الدفع عند الاستلام (كاش)";
+
+      const igOrderMessage = `مرحباً Triple Z 👋
+أتممت طلبي عبر الموقع برقم: #${data.orderId}
+
+📋 بيانات العميل:
+- الاسم: ${fullName.trim()}
+- الهاتف: ${phone.trim()}
+- العنوان: ${currentGov.ar} — ${city} (${address.trim()})
+${notes && notes.trim() ? `- ملاحظات: ${notes.trim()}\n` : ""}
+👕 القطع المطلوبة:
+${itemsList}
+
+💵 إجمالي الفاتورة: ${grandTotal} ج.م
+- طريقة الدفع: ${paymentMethodArabic}
+${paymentType === "deposit" ? `- عربون (30%): ${depositAmount} ج.م (متبقي عند الاستلام: ${remainingAmount} ج.م)` : "- مدفوع بالكامل (100%)"}
+
+أرجو تأكيد استلام الطلب وشحنه. شكراً لكم!`;
+
+      // Copy to clipboard immediately inside user click gesture
+      try {
+        if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(igOrderMessage);
+        }
+      } catch {
+        // Fallback handled on confirmation page
+      }
+
+      // Store in sessionStorage for order-confirmation page
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem(
+            "tz_last_order_details",
+            JSON.stringify({
+              orderId: data.orderId,
+              message: igOrderMessage,
+              customerName: fullName.trim(),
+              phone: phone.trim(),
+              total: grandTotal,
+              paymentMethod: paymentMethodArabic,
+            })
+          );
+        } catch {}
+      }
+
       clearCart();
       router.push(`/order-confirmation?orderId=${data.orderId}`);
     } catch (err: any) {

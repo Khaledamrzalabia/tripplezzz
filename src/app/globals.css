@@ -8217,4 +8217,324 @@ body.drawer-open {
       filter: blur(4px);
     }
   }
+}
+
+/* ==========================================================================
+   TRIPLE Z — ORDER CONFIRMATION & INSTAGRAM DIRECT INTEGRATION
+   ========================================================================== */
+.order-confirmation-page {
+  padding-top: clamp(80px, 12vw, 110px);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+  min-height: 90vh;
+}
+
+.order-conf-badge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+}
+
+.order-conf-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1.5px solid #10b981;
+  color: #10b981;
+  font-size: 2.2rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.28);
+  animation: pulseDot 2.2s infinite ease-in-out;
+}
+
+.order-conf-title {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0.5rem 0 1rem;
+}
+
+.order-conf-subtitle {
+  font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+  color: var(--clr-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 2.5rem;
+}
+
+/* Instagram Order Box */
+.order-conf-ig-box {
+  background: linear-gradient(180deg, rgba(20, 24, 34, 0.92) 0%, rgba(13, 16, 23, 0.96) 100%) padding-box,
+              linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) border-box;
+  border: 1.5px solid transparent;
+  border-radius: 24px;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(220, 39, 67, 0.12);
+  margin-bottom: 3rem;
+  text-align: right;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.order-conf-ig-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.15rem;
+}
+
+.order-conf-ig-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(220, 39, 67, 0.12);
+  border: 1px solid rgba(220, 39, 67, 0.35);
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.order-conf-ig-icon {
+  font-size: 1.1rem;
+}
+
+.order-conf-countdown-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  color: #f59e0b;
+}
+
+.order-conf-countdown-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  animation: pulseDot 1.2s infinite ease-in-out;
+}
+
+.order-conf-cancel-timer-btn {
+  background: transparent;
+  border: none;
+  color: var(--clr-text-muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.order-conf-cancel-timer-btn:hover {
+  color: #fff;
+}
+
+.order-conf-ig-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.order-conf-notice-pill {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  border-radius: 14px;
+  padding: 0.95rem 1.15rem;
+  color: #e6f7ef;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.order-conf-notice-pill strong {
+  color: #10b981;
+}
+
+.order-conf-ig-btn {
+  width: 100%;
+  height: 54px;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #fff !important;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  text-decoration: none !important;
+  box-shadow: 0 8px 28px rgba(220, 39, 67, 0.35);
+  transition: all 0.25s var(--apple-smooth);
+}
+
+.order-conf-ig-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(220, 39, 67, 0.5);
+  filter: brightness(1.08);
+}
+
+.order-conf-action-btns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 580px) {
+  .order-conf-action-btns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.order-conf-secondary-btn {
+  height: 46px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.order-conf-message-preview {
+  background: rgba(10, 12, 17, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.order-conf-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-conf-preview-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--clr-text-secondary);
+}
+
+.order-conf-copy-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--clr-accent);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.order-conf-copy-pill:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.order-conf-pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Timeline */
+.order-conf-timeline-card {
+  background: rgba(16, 20, 28, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  margin-bottom: 2.5rem;
+  text-align: right;
+}
+
+.order-conf-timeline-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--clr-accent);
+  margin: 0 0 1.5rem;
+}
+
+.order-conf-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.25rem;
+}
+
+.order-conf-step {
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.order-conf-step.completed {
+  border-top: 2px solid #10b981;
+}
+
+.order-conf-step.in-progress {
+  border-top: 2px solid var(--clr-accent);
+}
+
+.order-conf-step.upcoming {
+  border-top: 2px solid rgba(255, 255, 255, 0.14);
+}
+
+.order-conf-step-num {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.order-conf-step.completed .order-conf-step-num { color: #10b981; }
+.order-conf-step.in-progress .order-conf-step-num { color: var(--clr-accent); }
+.order-conf-step.upcoming .order-conf-step-num { color: var(--clr-text-muted); }
+
+.order-conf-step-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #fff;
+  margin: 0;
+}
+
+.order-conf-step.upcoming .order-conf-step-name {
+  color: var(--clr-text-muted);
+}
+
+.order-conf-step-desc {
+  font-size: 0.74rem;
+  color: var(--clr-text-muted);
+}
+
+.order-conf-footer-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
