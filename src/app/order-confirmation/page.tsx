@@ -33,6 +33,15 @@ export default function OrderConfirmationPage() {
   const currentMessage = orderDetails?.message || fallbackMessage;
 
   useEffect(() => {
+    // Always start from the top of the confirmation page
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    } catch {
+      window.scrollTo(0, 0);
+    }
+
     // 1. Retrieve order details from sessionStorage if available
     let saved: StoredOrderDetails | null = null;
     try {

@@ -7,6 +7,7 @@ import { CurrencyProvider } from "../context/CurrencyContext";
 import { CustomerAuthProvider } from "../context/CustomerAuthContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
@@ -145,6 +146,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         <CurrencyProvider>
           <CartProvider>
             <CustomerAuthProvider>

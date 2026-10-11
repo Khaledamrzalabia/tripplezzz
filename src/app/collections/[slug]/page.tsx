@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "../../components/ProductCard";
 import { getAsyncServerProducts } from "../../../lib/products.server";
+import { isProductComingSoon } from "../../../types/product";
 
 const COLLECTION_META: Record<string, { name: string; description: string; image: string }> = {
   argentina: { name: "Argentina", description: "Heritage in every detail. Inspired by the champions of the world.", image: "/campaign/banner-argentina.webp" },
@@ -26,7 +27,15 @@ export default async function CollectionPage({ params }: { params: Promise<Param
   const meta = COLLECTION_META[slug];
   if (!meta) notFound();
   const allProducts = await getAsyncServerProducts();
-  const products = allProducts.filter((p) => p.collection === slug);
+  const products = allProducts
+    .filter((p) => p.collection === slug)
+    .sort((a, b) => {
+      const aOpen = !isProductComingSoon(a);
+      const bOpen = !isProductComingSoon(b);
+      if (aOpen && !bOpen) return 1;
+      if (!aOpen && bOpen) return -1;
+      return 0;
+    });
 
   return (
     <div className="page-padding">

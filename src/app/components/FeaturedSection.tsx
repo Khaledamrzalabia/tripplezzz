@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import type { Product } from "../../types/product";
+import { isProductComingSoon } from "../../types/product";
 
 interface Props {
   products: Product[];
@@ -23,6 +24,17 @@ export default function FeaturedSection({ products: initialProducts }: Props) {
       })
       .catch(() => {});
   }, []);
+
+  // Display Coming Soon first, and open / available pieces at the end / bottom
+  const displayProducts = useMemo(() => {
+    return [...products].sort((a, b) => {
+      const aOpen = !isProductComingSoon(a);
+      const bOpen = !isProductComingSoon(b);
+      if (aOpen && !bOpen) return 1;
+      if (!aOpen && bOpen) return -1;
+      return 0;
+    });
+  }, [products]);
 
   return (
     <section className="section mockup-featured-section" aria-labelledby="featured-heading">
@@ -44,7 +56,7 @@ export default function FeaturedSection({ products: initialProducts }: Props) {
 
         {/* 5-Column Grid */}
         <div className="mockup-featured-grid">
-          {products.slice(0, 5).map((p) => (
+          {displayProducts.slice(0, 5).map((p) => (
             <ProductCard key={p.id} product={p} headingLevel="h3" />
           ))}
         </div>

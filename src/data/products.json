@@ -1,67 +1,19 @@
 [
   {
-    "id": "tz-001",
-    "slug": "triple-z-la-pulga-hoodie",
-    "name": "La Pulga Signature Hoodie",
-    "description": "Heavyweight loopback fleece hoodie with premium embroidery and contemporary football silhouette.",
-    "longDescription": "Crafted from 500gsm custom-milled loopback fleece. Features relaxed dropped shoulders, deep double-layer hood, heavy ribbing at cuffs and hem, and tonal Triple Z crest. Signature football-inspired back embroidery and authentic gold badge details.",
-    "currency": "USD",
-    "images": [
-      {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/product-front-hoodie-pedestal.webp",
-        "alt": "La Pulga Signature Hoodie — Front Pedestal View"
-      },
-      {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/triple-z-signature-hoodie.webp",
-        "alt": "La Pulga Signature Hoodie — Flatlay View"
-      },
-      {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/hero-hoodies-pair.webp",
-        "alt": "La Pulga Signature Hoodie — Pair Pedestal"
-      },
-      {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-crest.webp",
-        "alt": "La Pulga Signature Hoodie — AFA Gold Crest Detail"
-      },
-      {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-embroidery.webp",
-        "alt": "La Pulga Signature Hoodie — Triple Z Embroidery Detail"
-      }
-    ],
-    "category": "tops",
-    "collection": "argentina",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "colors": [
-      "#4a7c9d",
-      "#0a0a0a",
-      "#b59b6c"
-    ],
-    "availability": "coming-soon",
-    "isBlurred": true,
-    "featured": true,
-    "isPlaceholder": false
-  },
-  {
     "id": "tz-002",
     "slug": "triple-z-portugal-heritage-hoodie",
     "name": "Portugal Heritage Hoodie",
     "description": "Deep crimson and forest green block construction with metallic gold crest.",
     "longDescription": "500gsm heavyweight brushed fleece. Contrast color-block paneling inspired by Portuguese football heritage. Custom gold hardware and embroidered heritage crest.",
+    "craftSpecs": [],
+    "fitSilhouette": "",
+    "garmentCare": "",
+    "price": 900,
     "currency": "USD",
     "images": [
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/portugal-heritage-hoodie.webp",
-        "alt": "Portugal Heritage Hoodie"
-      },
-      {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/campaign/banner-portugal.webp",
-        "alt": "Portugal Heritage Hoodie — Campaign Look"
+        "alt": "Portugal Heritage Hoodie",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/portugal-heritage-hoodie.png"
       }
     ],
     "category": "tops",
@@ -80,28 +32,75 @@
     ],
     "availability": "coming-soon",
     "isBlurred": true,
+    "featured": false,
+    "isPlaceholder": false
+  },
+  {
+    "id": "tz-005",
+    "slug": "triple-z-messi-10-hoodie",
+    "name": "Messi 10 Hoodie",
+    "description": "Signature statement piece with golden embroidered 10 and national sun crest.",
+    "longDescription": "Commemorative heavyweight hoodie featuring 3D puff embroidery, golden thread details, and signature Argentine sky blue and gold back numbering.",
+    "craftSpecs": [],
+    "fitSilhouette": "",
+    "garmentCare": "",
+    "currency": "USD",
+    "images": [
+      {
+        "alt": "Messi 10 Hoodie — Back Numbering",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/product-messi-back-pedestal.jpg"
+      },
+      {
+        "alt": "Messi 10 Hoodie — Front View",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/argentina-hoodie-dark.png"
+      },
+      {
+        "alt": "Messi 10 Hoodie — AFA 3-Stars Crest",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-crest.png"
+      }
+    ],
+    "category": "tops",
+    "collection": "argentina",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "#68a6d6",
+      "#fafafa",
+      "#0a0a0a"
+    ],
+    "availability": "in-stock",
+    "isBlurred": false,
     "featured": true,
     "isPlaceholder": false
   },
   {
     "id": "tz-003",
-    "slug": "triple-z-stadium-track-jacket",
-    "name": "Stadium Track Jacket",
+    "slug": "",
+    "name": "La pulga",
     "description": "Technical matte shell with structured contrast panels and custom matte hardware.",
     "longDescription": "The next evolution of pitch outerwear. High-density weather-resistant technical shell, custom gold two-way zip, embroidered sun emblem, and tailored ergonomic sleeves.",
+    "craftSpecs": [],
+    "fitSilhouette": "",
+    "garmentCare": "",
+    "price": 900,
     "currency": "USD",
     "images": [
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/stadium-track-jacket.webp",
-        "alt": "Stadium Track Jacket"
+        "alt": "Stadium Track Jacket",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/products/1791692256964_c1959e881aee47c824657b0f94c74618.png"
       },
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-stripe.webp",
-        "alt": "Stadium Track Jacket — Sun Emblem Detail"
+        "alt": "La pulga",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/products/1791692332015_a5c4ea539bb396cca3d5a2601f7d52e2.png"
       }
     ],
     "category": "outerwear",
-    "collection": "stadium",
+    "collection": "core",
     "sizes": [
       "S",
       "M",
@@ -113,8 +112,8 @@
       "#c9a96e",
       "#0a0a0a"
     ],
-    "availability": "coming-soon",
-    "isBlurred": true,
+    "availability": "low-stock",
+    "isBlurred": false,
     "featured": true,
     "isPlaceholder": false
   },
@@ -124,15 +123,18 @@
     "name": "Pitch Black Tee",
     "description": "Heavyweight 240gsm cotton tee with golden Triple Z chest embroidery.",
     "longDescription": "Premium 240gsm combed organic cotton tee. Pre-shrunk relaxed boxy fit. Subtle tonal & gold embroidery at center chest. Ribbed collar.",
+    "craftSpecs": [],
+    "fitSilhouette": "",
+    "garmentCare": "",
     "currency": "USD",
     "images": [
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/pitch-black-tee.webp",
-        "alt": "Pitch Black Tee"
+        "alt": "Pitch Black Tee",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/pitch-black-tee.png"
       },
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-embroidery.webp",
-        "alt": "Pitch Black Tee — Gold Thread Detail"
+        "alt": "Pitch Black Tee — Gold Thread Detail",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-embroidery.png"
       }
     ],
     "category": "tops",
@@ -150,29 +152,41 @@
       "#2a2a2a"
     ],
     "availability": "coming-soon",
-    "isBlurred": true,
+    "isBlurred": false,
     "featured": true,
     "isPlaceholder": false
   },
   {
-    "id": "tz-005",
-    "slug": "triple-z-messi-10-hoodie",
-    "name": "Messi 10 Hoodie",
-    "description": "Signature statement piece with golden embroidered 10 and national sun crest.",
-    "longDescription": "Commemorative heavyweight hoodie featuring 3D puff embroidery, golden thread details, and signature Argentine sky blue and gold back numbering.",
+    "id": "tz-001",
+    "slug": "triple-z-la-pulga-hoodie",
+    "name": "La Pulga Signature Hoodie",
+    "description": "Heavyweight loopback fleece hoodie with premium embroidery and contemporary football silhouette.",
+    "longDescription": "Crafted from 500gsm custom-milled loopback fleece. Features relaxed dropped shoulders, deep double-layer hood, heavy ribbing at cuffs and hem, and tonal Triple Z crest. Signature football-inspired back embroidery and authentic gold badge details.",
+    "craftSpecs": [],
+    "fitSilhouette": "",
+    "garmentCare": "",
+    "price": 900,
     "currency": "USD",
     "images": [
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/product-messi-back-pedestal.webp",
-        "alt": "Messi 10 Hoodie — Back Numbering"
+        "alt": "La Pulga Signature Hoodie — Front Pedestal View",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/product-front-hoodie-pedestal.webp"
       },
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/argentina-hoodie-dark.webp",
-        "alt": "Messi 10 Hoodie — Front View"
+        "alt": "La Pulga Signature Hoodie — Flatlay View",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/triple-z-signature-hoodie.webp"
       },
       {
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-crest.webp",
-        "alt": "Messi 10 Hoodie — AFA 3-Stars Crest"
+        "alt": "La Pulga Signature Hoodie — Pair Pedestal",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/hero-hoodies-pair.webp"
+      },
+      {
+        "alt": "La Pulga Signature Hoodie — AFA Gold Crest Detail",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-crest.webp"
+      },
+      {
+        "alt": "La Pulga Signature Hoodie — Triple Z Embroidery Detail",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-embroidery.webp"
       }
     ],
     "category": "tops",
@@ -182,15 +196,16 @@
       "M",
       "L",
       "XL",
-      "XXL"
+      "XXL",
+      "XS"
     ],
     "colors": [
-      "#68a6d6",
-      "#fafafa",
-      "#0a0a0a"
+      "#4a7c9d",
+      "#0a0a0a",
+      "#b59b6c"
     ],
-    "availability": "coming-soon",
-    "isBlurred": true,
+    "availability": "in-stock",
+    "isBlurred": false,
     "featured": true,
     "isPlaceholder": false
   }

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 
@@ -9,6 +10,16 @@ export default function CartPage() {
   const { state, removeItem, updateQty, totalItems, totalPrice } = useCart();
   const { formatPrice } = useCurrency();
   const items = state.items;
+
+  useEffect(() => {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   if (items.length === 0) {
     return (

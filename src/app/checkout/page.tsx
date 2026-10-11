@@ -54,6 +54,48 @@ export default function CheckoutPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [formError, setFormError] = useState("");
 
+  // Scroll to top helper
+  const scrollToTop = (behavior: ScrollBehavior = "smooth") => {
+    if (typeof window !== "undefined") {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior });
+        if (behavior === "instant") {
+          if (document.documentElement) document.documentElement.scrollTop = 0;
+          if (document.body) document.body.scrollTop = 0;
+        } else {
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          });
+        }
+      } catch {
+        window.scrollTo(0, 0);
+      }
+    }
+  };
+
+  // Scroll to top on page mount
+  useEffect(() => {
+    scrollToTop("instant");
+  }, []);
+
+  // Scroll to top whenever step changes
+  useEffect(() => {
+    scrollToTop("smooth");
+  }, [currentStep]);
+
+  // Scroll to top when an error is reported
+  useEffect(() => {
+    if (formError) {
+      scrollToTop("smooth");
+    }
+  }, [formError]);
+
+  useEffect(() => {
+    if (authError) {
+      scrollToTop("smooth");
+    }
+  }, [authError]);
+
   // Populate data when customer logs in
   useEffect(() => {
     if (customer) {
@@ -90,6 +132,9 @@ export default function CheckoutPage() {
       const res = await login(authEmail, authPassword);
       if (!res.success) {
         setAuthError(res.error || "فشل تسجيل الدخول");
+        scrollToTop("smooth");
+      } else {
+        scrollToTop("smooth");
       }
     } else {
       const res = await register({
@@ -103,6 +148,9 @@ export default function CheckoutPage() {
       });
       if (!res.success) {
         setAuthError(res.error || "فشل إنشاء الحساب");
+        scrollToTop("smooth");
+      } else {
+        scrollToTop("smooth");
       }
     }
     setAuthSubmitting(false);
@@ -195,6 +243,7 @@ export default function CheckoutPage() {
     }
     setGpsSuccessMsg(`✓ تم اعتماد الموقع: ${detectedLocationData.govAr}${detectedLocationData.city ? ` - ${detectedLocationData.city}` : ""}`);
     setDetectedLocationData(null);
+    scrollToTop("smooth");
   };
 
   // Proof Image Upload
@@ -233,6 +282,7 @@ export default function CheckoutPage() {
   const validateStep1 = () => {
     if (!fullName.trim() || !phone.trim()) {
       setFormError("يرجى ملء الاسم الكامل ورقم الهاتف للمتابعة");
+      scrollToTop("smooth");
       return false;
     }
     setFormError("");
@@ -242,6 +292,7 @@ export default function CheckoutPage() {
   const validateStep2 = () => {
     if (!city.trim() || !address.trim()) {
       setFormError("يرجى ملء الحي والعنوان بالتفصيل (الشارع، رقم العقار، الشقة) للمتابعة");
+      scrollToTop("smooth");
       return false;
     }
     setFormError("");
@@ -256,11 +307,13 @@ export default function CheckoutPage() {
     if (!customer) {
       setCurrentStep(1);
       setFormError("يرجى تسجيل الدخول أو إنشاء حساب لإتمام الطلب");
+      scrollToTop("smooth");
       return;
     }
 
     if (!fullName.trim() || !phone.trim() || !city.trim() || !address.trim()) {
       setFormError("يرجى التأكد من ملء جميع بيانات الشحن والتواصل");
+      scrollToTop("smooth");
       return;
     }
 
@@ -268,6 +321,7 @@ export default function CheckoutPage() {
     if (paymentMethod !== "cod") {
       if (paymentMethod === "vodafone_cash" && !paymentReference.trim()) {
         setFormError("يرجى كتابة رقم فودافون كاش الذي قمت بالتحويل منه للتحقق من المعاملة");
+        scrollToTop("smooth");
         return;
       }
       if (!paymentProofUrl) {
@@ -278,6 +332,7 @@ export default function CheckoutPage() {
             ? "يرجى رفع سكرين شوت من إشعار دفع PayPal"
             : "يرجى رفع سكرين شوت من إشعار تحويل إنستاباي لتأكيد الحجز فورياً"
         );
+        scrollToTop("smooth");
         return;
       }
     }
@@ -388,6 +443,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
     } catch (err: any) {
       setStatus("idle");
       setFormError(err.message || "حدث خطأ أثناء معالجة الطلب");
+      scrollToTop("smooth");
     }
   };
 
@@ -454,9 +510,26 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                 key={st.num}
                 className="checkout-step-item"
                 onClick={() => {
-                  if (st.num === 1) setCurrentStep(1);
-                  if (st.num === 2 && validateStep1()) setCurrentStep(2);
-                  if (st.num === 3 && validateStep1() && validateStep2()) setCurrentStep(3);
+                  if (st.num === 1) {
+                    setCurrentStep(1);
+                    scrollToTop("smooth");
+                  }
+                  if (st.num === 2) {
+                    if (validateStep1()) {
+                      setCurrentStep(2);
+                      scrollToTop("smooth");
+                    } else {
+                      scrollToTop("smooth");
+                    }
+                  }
+                  if (st.num === 3) {
+                    if (validateStep1() && validateStep2()) {
+                      setCurrentStep(3);
+                      scrollToTop("smooth");
+                    } else {
+                      scrollToTop("smooth");
+                    }
+                  }
                 }}
                 style={{
                   opacity: isActive ? 1 : isDone ? 0.9 : 0.5,
@@ -725,7 +798,12 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                     <button
                       type="button"
                       onClick={() => {
-                        if (validateStep1()) setCurrentStep(2);
+                        if (validateStep1()) {
+                          setCurrentStep(2);
+                          scrollToTop("smooth");
+                        } else {
+                          scrollToTop("smooth");
+                        }
                       }}
                       className="btn btn-pill-white"
                       style={{ padding: "0.9rem 2rem", fontSize: "1rem" }}
@@ -898,7 +976,10 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                   <div className="checkout-nav-actions">
                     <button
                       type="button"
-                      onClick={() => setCurrentStep(1)}
+                      onClick={() => {
+                        setCurrentStep(1);
+                        scrollToTop("smooth");
+                      }}
                       className="btn btn-outline"
                       style={{ padding: "0.9rem 1.5rem" }}
                     >
@@ -907,7 +988,12 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                     <button
                       type="button"
                       onClick={() => {
-                        if (validateStep2()) setCurrentStep(3);
+                        if (validateStep2()) {
+                          setCurrentStep(3);
+                          scrollToTop("smooth");
+                        } else {
+                          scrollToTop("smooth");
+                        }
                       }}
                       className="btn btn-pill-white"
                       style={{ padding: "0.9rem 2rem", fontSize: "1rem" }}
@@ -1242,7 +1328,10 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                   <div className="checkout-nav-actions">
                     <button
                       type="button"
-                      onClick={() => setCurrentStep(2)}
+                      onClick={() => {
+                        setCurrentStep(2);
+                        scrollToTop("smooth");
+                      }}
                       className="btn btn-outline"
                       style={{ padding: "1rem 1.75rem" }}
                     >
