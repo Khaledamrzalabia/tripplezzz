@@ -15,17 +15,29 @@ export default function CartDrawer() {
   const [shouldRender, setShouldRender] = useState(false);
   const [removingKey, setRemovingKey] = useState<string | null>(null);
 
+  const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (isDrawerOpen) {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
       setShouldRender(true);
       setIsClosing(false);
     } else if (shouldRender && !isClosing) {
       setIsClosing(true);
-      const timer = setTimeout(() => {
+      closeTimerRef.current = setTimeout(() => {
         setShouldRender(false);
         setIsClosing(false);
+        closeTimerRef.current = null;
       }, 280);
-      return () => clearTimeout(timer);
+      return () => {
+        if (closeTimerRef.current) {
+          clearTimeout(closeTimerRef.current);
+          closeTimerRef.current = null;
+        }
+      };
     }
   }, [isDrawerOpen, shouldRender, isClosing]);
 
@@ -33,6 +45,11 @@ export default function CartDrawer() {
     if (isClosing) return;
     setIsClosing(true);
     closeDrawer();
+    closeTimerRef.current = setTimeout(() => {
+      setShouldRender(false);
+      setIsClosing(false);
+      closeTimerRef.current = null;
+    }, 280);
   };
 
   const handleRemove = (productId: string, selectedSize?: string) => {
@@ -45,7 +62,7 @@ export default function CartDrawer() {
   };
 
   useEffect(() => {
-    if (shouldRender) {
+    if (shouldRender && !isClosing) {
       document.body.classList.add("drawer-open");
       document.body.style.overflow = "hidden";
       setTimeout(() => closeBtnRef.current?.focus(), 60);
@@ -57,7 +74,7 @@ export default function CartDrawer() {
       document.body.classList.remove("drawer-open");
       document.body.style.overflow = "";
     };
-  }, [shouldRender]);
+  }, [shouldRender, isClosing]);
 
   // Handle ESC key and focus trap
   useEffect(() => {

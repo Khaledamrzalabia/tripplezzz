@@ -47,7 +47,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
   };
 
   useEffect(() => {
-    if (shouldRender) {
+    if (shouldRender && !isClosing) {
       setTimeout(() => inputRef.current?.focus(), 60);
       document.body.style.overflow = "hidden";
     } else {
@@ -56,7 +56,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [shouldRender]);
+  }, [shouldRender, isClosing]);
 
   useEffect(() => {
     if (!shouldRender || isClosing) return;

@@ -3553,6 +3553,7 @@ select {
 }
 
 .tz-drawer-overlay.closing {
+  pointer-events: none !important;
   animation: fadeOut 0.28s var(--apple-smooth) forwards;
 }
 
@@ -3573,6 +3574,7 @@ select {
 }
 
 .tz-drawer.closing {
+  pointer-events: none !important;
   animation: appleSlideDrawerOut 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
@@ -3960,6 +3962,7 @@ select {
 }
 
 .tz-search-overlay.closing {
+  pointer-events: none !important;
   animation: fadeOut 0.24s var(--apple-smooth) forwards;
 }
 
@@ -3981,6 +3984,7 @@ select {
 }
 
 .tz-search-modal.closing {
+  pointer-events: none !important;
   animation: appleSpotlightOut 0.24s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
