@@ -1424,7 +1424,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                 <span>{subtotal} ج.م</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", color: "var(--clr-text-secondary)" }}>
-                <span>مصاريف الشحن ({currentGov.ar}):</span>
+                <span>مصاريف الشحن ({currentGov.ar} - شحنة واحدة للطلب):</span>
                 <span>{shippingFee} ج.م</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 800, fontSize: "1.2rem", borderTop: "1px solid var(--clr-border)", paddingTop: "0.75rem" }}>
