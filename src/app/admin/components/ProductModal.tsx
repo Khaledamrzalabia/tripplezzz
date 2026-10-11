@@ -208,13 +208,33 @@ export default function ProductModal({
                   <label className="admin-form-label">
                     المجموعة (Collection)
                   </label>
-                  <input
-                    type="text"
-                    value={formData.collection}
-                    onChange={(e) => setFormData({ ...formData, collection: e.target.value })}
-                    placeholder="Core / Stadium / Capsule"
-                    className="admin-form-input"
-                  />
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <select
+                      value={["core", "portugal", "argentina"].includes(formData.collection?.toLowerCase() || "") ? formData.collection.toLowerCase() : "custom"}
+                      onChange={(e) => {
+                        if (e.target.value !== "custom") {
+                          setFormData({ ...formData, collection: e.target.value });
+                        }
+                      }}
+                      className="admin-form-input"
+                      style={{ flex: "1" }}
+                    >
+                      <option value="core">Core Collection</option>
+                      <option value="portugal">Portugal (CR7 / Lusitânia)</option>
+                      <option value="argentina">Argentina (Albiceleste)</option>
+                      <option value="custom">مجموعة مخصصة (Custom)...</option>
+                    </select>
+                    {!["core", "portugal", "argentina"].includes(formData.collection?.toLowerCase() || "") && (
+                      <input
+                        type="text"
+                        value={formData.collection}
+                        onChange={(e) => setFormData({ ...formData, collection: e.target.value })}
+                        placeholder="اسم الكولكشن..."
+                        className="admin-form-input"
+                        style={{ flex: "1" }}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,14 +266,14 @@ export default function ProductModal({
 
                 <div className="admin-form-group">
                   <label className="admin-form-label">
-                    السعر بالدولار ($)
+                    السعر بالجنيه المصري (ج.م / EGP) *
                   </label>
                   <input
                     type="number"
                     min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    placeholder="120"
+                    placeholder="900"
                     className="admin-form-input"
                   />
                   {formData.availability === "coming-soon" && (

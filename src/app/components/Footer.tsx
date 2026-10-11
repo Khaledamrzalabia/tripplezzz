@@ -105,20 +105,20 @@ export default function Footer() {
             <span>&copy; 2026 Triple Z. All rights reserved.</span>
           </div>
 
-          <div className="mockup-footer-currency-row">
-            <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>Currency:</span>
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-              className="tz-currency-select"
-              aria-label="Footer currency selection"
-            >
-              {Object.values(CURRENCIES).map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.code} ({c.symbol.trim()})
-                </option>
-              ))}
-            </select>
+          <div className="mockup-footer-currency-row" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ fontSize: "0.75rem", color: "var(--clr-text-muted)" }}>العملة:</span>
+            <span style={{
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              color: "var(--clr-accent)",
+              border: "1px solid rgba(226, 255, 76, 0.25)",
+              padding: "2px 8px",
+              borderRadius: "4px",
+              background: "rgba(226, 255, 76, 0.05)"
+            }}>
+              🇪🇬 EGP • جنيه مصري
+            </span>
           </div>
         </div>
       </div>

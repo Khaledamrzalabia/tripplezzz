@@ -17,12 +17,8 @@ export default function FeaturedSection({ products: initialProducts }: Props) {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (Array.isArray(data)) {
-          const featured = data.filter((p: Product) => p.featured);
-          if (featured.length > 0) {
-            setProducts(featured);
-          } else if (data.length > 0) {
-            setProducts(data);
-          }
+          const featured = data.filter((p: Product) => Boolean(p.featured));
+          setProducts(featured);
         }
       })
       .catch(() => {});

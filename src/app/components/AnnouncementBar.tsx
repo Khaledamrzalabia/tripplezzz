@@ -17,7 +17,7 @@ export default function AnnouncementBar() {
         <div className="tz-announcement-left">
           <span className="tz-announcement-badge">LIMITED DROP</span>
           <span className="tz-announcement-msg">
-            NEW SEASON LIVE • FREE SHIPPING ON ORDERS OVER $150
+            TRIPLE Z • قطع ليمتد إيديشن بأعداد حصرية محدودة • شحن لكافة محافظات مصر
           </span>
         </div>
 
@@ -28,22 +28,11 @@ export default function AnnouncementBar() {
           </Link>
         </div>
 
-        {/* Right: Currency Selector & Dismiss */}
+        {/* Right: Currency Indicator & Dismiss */}
         <div className="tz-announcement-right">
-          <label htmlFor="currency-select-top" className="sr-only">Select Currency</label>
-          <select
-            id="currency-select-top"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-            className="tz-currency-select"
-            aria-label="Change currency"
-          >
-            {Object.values(CURRENCIES).map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.code} ({c.symbol.trim()})
-              </option>
-            ))}
-          </select>
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--clr-accent)", letterSpacing: "0.08em" }}>
+            EGP • ج.م
+          </span>
 
           <button
             type="button"
