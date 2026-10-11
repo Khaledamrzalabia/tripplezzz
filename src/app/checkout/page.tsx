@@ -108,6 +108,15 @@ export default function CheckoutPage() {
     setAuthSubmitting(false);
   };
 
+  // Detected location confirmation modal state
+  const [detectedLocationData, setDetectedLocationData] = useState<{
+    govEn: string;
+    govAr: string;
+    city: string;
+    street: string;
+    displayName: string;
+  } | null>(null);
+
   // GPS Auto-detect handler
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
@@ -143,26 +152,22 @@ export default function CheckoutPage() {
               stateText.includes(arName) ||
               (data.display_name && data.display_name.includes(arName))
             );
-          });
-
-          if (matchedGov) {
-            setGovernorate(matchedGov.en);
-          }
+          }) || EGYPT_GOVERNORATES[0];
 
           const detectedCity = addr.city || addr.town || addr.suburb || addr.neighbourhood || addr.village || "";
-          if (detectedCity) {
-            setCity(detectedCity);
-          }
-
           const street = addr.road || addr.residential || addr.suburb || "";
-          if (street) {
-            setAddress((prev) => (prev ? prev : `${street} - `));
-          }
 
-          setGpsSuccessMsg("✓ تم تحديد منطقتك بنجاح! يرجى تكملة رقم العقار والدور والشقة.");
+          // Instead of instantly applying without user knowing, prompt confirmation modal
+          setDetectedLocationData({
+            govEn: matchedGov.en,
+            govAr: matchedGov.ar,
+            city: detectedCity,
+            street,
+            displayName: data.display_name || "",
+          });
         } catch (err) {
           console.warn("GPS reverse error:", err);
-          setGpsSuccessMsg("تم التقاط الإحداثيات! يرجى مراجعة المحافظة والعنوان أدناه.");
+          alert("تم التقاط إحداثياتك لكن تعذر قراءة اسم الشارع تلقائياً. يمكنك اختيار المحافظة والحي يدوياً.");
         } finally {
           setDetectingGps(false);
         }
@@ -170,13 +175,26 @@ export default function CheckoutPage() {
       (error) => {
         setDetectingGps(false);
         if (error.code === error.PERMISSION_DENIED) {
-          alert("تم رفض إذن تحديد الموقع. يمكنك اختيار محافظتك وكتابة عنوانك يدوياً بكل سهولة.");
+          alert("تنبيه: إذن تحديد الموقع لم يُمنح في إعدادات المتصفح أو تم رفضه مسبقاً. يمكنك اختيار المحافظة وكتابة العنوان يدوياً بكل سهولة وبدون أي مشكلة.");
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          alert("تعذر قراءة إشارة GPS بدقة حالياً. يمكنك إدخال المحافظة والعنوان يدوياً.");
         } else {
-          alert("تعذر الوصول لموقعك الحالي بدقة. يرجى إدخال العنوان يدوياً.");
+          alert("استغرق تحديد الموقع وقتاً أطول من المعتاد. يرجى اختيار المحافظة والعنوان يدوياً.");
         }
       },
-      { timeout: 12000, enableHighAccuracy: true }
+      { timeout: 15000, enableHighAccuracy: false, maximumAge: 60000 }
     );
+  };
+
+  const handleConfirmDetectedLocation = () => {
+    if (!detectedLocationData) return;
+    setGovernorate(detectedLocationData.govEn);
+    if (detectedLocationData.city) setCity(detectedLocationData.city);
+    if (detectedLocationData.street) {
+      setAddress((prev) => (prev ? prev : `${detectedLocationData.street} - `));
+    }
+    setGpsSuccessMsg(`✓ تم اعتماد الموقع: ${detectedLocationData.govAr}${detectedLocationData.city ? ` - ${detectedLocationData.city}` : ""}`);
+    setDetectedLocationData(null);
   };
 
   // Proof Image Upload
@@ -246,9 +264,22 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (paymentMethod !== "cod" && paymentType === "deposit" && !paymentReference && !paymentProofUrl) {
-      setFormError("يرجى إدخال رقم المعاملة أو رفع صورة تحويل العربون لتأكيد الحجز الفوري");
-      return;
+    // Validation for online payments
+    if (paymentMethod !== "cod") {
+      if (paymentMethod === "vodafone_cash" && !paymentReference.trim()) {
+        setFormError("يرجى كتابة رقم فودافون كاش الذي قمت بالتحويل منه للتحقق من المعاملة");
+        return;
+      }
+      if (!paymentProofUrl) {
+        setFormError(
+          paymentMethod === "vodafone_cash"
+            ? "يرجى رفع سكرين شوت من رسالة تأكيد الدفع بفودافون كاش"
+            : paymentMethod === "paypal"
+            ? "يرجى رفع سكرين شوت من إشعار دفع PayPal"
+            : "يرجى رفع سكرين شوت من إشعار تحويل إنستاباي لتأكيد الحجز فورياً"
+        );
+        return;
+      }
     }
 
     try {
@@ -757,6 +788,47 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                     </button>
                   </div>
 
+                  {/* Detected Location Confirmation Modal / Card */}
+                  {detectedLocationData && (
+                    <div style={{
+                      background: "rgba(226, 255, 76, 0.08)",
+                      border: "2px solid var(--clr-accent)",
+                      borderRadius: "var(--radius-md)",
+                      padding: "1.25rem",
+                      marginBottom: "1.5rem"
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                        <span style={{ fontSize: "1.2rem" }}>🎯</span>
+                        <strong style={{ color: "var(--clr-accent)", fontSize: "1rem" }}>
+                          تم التقاط موقعك! هل تود اعتماده؟
+                        </strong>
+                      </div>
+                      <div style={{ fontSize: "0.9rem", color: "var(--clr-text-primary)", marginBottom: "0.75rem", lineHeight: "1.6" }}>
+                        <div>• <strong>المحافظة:</strong> {detectedLocationData.govAr}</div>
+                        {detectedLocationData.city && <div>• <strong>المنطقة / الحي:</strong> {detectedLocationData.city}</div>}
+                        {detectedLocationData.street && <div>• <strong>الشارع المكتشف:</strong> {detectedLocationData.street}</div>}
+                      </div>
+                      <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                        <button
+                          type="button"
+                          onClick={handleConfirmDetectedLocation}
+                          className="btn btn-pill-white"
+                          style={{ padding: "0.55rem 1.25rem", fontSize: "0.85rem", fontWeight: 800 }}
+                        >
+                          نعم، اعتمد هذا العنوان ✓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDetectedLocationData(null)}
+                          className="btn btn-outline"
+                          style={{ padding: "0.55rem 1rem", fontSize: "0.85rem" }}
+                        >
+                          إلغاء وتعديل يدوياً ✕
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {gpsSuccessMsg && (
                     <div style={{
                       background: "rgba(34, 197, 94, 0.1)",
@@ -963,7 +1035,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                         اختر وسيلة تحويل العربون ({depositAmount} ج.م):
                       </h3>
 
-                      <div className="checkout-payment-channel-grid">
+                      <div className="checkout-payment-channel-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
                         {/* InstaPay */}
                         <div
                           onClick={() => setPaymentMethod("instapay")}
@@ -980,7 +1052,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                             <span>انستا باي (InstaPay)</span>
                           </div>
                           <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
-                            تحويل لحظي عبر تطبيق انستاباي بالرابط أو الـ IPA
+                            سكرين شوت من التحويل فقط
                           </div>
                         </div>
 
@@ -997,10 +1069,30 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                         >
                           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
                             <span>📱</span>
-                            <span>فودافون كاش (Vodafone Cash)</span>
+                            <span>فودافون كاش</span>
                           </div>
                           <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
-                            تحويل فوري إلى رقم المحفظة الرسمي
+                            رقم المحول منه + سكرين شوت
+                          </div>
+                        </div>
+
+                        {/* PayPal */}
+                        <div
+                          onClick={() => setPaymentMethod("paypal")}
+                          style={{
+                            padding: "1rem",
+                            borderRadius: "var(--radius-md)",
+                            border: paymentMethod === "paypal" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
+                            background: paymentMethod === "paypal" ? "rgba(226, 255, 76, 0.05)" : "transparent",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
+                            <span>🌐</span>
+                            <span>PayPal</span>
+                          </div>
+                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
+                            سكرين شوت من الدفع فقط
                           </div>
                         </div>
                       </div>
@@ -1044,7 +1136,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                               gap: "0.75rem"
                             }}>
                               <div style={{ fontSize: "0.85rem" }}>
-                                <span>أو افتح رابط الدفع المباشر في إنستاباي:</span>
+                                <span>أو اضغط لفتح رابط الدفع المباشر في إنستاباي:</span>
                               </div>
                               <a
                                 href="https://ipn.eg/S/migohlmy/instapay/2BdKeD"
@@ -1078,22 +1170,50 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                           </div>
                         )}
 
+                        {paymentMethod === "paypal" && (
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                            <div>
+                              <span style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>حساب PayPal الرسمي:</span>
+                              <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-accent)", letterSpacing: "0.03em" }}>
+                                payments@triple-z.com
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy("payments@triple-z.com", "paypal")}
+                              className="btn btn-outline"
+                              style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}
+                            >
+                              {copiedText === "paypal" ? "✓ تم النسخ" : "نسخ الإيميل 📋"}
+                            </button>
+                          </div>
+                        )}
+
                         {/* Transaction reference & Screenshot Upload */}
                         <div style={{ marginTop: "1.25rem", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "1rem" }}>
-                          <div className="checkout-proof-grid">
-                            <div className="form-group" style={{ marginBottom: 0 }}>
-                              <label className="form-label">رقم الهاتف المحول منه أو رقم العملية</label>
-                              <input
-                                type="text"
-                                value={paymentReference}
-                                onChange={(e) => setPaymentReference(e.target.value)}
-                                className="form-input"
-                                placeholder="مثال: تم التحويل من 010... أو كود المعاملة"
-                              />
-                            </div>
+                          <div className={paymentMethod === "vodafone_cash" ? "checkout-proof-grid" : ""}>
+                            {/* Phone number input required ONLY for Vodafone Cash */}
+                            {paymentMethod === "vodafone_cash" && (
+                              <div className="form-group" style={{ marginBottom: 0 }}>
+                                <label className="form-label">الرقم الذي قمت بالتحويل منه (محفظة فودافون كاش) *</label>
+                                <input
+                                  type="tel"
+                                  required
+                                  value={paymentReference}
+                                  onChange={(e) => setPaymentReference(e.target.value)}
+                                  className="form-input"
+                                  placeholder="010XXXXXXXX"
+                                />
+                              </div>
+                            )}
 
+                            {/* Screenshot Upload for all online payments (InstaPay / Vodafone Cash / PayPal) */}
                             <div className="form-group" style={{ marginBottom: 0 }}>
-                              <label className="form-label">إرفاق سكرين شوت التحويل (Screenshot) *</label>
+                              <label className="form-label">
+                                {paymentMethod === "vodafone_cash"
+                                  ? "ارفع سكرين شوت من رسالة الدفع والتأكيد *"
+                                  : "ارفع سكرين شوت من إشعار التحويل الناجح *"}
+                              </label>
                               <input
                                 type="file"
                                 accept="image/*"

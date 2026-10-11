@@ -21,11 +21,17 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0a",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Triple Z",
+  },
   metadataBase: new URL(
     process.env.SITE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||

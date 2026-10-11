@@ -205,14 +205,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH /api/orders — Update order status (Admin only)
+// PATCH /api/orders — Update order status (Admin or Customer self-cancellation)
 export async function PATCH(req: NextRequest) {
   try {
-    const adminCookie = req.cookies.get("tz_admin_session")?.value;
-    if (!adminCookie) {
-      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
-    }
-
     const pool = getPool();
     if (!pool) {
       return NextResponse.json({ error: "Database not connected" }, { status: 503 });
@@ -221,6 +216,37 @@ export async function PATCH(req: NextRequest) {
     const { id, status } = await req.json();
     if (!id || !status) {
       return NextResponse.json({ error: "Order ID and status required" }, { status: 400 });
+    }
+
+    const adminCookie = req.cookies.get("tz_admin_session")?.value;
+    const customerToken = req.cookies.get("tz_customer_token")?.value;
+    const customerId = customerToken ? verifyCustomerToken(customerToken) : null;
+
+    // Customer cancellation flow
+    if (status === "cancelled" && customerId && !adminCookie) {
+      const checkOrder = await pool.query(
+        "SELECT * FROM orders WHERE id = $1 AND customer_id = $2",
+        [id, customerId]
+      );
+      if (checkOrder.rows.length === 0) {
+        return NextResponse.json({ error: "Order not found or unauthorized" }, { status: 404 });
+      }
+
+      const existingOrder = checkOrder.rows[0];
+      if (["shipped", "delivered"].includes(existingOrder.status)) {
+        return NextResponse.json({ error: "لا يمكن إلغاء الطلب بعد خروجه مع مندوب الشحن. يرجى التواصل معنا مباشرة." }, { status: 400 });
+      }
+
+      const res = await pool.query(
+        "UPDATE orders SET status = 'cancelled', updated_at = NOW() WHERE id = $1 RETURNING *",
+        [id]
+      );
+      return NextResponse.json({ success: true, order: mapRowToOrder(res.rows[0]) });
+    }
+
+    // Admin flow
+    if (!adminCookie) {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
     }
 
     const res = await pool.query(

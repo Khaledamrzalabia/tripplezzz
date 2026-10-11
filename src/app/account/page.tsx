@@ -27,6 +27,8 @@ export default function AccountPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
 
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+
   const fetchOrders = async () => {
     try {
       setOrdersLoading(true);
@@ -39,6 +41,59 @@ export default function AccountPage() {
       console.error(e);
     } finally {
       setOrdersLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async (order: any) => {
+    const confirmCancel = window.confirm(
+      `هل أنت متأكد من رغبتك في إلغاء الطلب #${order.id}؟\nسيتم تحويلك مباشرة إلى رسائل إنستغرام لإخطار إدارة Triple Z بالإلغاء.`
+    );
+    if (!confirmCancel) return;
+
+    try {
+      setCancellingOrderId(order.id);
+      const res = await fetch("/api/orders", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: order.id, status: "cancelled" }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "تعذر إلغاء الطلب");
+        return;
+      }
+
+      // Format cancellation message for Instagram DM
+      const igCancelMessage = `مرحباً Triple Z 👋
+أرغب في إلغاء طلبي المسجل عبر الموقع.
+
+🛑 تفاصيل الطلب الملغى:
+- رقم الطلب: #${order.id}
+- الاسم: ${order.customerName}
+- رقم الهاتف: ${order.phone}
+- إجمالي الفاتورة: ${order.total} ج.م
+- طريقة الدفع: ${order.paymentMethod}
+
+يرجى تأكيد إلغاء تجهيز الشحنة. شكراً لكم!`;
+
+      // Copy cancellation message to clipboard
+      try {
+        if (typeof navigator !== "undefined" && navigator.clipboard) {
+          navigator.clipboard.writeText(igCancelMessage);
+        }
+      } catch {}
+
+      // Open Instagram Direct with triplez1606
+      const igUrl = "https://ig.me/m/triplez1606";
+      window.open(igUrl, "_blank", "noopener,noreferrer");
+
+      alert("تم تسجيل إلغاء الطلب بنجاح وتم فتح محادثة إنستغرام لرسالة الإلغاء. تم نسخ رسالة الإلغاء في الحافظة للصقها مباشرة!");
+      fetchOrders();
+    } catch (err: any) {
+      alert("حدث خطأ أثناء إلغاء الطلب: " + (err.message || "خطأ"));
+    } finally {
+      setCancellingOrderId(null);
     }
   };
 
@@ -207,7 +262,7 @@ export default function AccountPage() {
                     </div>
 
                     {/* Order items */}
-                    <div style={{ background: "rgba(255, 255, 255, 0.02)", borderRadius: "var(--radius-sm)", padding: "0.75rem" }}>
+                    <div style={{ background: "rgba(255, 255, 255, 0.02)", borderRadius: "var(--radius-sm)", padding: "0.75rem", marginBottom: "1rem" }}>
                       <span style={{ fontSize: "0.8rem", color: "var(--clr-text-muted)", display: "block", marginBottom: "0.5rem" }}>القطع المطلوبة:</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                         {order.items.map((it: any, idx: number) => (
@@ -219,6 +274,42 @@ export default function AccountPage() {
                           </div>
                         ))}
                       </div>
+                    </div>
+
+                    {/* Order Actions */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem", paddingTop: "0.5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ fontSize: "0.8rem", color: "var(--clr-text-muted)" }}>
+                        {order.status === "cancelled" ? (
+                          <span style={{ color: "#ef4444" }}>تم إلغاء هذا الطلب</span>
+                        ) : ["shipped", "delivered"].includes(order.status) ? (
+                          <span style={{ color: "var(--clr-accent)" }}>الطلب قيد التوصيل مع المندوب</span>
+                        ) : (
+                          <span>يمكنك إلغاء الطلب قبل تحويله للشحن</span>
+                        )}
+                      </div>
+
+                      {["pending", "confirmed", "preparing"].includes(order.status) && (
+                        <button
+                          type="button"
+                          onClick={() => handleCancelOrder(order)}
+                          disabled={cancellingOrderId === order.id}
+                          style={{
+                            padding: "0.4rem 0.9rem",
+                            borderRadius: "var(--radius-sm)",
+                            border: "1px solid rgba(239, 68, 68, 0.5)",
+                            background: "rgba(239, 68, 68, 0.1)",
+                            color: "#f87171",
+                            fontSize: "0.82rem",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.4rem"
+                          }}
+                        >
+                          {cancellingOrderId === order.id ? "جاري الإلغاء..." : "إلغاء الطلب وإشعار إنستغرام ↗"}
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
