@@ -8,30 +8,40 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/product-front-hoodie-pedestal.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/product-front-hoodie-pedestal.webp",
         "alt": "La Pulga Signature Hoodie — Front Pedestal View"
       },
       {
-        "src": "/products/triple-z-signature-hoodie.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/triple-z-signature-hoodie.webp",
         "alt": "La Pulga Signature Hoodie — Flatlay View"
       },
       {
-        "src": "/hero-hoodies-pair.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/hero-hoodies-pair.webp",
         "alt": "La Pulga Signature Hoodie — Pair Pedestal"
       },
       {
-        "src": "/craft/craft-crest.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-crest.webp",
         "alt": "La Pulga Signature Hoodie — AFA Gold Crest Detail"
       },
       {
-        "src": "/craft/craft-embroidery.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-embroidery.webp",
         "alt": "La Pulga Signature Hoodie — Triple Z Embroidery Detail"
       }
     ],
     "category": "tops",
     "collection": "argentina",
-    "sizes": ["S", "M", "L", "XL", "XXL"],
-    "colors": ["#4a7c9d", "#0a0a0a", "#b59b6c"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "#4a7c9d",
+      "#0a0a0a",
+      "#b59b6c"
+    ],
     "availability": "coming-soon",
     "isBlurred": true,
     "featured": true,
@@ -46,18 +56,28 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/portugal-heritage-hoodie.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/portugal-heritage-hoodie.webp",
         "alt": "Portugal Heritage Hoodie"
       },
       {
-        "src": "/campaign/banner-portugal.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/campaign/banner-portugal.webp",
         "alt": "Portugal Heritage Hoodie — Campaign Look"
       }
     ],
     "category": "tops",
     "collection": "portugal",
-    "sizes": ["S", "M", "L", "XL", "XXL"],
-    "colors": ["#8b1e28", "#1c4a2b", "#0a0a0a"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "#8b1e28",
+      "#1c4a2b",
+      "#0a0a0a"
+    ],
     "availability": "coming-soon",
     "isBlurred": true,
     "featured": true,
@@ -72,18 +92,27 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/stadium-track-jacket.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/stadium-track-jacket.webp",
         "alt": "Stadium Track Jacket"
       },
       {
-        "src": "/craft/craft-stripe.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-stripe.webp",
         "alt": "Stadium Track Jacket — Sun Emblem Detail"
       }
     ],
     "category": "outerwear",
     "collection": "stadium",
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["#162332", "#c9a96e", "#0a0a0a"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "#162332",
+      "#c9a96e",
+      "#0a0a0a"
+    ],
     "availability": "coming-soon",
     "isBlurred": true,
     "featured": true,
@@ -98,18 +127,28 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/pitch-black-tee.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/pitch-black-tee.webp",
         "alt": "Pitch Black Tee"
       },
       {
-        "src": "/craft/craft-embroidery.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-embroidery.webp",
         "alt": "Pitch Black Tee — Gold Thread Detail"
       }
     ],
     "category": "tops",
     "collection": "core",
-    "sizes": ["S", "M", "L", "XL", "XXL"],
-    "colors": ["#0a0a0a", "#c9a96e", "#2a2a2a"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "#0a0a0a",
+      "#c9a96e",
+      "#2a2a2a"
+    ],
     "availability": "coming-soon",
     "isBlurred": true,
     "featured": true,
@@ -124,22 +163,32 @@
     "currency": "USD",
     "images": [
       {
-        "src": "/products/product-messi-back-pedestal.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/product-messi-back-pedestal.webp",
         "alt": "Messi 10 Hoodie — Back Numbering"
       },
       {
-        "src": "/products/argentina-hoodie-dark.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/argentina-hoodie-dark.webp",
         "alt": "Messi 10 Hoodie — Front View"
       },
       {
-        "src": "/craft/craft-crest.webp",
+        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/craft/craft-crest.webp",
         "alt": "Messi 10 Hoodie — AFA 3-Stars Crest"
       }
     ],
     "category": "tops",
     "collection": "argentina",
-    "sizes": ["S", "M", "L", "XL", "XXL"],
-    "colors": ["#68a6d6", "#fafafa", "#0a0a0a"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "#68a6d6",
+      "#fafafa",
+      "#0a0a0a"
+    ],
     "availability": "coming-soon",
     "isBlurred": true,
     "featured": true,
