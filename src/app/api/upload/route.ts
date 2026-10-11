@@ -4,6 +4,7 @@ import path from "path";
 import crypto from "crypto";
 
 import { guardMultiSignalRateLimit } from "../../../lib/rateLimit";
+import { uploadToR2, isR2Configured } from "../../../lib/r2";
 import { supabaseAdmin, isSupabaseConfigured } from "../../../lib/supabase";
 
 const ALLOWED_MIME_TYPES = new Set([
@@ -69,7 +70,25 @@ export async function POST(request: Request) {
     const safeHash = crypto.randomBytes(16).toString("hex");
     const filename = `${Date.now()}_${safeHash}${ext}`;
 
-    // 5. Try Supabase Storage first if configured
+    // 5. Cloudflare R2 Object Storage (Zero Egress, High Performance)
+    if (isR2Configured) {
+      try {
+        const publicUrl = await uploadToR2({
+          key: `products/${filename}`,
+          buffer,
+          contentType: file.type,
+        });
+
+        return NextResponse.json({
+          success: true,
+          url: publicUrl,
+        });
+      } catch (r2Err) {
+        console.error("Cloudflare R2 upload error, attempting fallback:", r2Err);
+      }
+    }
+
+    // 6. Fallback: Supabase Storage if configured
     if (isSupabaseConfigured && supabaseAdmin) {
       try {
         const { data, error } = await supabaseAdmin.storage
