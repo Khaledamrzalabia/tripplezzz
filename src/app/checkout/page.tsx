@@ -381,10 +381,15 @@ export default function CheckoutPage() {
 
       setStatus("success");
 
-      // Format Instagram order confirmation message
-      const itemsList = state.items
-        .map((it) => `• ${it.quantity}× ${it.product.name}${it.selectedSize ? ` (${it.selectedSize})` : ""}`)
-        .join("\n");
+      // Format Instagram order confirmation message with comprehensive details
+      const itemsDetailedList = state.items
+        .map((it, idx) => {
+          const sizeStr = it.selectedSize ? `المقاس: ${it.selectedSize}` : "المقاس: Free Size";
+          const colorStr = it.selectedColor ? ` | اللون: ${it.selectedColor}` : "";
+          const priceStr = it.product.price ? ` (${it.product.price} ج.م للقطعة)` : "";
+          return `  ${idx + 1}. ${it.product.name}${priceStr}\n     ▫️ الكمية: ${it.quantity} قطعة | ${sizeStr}${colorStr}`;
+        })
+        .join("\n\n");
 
       const paymentMethodArabic =
         paymentMethod === "instapay"
@@ -396,21 +401,34 @@ export default function CheckoutPage() {
           : "الدفع عند الاستلام (كاش)";
 
       const igOrderMessage = `مرحباً Triple Z 👋
-أتممت طلبي عبر الموقع برقم: #${data.orderId}
+أتممت طلبي بنجاح عبر الموقع! يرجى تأكيد استلامه وتجهيزه للشحن 📦⚡
 
-📋 بيانات العميل:
-- الاسم: ${fullName.trim()}
-- الهاتف: ${phone.trim()}
-- العنوان: ${currentGov.ar} — ${city} (${address.trim()})
-${notes && notes.trim() ? `- ملاحظات: ${notes.trim()}\n` : ""}
-👕 القطع المطلوبة:
-${itemsList}
+═══════════════════════
+🆔 رقم الطلب: #${data.orderId}
+📅 التاريخ: ${new Date().toLocaleDateString("ar-EG", { dateStyle: "full" })}
+═══════════════════════
 
-💵 إجمالي الفاتورة: ${grandTotal} ج.م
-- طريقة الدفع: ${paymentMethodArabic}
-${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون المودع (30% أولوية تسليم): ${depositAmount} ج.م (المتبقي عند الاستلام: ${remainingAmount} ج.م)` : "- الدفع: عند الاستلام / بالكامل"}
+👤 بيانات العميل للتسليم:
+• الاسم بالكامل: ${fullName.trim()}
+• رقم الهاتف (للاتصال): ${phone.trim()}
+${whatsapp && whatsapp.trim() && whatsapp.trim() !== phone.trim() ? `• رقم الواتساب: ${whatsapp.trim()}\n` : ""}${email && email.trim() ? `• البريد الإلكتروني: ${email.trim()}\n` : ""}
+📍 عنوان التوصيل والشحن:
+• المحافظة: ${currentGov.ar} (${currentGov.en})
+• الحي / المدينة: ${city.trim()}
+• تفاصيل العنوان: ${address.trim()}
+${notes && notes.trim() ? `• ملاحظات للمندوب: ${notes.trim()}\n` : ""}
+👕 تفاصيل المنتجات والقطع المطلوبة (${state.items.reduce((acc, it) => acc + it.quantity, 0)} قطع):
+${itemsDetailedList}
 
-أرجو تأكيد استلام الطلب وشحنه بأسرع وقت. شكراً لكم!`;
+💳 تفاصيل الدفع والحسابات:
+• طريقة الدفع: ${paymentMethodArabic}
+• نظام السداد: ${paymentType === "deposit" && paymentMethod !== "cod" ? "عربون حجز أولوية (30%)" : "الدفع عند الاستلام / بالكامل"}
+• إجمالي المنتجات: ${subtotal} ج.م
+• مصاريف الشحن: ${shippingFee} ج.م
+• إجمالي الفاتورة: ${grandTotal} ج.م
+${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون المحول: ${depositAmount} ج.م\n• المتبقي عند الاستلام: ${remainingAmount} ج.م\n` : ""}${paymentReference && paymentReference.trim() ? `• رقم المعاملة / المحفظة: ${paymentReference.trim()}\n` : ""}
+═══════════════════════
+✨ تم نسخ هذه الرسالة تلقائياً لتسهيل تأكيد الحجز فوراً. شكراً لكم!`;
 
       // Copy to clipboard immediately inside user click gesture
       try {

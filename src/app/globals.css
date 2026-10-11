@@ -8539,6 +8539,185 @@ body.drawer-open {
   flex-wrap: wrap;
 }
 
+/* Instagram Auto-Redirect Loading Screen Overlay */
+.order-conf-redirect-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(6, 8, 12, 0.94);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease;
+  direction: rtl;
+}
+
+.order-conf-redirect-card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  background: linear-gradient(180deg, rgba(22, 27, 38, 0.98) 0%, rgba(13, 16, 24, 0.98) 100%) padding-box,
+              linear-gradient(135deg, #f09433 0%, #dc2743 45%, #bc1888 75%, #c9a96e 100%) border-box;
+  border: 1.5px solid transparent;
+  border-radius: 28px;
+  padding: clamp(2rem, 5vw, 2.75rem);
+  text-align: center;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(220, 39, 67, 0.25);
+  animation: appleIslandEntrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+.order-conf-redirect-card::before {
+  content: "";
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(220, 39, 67, 0.35) 0%, rgba(201, 169, 110, 0.2) 60%, transparent 100%);
+  filter: blur(35px);
+  pointer-events: none;
+}
+
+.order-conf-countdown-ring-wrap {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-conf-countdown-number {
+  font-family: var(--font-display, sans-serif);
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, #e2ff4c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: countdownPulse 1s infinite ease-in-out;
+}
+
+@keyframes countdownPulse {
+  0% { transform: scale(0.92); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(0.92); opacity: 0.85; }
+}
+
+.order-conf-ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.order-conf-copied-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10b981;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.45rem 1.15rem;
+  border-radius: 100px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.order-conf-redirect-heading {
+  font-size: clamp(1.35rem, 3.8vw, 1.85rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.85rem;
+  line-height: 1.35;
+}
+
+.order-conf-redirect-subtext {
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  color: var(--clr-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.order-conf-redirect-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.75rem;
+  text-align: right;
+  font-size: 0.88rem;
+}
+
+.order-conf-step-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #e5e7eb;
+}
+
+.order-conf-redirect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 1.75rem;
+  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.05rem;
+  border-radius: 100px;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(220, 39, 67, 0.45);
+  transition: all 0.25s ease;
+  margin-bottom: 0.85rem;
+  cursor: pointer;
+  border: none;
+}
+
+.order-conf-redirect-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(220, 39, 67, 0.6);
+  color: #fff;
+}
+
+.order-conf-redirect-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.order-conf-cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--clr-text-secondary);
+  padding: 0.65rem 1.25rem;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.order-conf-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 /* =========================================================
    CHECKOUT MOBILE OPTIMIZATION
    ========================================================= */
