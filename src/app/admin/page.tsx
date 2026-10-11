@@ -9,6 +9,7 @@ import AdminHeader, { type AdminTab } from "./components/AdminHeader";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminOrders from "./components/AdminOrders";
 import AdminProducts from "./components/AdminProducts";
+import AdminShipping from "./components/AdminShipping";
 import ProductModal, { type ProductFormData } from "./components/ProductModal";
 import PaymentProofModal from "./components/PaymentProofModal";
 
@@ -342,6 +343,11 @@ export default function AdminPage() {
             onQuickFeaturedToggle={handleQuickFeaturedToggle}
             onQuickStatusChange={handleQuickStatusChange}
           />
+        )}
+
+        {/* Tab 4: Shipping Rates Management View */}
+        {activeTab === "shipping" && (
+          <AdminShipping />
         )}
       </div>
 

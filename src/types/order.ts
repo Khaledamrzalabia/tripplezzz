@@ -50,7 +50,13 @@ export interface Order {
   updatedAt: string;
 }
 
-export const EGYPT_GOVERNORATES = [
+export interface GovernorateShipping {
+  en: string;
+  ar: string;
+  shipping: number;
+}
+
+export const EGYPT_GOVERNORATES: GovernorateShipping[] = [
   { en: "Cairo", ar: "القاهرة", shipping: 60 },
   { en: "Giza", ar: "الجيزة", shipping: 60 },
   { en: "Alexandria", ar: "الإسكندرية", shipping: 70 },

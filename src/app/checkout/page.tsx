@@ -7,7 +7,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
-import { EGYPT_GOVERNORATES, type PaymentMethod, type PaymentType } from "../../types/order";
+import { EGYPT_GOVERNORATES, type GovernorateShipping, type PaymentMethod, type PaymentType } from "../../types/order";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -32,6 +32,23 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+
+  // Dynamic Shipping Rates from Admin
+  const [shippingRates, setShippingRates] = useState<GovernorateShipping[]>(EGYPT_GOVERNORATES);
+
+  // Fetch active admin shipping rates on mount
+  useEffect(() => {
+    fetch("/api/shipping")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setShippingRates(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not load dynamic shipping rates, using defaults:", err);
+      });
+  }, []);
 
   // Step 2: Shipping Details
   const [governorate, setGovernorate] = useState(EGYPT_GOVERNORATES[0].en);
@@ -112,9 +129,9 @@ export default function CheckoutPage() {
     }
   }, [customer]);
 
-  // Shipping calculation
-  const currentGov = EGYPT_GOVERNORATES.find((g) => g.en === governorate) || EGYPT_GOVERNORATES[0];
-  const shippingFee = currentGov.shipping;
+  // Shipping calculation (Dynamic admin-configured rates)
+  const currentGov = shippingRates.find((g) => g.en === governorate) || shippingRates[0] || EGYPT_GOVERNORATES[0];
+  const shippingFee = currentGov ? currentGov.shipping : 60;
   const subtotal = totalPrice;
   const grandTotal = subtotal + shippingFee;
 
@@ -193,14 +210,14 @@ export default function CheckoutPage() {
 
           // Auto-match governorate
           const stateText = (addr.state || addr.province || addr.governorate || "").toLowerCase();
-          const matchedGov = EGYPT_GOVERNORATES.find((g) => {
+          const matchedGov = shippingRates.find((g) => {
             const arName = g.ar.replace("محافظة", "").trim();
             return (
               stateText.includes(g.en.toLowerCase()) ||
               stateText.includes(arName) ||
               (data.display_name && data.display_name.includes(arName))
             );
-          }) || EGYPT_GOVERNORATES[0];
+          }) || shippingRates[0] || EGYPT_GOVERNORATES[0];
 
           const detectedCity = addr.city || addr.town || addr.suburb || addr.neighbourhood || addr.village || "";
           const street = addr.road || addr.residential || addr.suburb || "";
@@ -947,7 +964,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                         onChange={(e) => setGovernorate(e.target.value)}
                         className="form-input"
                       >
-                        {EGYPT_GOVERNORATES.map((g) => (
+                        {shippingRates.map((g) => (
                           <option key={g.en} value={g.en}>
                             {g.ar} - شحن: {g.shipping} ج.م
                           </option>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPool } from "../../../lib/db";
 import { verifyCustomerToken } from "../../../lib/customers.server";
+import { getShippingRates } from "../../../lib/shipping.server";
 import { EGYPT_GOVERNORATES, type Order, type PaymentMethod, type PaymentType } from "../../../types/order";
 
 // GET /api/orders — List orders (Admin or Customer self-orders)
@@ -142,13 +143,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 3. Verified Egyptian shipping fee lookup
+    // 3. Verified Egyptian shipping fee lookup from admin settings
+    const activeRates = await getShippingRates();
     let verifiedShipping = 70; // safe default
-    const matchedGov = EGYPT_GOVERNORATES.find(
+    const matchedGov = activeRates.find(
       (g) => governorate.includes(g.en) || governorate.includes(g.ar)
     );
     if (matchedGov) {
-      verifiedShipping = matchedGov.shipping;
+      verifiedShipping = Number(matchedGov.shipping) || 0;
     }
 
     const verifiedTotal = verifiedSubtotal + verifiedShipping;

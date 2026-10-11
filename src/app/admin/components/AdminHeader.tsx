@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export type AdminTab = "dashboard" | "orders" | "products";
+export type AdminTab = "dashboard" | "orders" | "products" | "shipping";
 
 interface Props {
   activeTab: AdminTab;
@@ -109,6 +109,15 @@ export default function AdminHeader({
           <span className="admin-segment-badge">
             {productsCount}
           </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("shipping")}
+          className={`admin-segment-btn ${activeTab === "shipping" ? "active" : ""}`}
+        >
+          <span className="admin-segment-icon">🚚</span>
+          <span>أسعار الشحن</span>
         </button>
       </nav>
     </header>
