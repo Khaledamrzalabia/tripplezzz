@@ -19,6 +19,7 @@ export default function AdminShipping() {
   const [search, setSearch] = useState("");
   const [regionFilter, setRegionFilter] = useState("all");
   const [bulkPrice, setBulkPrice] = useState("");
+  const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -44,13 +45,16 @@ export default function AdminShipping() {
     fetchRates();
   }, []);
 
-  const handlePriceChange = (enName: string, newPrice: string) => {
-    const val = Number(newPrice);
-    setRates((prev) =>
-      prev.map((r) =>
-        r.en === enName ? { ...r, shipping: isNaN(val) ? 0 : Math.max(0, val) } : r
-      )
-    );
+  const handlePriceChange = (enName: string, newText: string) => {
+    setInputValues((prev) => ({ ...prev, [enName]: newText }));
+    if (newText.trim() !== "") {
+      const val = Number(newText);
+      if (!isNaN(val) && val >= 0) {
+        setRates((prev) =>
+          prev.map((r) => (r.en === enName ? { ...r, shipping: val } : r))
+        );
+      }
+    }
     setSaveSuccessMsg("");
   };
 
@@ -60,10 +64,19 @@ export default function AdminShipping() {
       setSaveSuccessMsg("");
       setErrorMsg("");
 
+      const finalRates = rates.map((r) => {
+        const raw = inputValues[r.en];
+        if (raw !== undefined && raw.trim() !== "") {
+          const val = Number(raw);
+          return { ...r, shipping: isNaN(val) ? r.shipping : Math.max(0, val) };
+        }
+        return r;
+      });
+
       const res = await fetch("/api/shipping", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rates }),
+        body: JSON.stringify({ rates: finalRates }),
       });
 
       const data = await res.json();
@@ -71,7 +84,8 @@ export default function AdminShipping() {
         throw new Error(data.error || "فشل حفظ أسعار الشحن");
       }
 
-      setRates(data.rates || rates);
+      setRates(data.rates || finalRates);
+      setInputValues({});
       setSaveSuccessMsg("✓ تم حفظ جميع أسعار الشحن بنجاح وسيتعامل بها المتجر فوراً!");
       setTimeout(() => setSaveSuccessMsg(""), 4000);
     } catch (err: any) {
@@ -112,7 +126,7 @@ export default function AdminShipping() {
 
   const handleApplyBulk = () => {
     const price = Number(bulkPrice);
-    if (isNaN(price) || price < 0) {
+    if (isNaN(price) || price < 0 || bulkPrice.trim() === "") {
       alert("يرجى إدخال سعر صحيح لتطبيقه.");
       return;
     }
@@ -121,6 +135,11 @@ export default function AdminShipping() {
     setRates((prev) =>
       prev.map((r) => (filteredEnNames.has(r.en) ? { ...r, shipping: price } : r))
     );
+    const updatedInputs = { ...inputValues };
+    filteredEnNames.forEach((name) => {
+      updatedInputs[name] = String(price);
+    });
+    setInputValues(updatedInputs);
     setBulkPrice("");
     setSaveSuccessMsg(`✓ تم تطبيق ${price} ج.م على ${filteredRates.length} محافظة. تذكر الضغط على "حفظ التغييرات" لتثبيتها.`);
   };
@@ -360,7 +379,7 @@ export default function AdminShipping() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <input
                 type="number"
-                value={gov.shipping}
+                value={inputValues[gov.en] !== undefined ? inputValues[gov.en] : gov.shipping}
                 onChange={(e) => handlePriceChange(gov.en, e.target.value)}
                 min="0"
                 step="5"

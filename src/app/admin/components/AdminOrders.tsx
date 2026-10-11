@@ -55,7 +55,16 @@ export default function AdminOrders({
   }, [orders, search, filterStatus, filterPayment]);
 
   const handleCopyAddress = (order: Order) => {
-    const text = `العميل: ${order.customerName}\nالهاتف: ${order.phone}\nالمحافظة: ${order.governorate} - ${order.city}\nالعنوان: ${order.address}\nملاحظات: ${order.notes || "لا يوجد"}\nالمطلوب تحصيله: ${order.paymentType === "deposit" ? order.remainingAmount : order.total} ج.م`;
+    let amountText = "";
+    if (order.paymentMethod === "cod") {
+      amountText = `${order.total} ج.م (تحصيل كاش كامل عند الاستلام)`;
+    } else if (order.paymentType === "deposit") {
+      amountText = `${order.remainingAmount} ج.م (متبقي بعد دفع العربون)`;
+    } else {
+      amountText = "0 ج.م (مدفوع بالكامل أونلاين - لا يُحصل أي مبلغ)";
+    }
+
+    const text = `العميل: ${order.customerName}\nالهاتف: ${order.phone}\nالمحافظة: ${order.governorate} - ${order.city}\nالعنوان: ${order.address}\nملاحظات: ${order.notes || "لا يوجد"}\nالمطلوب تحصيله: ${amountText}`;
     navigator.clipboard.writeText(text);
     setCopiedId(order.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -460,14 +469,18 @@ export default function AdminOrders({
                               : "💵 كاش عند الاستلام"}
                           </span>
 
-                          {o.paymentType === "deposit" ? (
+                          {o.paymentMethod === "cod" ? (
+                            <span style={{ fontSize: "0.74rem", color: "#f59e0b", display: "block", marginTop: "0.2rem" }}>
+                              تحصيل كامل ({o.total} ج.م)
+                            </span>
+                          ) : o.paymentType === "deposit" ? (
                             <div style={{ fontSize: "0.76rem", color: "var(--clr-accent)", marginTop: "0.2rem" }}>
                               عربون: <strong>{o.depositAmount} ج.م</strong>
                               <div style={{ color: "#f59e0b" }}>متبقي: {o.remainingAmount} ج.م</div>
                             </div>
                           ) : (
-                            <span style={{ fontSize: "0.74rem", color: "#10b981" }}>
-                              مدفوع بالكامل (100%)
+                            <span style={{ fontSize: "0.74rem", color: "#10b981", display: "block", marginTop: "0.2rem" }}>
+                              مدفوع بالكامل أونلاين (100%)
                             </span>
                           )}
 

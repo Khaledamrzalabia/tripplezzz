@@ -68,7 +68,14 @@ export default function OrderConfirmationPage() {
       navigator.clipboard.writeText(textToCopy).catch(() => {});
     }
 
-    // 3. Start 5-second countdown (5 to 0) to open Instagram Direct automatically
+    // 3. Start 5-second countdown (5 to 0) to open Instagram Direct automatically (ONLY ONCE per order)
+    const alreadyRedirected = typeof window !== "undefined" && Boolean(sessionStorage.getItem("tz_redirected_" + orderId));
+    if (alreadyRedirected) {
+      setCountdown(null);
+      setIsRedirectCancelled(true);
+      return;
+    }
+
     let secondsLeft = 5;
     countdownIntervalRef.current = setInterval(() => {
       secondsLeft -= 1;
@@ -76,6 +83,11 @@ export default function OrderConfirmationPage() {
 
       if (secondsLeft <= 0) {
         if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.setItem("tz_redirected_" + orderId, "true");
+          } catch {}
+        }
         window.location.href = instagramDmUrl;
       }
     }, 1000);
@@ -96,6 +108,11 @@ export default function OrderConfirmationPage() {
   const handleImmediateRedirect = () => {
     if (countdownIntervalRef.current) {
       clearInterval(countdownIntervalRef.current);
+    }
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("tz_redirected_" + orderId, "true");
+      } catch {}
     }
     window.location.href = instagramDmUrl;
   };

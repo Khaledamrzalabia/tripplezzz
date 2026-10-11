@@ -97,7 +97,17 @@ export async function POST(req: NextRequest) {
       paymentReference,
     } = body;
 
-    if (!customerName || !email || !phone || !governorate || !city || !address) {
+    const cleanPhone = (phone || "").replace(/[\s\-\+]/g, "").replace(/^20/, "");
+    if (!cleanPhone || !/^01[0125][0-9]{8}$/.test(cleanPhone)) {
+      return NextResponse.json(
+        { error: "يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم (يبدأ بـ 010 أو 011 أو 012 أو 015)" },
+        { status: 400 }
+      );
+    }
+
+    const safeEmail = (email && email.trim()) || `${cleanPhone}@customer.triplez.com`;
+
+    if (!customerName || !governorate || !city || !address) {
       return NextResponse.json({ error: "جميع بيانات العميل والعنوان مطلوبة" }, { status: 400 });
     }
 
@@ -105,37 +115,59 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "السلة فارغة" }, { status: 400 });
     }
 
-    // 1. SECURITY & PRICE INTEGRITY: Fetch verified products from DB
+    // 1. SECURITY & AVAILABILITY INTEGRITY: Fetch verified products from DB
     const productIds = items.map((it: any) => it.productId).filter(Boolean);
     const dbRes = await pool.query(
-      "SELECT id, name, price, images FROM products WHERE id = ANY($1::varchar[])",
+      "SELECT id, name, price, images, availability FROM products WHERE id = ANY($1::varchar[])",
       [productIds]
     );
 
-    const priceMap = new Map<string, { price: number; name: string; img?: string }>();
+    const productMap = new Map<string, { price: number; name: string; img?: string; availability?: string }>();
     for (const r of dbRes.rows) {
       const imgs = Array.isArray(r.images) ? r.images : (typeof r.images === "string" ? JSON.parse(r.images) : []);
-      priceMap.set(r.id, {
+      productMap.set(r.id, {
         price: r.price !== null && r.price !== undefined ? Number(r.price) : 0,
         name: r.name,
         img: imgs[0]?.src || "/hero.jpg",
+        availability: r.availability || "in-stock",
       });
     }
 
-    // 2. Validate and compute genuine subtotal
+    // 2. Validate availability and compute genuine subtotal
     let verifiedSubtotal = 0;
     const verifiedItems = [];
 
     for (const item of items) {
-      const verified = priceMap.get(item.productId);
+      const verified = productMap.get(item.productId);
+      if (!verified) {
+        return NextResponse.json(
+          { error: `المنتج (${item.productName || item.productId}) لم يعد متاحاً بالمتجر` },
+          { status: 400 }
+        );
+      }
+
+      if (verified.availability === "out-of-stock") {
+        return NextResponse.json(
+          { error: `عذراً، نفدت الكمية من المنتج (${verified.name})` },
+          { status: 400 }
+        );
+      }
+
+      if (verified.availability === "coming-soon") {
+        return NextResponse.json(
+          { error: `المنتج (${verified.name}) لم يتم إطلاقه للبيع بعد (Coming Soon)` },
+          { status: 400 }
+        );
+      }
+
       const qty = Math.max(1, Math.min(20, Math.floor(Number(item.quantity) || 1)));
-      const unitPrice = verified ? verified.price : (Number(item.price) || 0);
+      const unitPrice = verified.price;
 
       verifiedSubtotal += unitPrice * qty;
       verifiedItems.push({
         productId: item.productId,
-        productName: verified ? verified.name : item.productName,
-        productImage: verified?.img || item.productImage || "/hero.jpg",
+        productName: verified.name,
+        productImage: verified.img || "/hero.jpg",
         quantity: qty,
         price: unitPrice,
         selectedSize: item.selectedSize || "Standard",
@@ -162,9 +194,22 @@ export async function POST(req: NextRequest) {
     }
 
     const verifiedTotal = verifiedSubtotal + verifiedShipping;
-    const isDeposit = paymentType === "deposit" && paymentMethod !== "cod";
-    const verifiedDeposit = isDeposit ? Math.round(verifiedTotal * 0.3) : verifiedTotal;
-    const verifiedRemaining = verifiedTotal - verifiedDeposit;
+
+    // Accurate financial calculation: COD = 0 deposit, 100% remaining
+    let verifiedDeposit = 0;
+    let verifiedRemaining = verifiedTotal;
+
+    if (paymentMethod === "cod") {
+      verifiedDeposit = 0;
+      verifiedRemaining = verifiedTotal;
+    } else if (paymentType === "deposit") {
+      verifiedDeposit = Math.round(verifiedTotal * 0.3);
+      verifiedRemaining = verifiedTotal - verifiedDeposit;
+    } else {
+      // 100% full online payment (InstaPay / Vodafone Cash / PayPal)
+      verifiedDeposit = verifiedTotal;
+      verifiedRemaining = 0;
+    }
 
     // Optional customer token link
     const token = req.cookies.get("tz_customer_token")?.value;
@@ -188,8 +233,8 @@ export async function POST(req: NextRequest) {
         orderId,
         customerId || null,
         customerName.trim(),
-        email.trim().toLowerCase(),
-        phone.trim(),
+        safeEmail.trim().toLowerCase(),
+        cleanPhone,
         whatsapp?.trim() || null,
         governorate.trim(),
         city.trim(),

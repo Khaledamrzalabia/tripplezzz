@@ -135,9 +135,10 @@ export default function CheckoutPage() {
   const subtotal = totalPrice;
   const grandTotal = subtotal + shippingFee;
 
-  // Deposit 30% calculation
-  const depositAmount = paymentType === "deposit" ? Math.round(grandTotal * 0.3) : grandTotal;
-  const remainingAmount = grandTotal - depositAmount;
+  // Deposit vs Full vs COD calculation
+  const isDepositMode = paymentType === "deposit" && paymentMethod !== "cod";
+  const depositAmount = paymentMethod === "cod" ? 0 : isDepositMode ? Math.round(grandTotal * 0.3) : grandTotal;
+  const remainingAmount = paymentMethod === "cod" ? grandTotal : grandTotal - depositAmount;
 
   // Handle Quick Auth
   const handleAuthSubmit = async (e: FormEvent) => {
@@ -297,11 +298,25 @@ export default function CheckoutPage() {
 
   // Wizard Step Validations
   const validateStep1 = () => {
-    if (!fullName.trim() || !phone.trim()) {
-      setFormError("يرجى ملء الاسم الكامل ورقم الهاتف للمتابعة");
+    const cleanPhone = phone.replace(/[\s\-\+]/g, "").replace(/^20/, "");
+    if (!fullName.trim()) {
+      setFormError("يرجى إدخال الاسم الكامل للمتابعة");
       scrollToTop("smooth");
       return false;
     }
+
+    if (!cleanPhone || !/^01[0125][0-9]{8}$/.test(cleanPhone)) {
+      setFormError("يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم (يبدأ بـ 010 أو 011 أو 012 أو 015)");
+      scrollToTop("smooth");
+      return false;
+    }
+
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setFormError("صيغة البريد الإلكتروني غير صحيحة، يرجى كتابة إيميل صالح مثل name@example.com");
+      scrollToTop("smooth");
+      return false;
+    }
+
     setFormError("");
     return true;
   };
@@ -354,17 +369,20 @@ export default function CheckoutPage() {
       }
     }
 
+    const cleanPhone = phone.replace(/[\s\-\+]/g, "").replace(/^20/, "");
+    const safeEmail = email.trim() || customer?.email || `${cleanPhone}@customer.triplez.com`;
+
     try {
       setStatus("loading");
       const orderData = {
-        customerName: fullName,
-        email,
-        phone,
-        whatsapp,
+        customerName: fullName.trim(),
+        email: safeEmail,
+        phone: cleanPhone,
+        whatsapp: whatsapp.trim() || cleanPhone,
         governorate: currentGov.ar + " (" + currentGov.en + ")",
-        city,
-        address,
-        notes,
+        city: city.trim(),
+        address: address.trim(),
+        notes: notes.trim(),
         items: state.items.map((it) => ({
           productId: it.product.id,
           productName: it.product.name,
@@ -378,7 +396,7 @@ export default function CheckoutPage() {
         shippingFee,
         total: grandTotal,
         paymentMethod,
-        paymentType,
+        paymentType: paymentMethod === "cod" ? "full" : paymentType,
         depositAmount,
         remainingAmount,
         paymentProofUrl,

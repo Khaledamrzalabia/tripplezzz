@@ -29,6 +29,9 @@ export default function AdminDashboard({
     const totalGrossRevenue = validOrders.reduce((sum, o) => sum + (o.total || 0), 0);
 
     const collectedDeposits = validOrders.reduce((sum, o) => {
+      if (o.paymentMethod === "cod") {
+        return sum + (o.status === "delivered" ? (o.total || 0) : 0);
+      }
       if (o.paymentType === "deposit") {
         return sum + (o.depositAmount || 0);
       }
@@ -36,8 +39,13 @@ export default function AdminDashboard({
     }, 0);
 
     const pendingCollection = validOrders
-      .filter((o) => o.status !== "delivered")
-      .reduce((sum, o) => sum + (o.remainingAmount || 0), 0);
+      .filter((o) => o.status !== "delivered" && o.status !== "cancelled")
+      .reduce((sum, o) => {
+        if (o.paymentMethod === "cod") {
+          return sum + (o.total || 0);
+        }
+        return sum + (o.remainingAmount || 0);
+      }, 0);
 
     const aov = validOrders.length > 0 ? Math.round(totalGrossRevenue / validOrders.length) : 0;
 
