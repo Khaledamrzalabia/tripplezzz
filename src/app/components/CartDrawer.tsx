@@ -32,11 +32,7 @@ export default function CartDrawer() {
   const handleClose = () => {
     if (isClosing) return;
     setIsClosing(true);
-    setTimeout(() => {
-      closeDrawer();
-      setShouldRender(false);
-      setIsClosing(false);
-    }, 280);
+    closeDrawer();
   };
 
   const handleRemove = (productId: string, selectedSize?: string) => {

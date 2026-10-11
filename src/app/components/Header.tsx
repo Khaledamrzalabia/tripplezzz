@@ -292,8 +292,8 @@ export default function Header() {
         <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       )}
 
-      {/* Slide-out Cart Drawer — lazy chunk loaded only when opened */}
-      {isDrawerOpen && <CartDrawer />}
+      {/* Slide-out Cart Drawer — self-contained exit animation */}
+      <CartDrawer />
 
       {/* Floating non-intrusive luxury Cart Toast */}
       <CartToast />
