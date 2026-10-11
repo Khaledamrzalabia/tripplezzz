@@ -37,9 +37,19 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
     const body = await request.json();
     const isComingSoon = body.availability === "coming-soon";
 
+    let cleanSlug: string | undefined = undefined;
+    if (body.slug !== undefined) {
+      const trimmed = body.slug.trim();
+      if (trimmed) {
+        cleanSlug = trimmed;
+      } else if (body.name?.trim()) {
+        cleanSlug = body.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      }
+    }
+
     const updateData: Partial<Product> = {
       ...(body.name !== undefined && { name: body.name.trim() }),
-      ...(body.slug !== undefined && { slug: body.slug.trim() }),
+      ...(cleanSlug !== undefined && { slug: cleanSlug }),
       ...(body.description !== undefined && { description: body.description.trim() }),
       ...(body.longDescription !== undefined && { longDescription: body.longDescription.trim() }),
       ...(body.price !== undefined && {

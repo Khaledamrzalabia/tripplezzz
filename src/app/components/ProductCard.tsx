@@ -23,6 +23,7 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
 
   const primaryImage = product.images[0];
   const isComingSoon = isProductComingSoon(product);
+  const productHref = `/products/${product.slug?.trim() || product.id}`;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,7 +67,7 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
 
         {/* Product Image Link */}
         <Link
-          href={`/products/${product.slug}`}
+          href={productHref}
           className="mockup-product-link"
           aria-label={isComingSoon ? "Coming Soon Teaser" : product.name}
         >
@@ -88,7 +89,7 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
       {isComingSoon ? (
         /* Teaser Mode: Name and Coming Soon status with suspense color dots */
         <div className="mockup-card-body mockup-card-teaser-body">
-          <Link href={`/products/${product.slug}`} className="mockup-product-title-link">
+          <Link href={productHref} className="mockup-product-title-link">
             <HeadingTag className="mockup-card-title">{product.name}</HeadingTag>
           </Link>
           <div className="mockup-card-footer mockup-teaser-footer">
@@ -110,7 +111,7 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
       ) : (
         /* Regular Product Card */
         <div className="mockup-card-body">
-          <Link href={`/products/${product.slug}`} className="mockup-product-title-link">
+          <Link href={productHref} className="mockup-product-title-link">
             <HeadingTag className="mockup-card-title">{product.name}</HeadingTag>
           </Link>
 
