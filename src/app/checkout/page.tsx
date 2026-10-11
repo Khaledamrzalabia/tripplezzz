@@ -410,65 +410,47 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
         </div>
 
         {/* Stepper Progress Bar */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: "var(--clr-bg-surface)",
-          border: "1px solid var(--clr-border)",
-          borderRadius: "var(--radius-lg)",
-          padding: "1rem 1.5rem",
-          marginBottom: "2rem",
-          position: "relative"
-        }}>
+        <div className="checkout-stepper-container">
           {[
             { num: 1, title: "بيانات العميل", desc: "الحساب والتواصل" },
             { num: 2, title: "عنوان التوصيل", desc: "تحديد الموقع GPS" },
             { num: 3, title: "طريقة الدفع", desc: "أولوية الحجز والعربون" },
-          ].map((st, idx) => {
+          ].map((st) => {
             const isActive = currentStep === st.num;
             const isDone = currentStep > st.num;
             return (
               <div
                 key={st.num}
+                className="checkout-step-item"
                 onClick={() => {
                   if (st.num === 1) setCurrentStep(1);
                   if (st.num === 2 && validateStep1()) setCurrentStep(2);
                   if (st.num === 3 && validateStep1() && validateStep2()) setCurrentStep(3);
                 }}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                  cursor: "pointer",
                   opacity: isActive ? 1 : isDone ? 0.9 : 0.5,
                   transition: "opacity 0.2s ease"
                 }}
               >
-                <div style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 800,
-                  fontSize: "0.95rem",
-                  background: isDone
-                    ? "var(--clr-accent)"
-                    : isActive
-                    ? "rgba(226, 255, 76, 0.15)"
-                    : "rgba(255, 255, 255, 0.05)",
-                  color: isDone ? "#000" : isActive ? "var(--clr-accent)" : "#fff",
-                  border: isActive ? "2px solid var(--clr-accent)" : "1px solid rgba(255, 255, 255, 0.1)"
-                }}>
+                <div
+                  className="checkout-step-circle"
+                  style={{
+                    background: isDone
+                      ? "var(--clr-accent)"
+                      : isActive
+                      ? "rgba(226, 255, 76, 0.15)"
+                      : "rgba(255, 255, 255, 0.05)",
+                    color: isDone ? "#000" : isActive ? "var(--clr-accent)" : "#fff",
+                    border: isActive ? "2px solid var(--clr-accent)" : "1px solid rgba(255, 255, 255, 0.1)"
+                  }}
+                >
                   {isDone ? "✓" : st.num}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: "0.95rem", color: isActive ? "var(--clr-accent)" : "inherit" }}>
+                  <div className="checkout-step-title" style={{ fontWeight: 700, fontSize: "0.95rem", color: isActive ? "var(--clr-accent)" : "inherit" }}>
                     {st.title}
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)" }}>
+                  <div className="checkout-step-desc" style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)" }}>
                     {st.desc}
                   </div>
                 </div>
@@ -708,7 +690,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                     </div>
                   </div>
 
-                  <div style={{ marginTop: "2rem", display: "flex", justifyContent: "flex-end" }}>
+                  <div className="checkout-nav-actions" style={{ justifyContent: "flex-end" }}>
                     <button
                       type="button"
                       onClick={() => {
@@ -732,18 +714,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                   </div>
 
                   {/* 1-Tap GPS Location Button */}
-                  <div style={{
-                    background: "rgba(226, 255, 76, 0.04)",
-                    border: "1px dashed rgba(226, 255, 76, 0.35)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "1.25rem",
-                    marginBottom: "1.75rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "1rem"
-                  }}>
+                  <div className="checkout-gps-banner">
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <span style={{ fontSize: "1.2rem" }}>📍</span>
@@ -852,7 +823,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                     </div>
                   </div>
 
-                  <div style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between" }}>
+                  <div className="checkout-nav-actions">
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
@@ -903,7 +874,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                   </div>
 
                   {/* Payment Plans Comparison Cards */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.75rem" }}>
+                  <div className="checkout-plan-grid">
                     {/* Option A: Recommended Deposit */}
                     <div
                       onClick={() => {
@@ -985,14 +956,14 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                       background: "var(--clr-bg-surface)",
                       border: "1px solid var(--clr-border)",
                       borderRadius: "var(--radius-md)",
-                      padding: "1.5rem",
+                      padding: "1.25rem",
                       marginBottom: "1.75rem"
                     }}>
                       <h3 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 1rem" }}>
                         اختر وسيلة تحويل العربون ({depositAmount} ج.م):
                       </h3>
 
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+                      <div className="checkout-payment-channel-grid">
                         {/* InstaPay */}
                         <div
                           onClick={() => setPaymentMethod("instapay")}
@@ -1046,7 +1017,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.75rem" }}>
                               <div>
                                 <span style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>عنوان الدفع اللحظي (IPA):</span>
-                                <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-accent)", letterSpacing: "0.03em" }}>
+                                <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-accent)", letterSpacing: "0.03em", wordBreak: "break-all" }}>
                                   migohlmy@instapay
                                 </div>
                               </div>
@@ -1069,7 +1040,8 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                               display: "flex",
                               justifyContent: "space-between",
                               alignItems: "center",
-                              gap: "1rem"
+                              flexWrap: "wrap",
+                              gap: "0.75rem"
                             }}>
                               <div style={{ fontSize: "0.85rem" }}>
                                 <span>أو افتح رابط الدفع المباشر في إنستاباي:</span>
@@ -1108,7 +1080,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
 
                         {/* Transaction reference & Screenshot Upload */}
                         <div style={{ marginTop: "1.25rem", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "1rem" }}>
-                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                          <div className="checkout-proof-grid">
                             <div className="form-group" style={{ marginBottom: 0 }}>
                               <label className="form-label">رقم الهاتف المحول منه أو رقم العملية</label>
                               <input
@@ -1147,7 +1119,7 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `- العربون ال�
                   )}
 
                   {/* Navigation & Submit Button */}
-                  <div style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
+                  <div className="checkout-nav-actions">
                     <button
                       type="button"
                       onClick={() => setCurrentStep(2)}
