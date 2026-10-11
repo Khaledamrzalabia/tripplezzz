@@ -21,6 +21,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
   const [selectedSize, setSelectedSize] = useState<string | undefined>(product.sizes?.[0]);
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(product.colors?.[0]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -32,7 +33,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
 
   const handleAdd = () => {
     if (isOutOfStock || isComingSoon) return;
-    addItem(product, qty, selectedSize);
+    addItem(product, qty, selectedSize, selectedColor);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -183,6 +184,37 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               </div>
             )}
 
+            {/* Color selection */}
+            {product.colors && product.colors.length > 0 && (
+              <div style={{ marginBottom: "1.75rem", width: "100%", maxWidth: "100%" }}>
+                <p className="option-label" style={{ marginBottom: "0.75rem" }}>
+                  Color
+                </p>
+                <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+                  {product.colors.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setSelectedColor(c)}
+                      aria-label={`Select color ${c}`}
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: "50%",
+                        backgroundColor: c,
+                        border: selectedColor === c ? "2px solid var(--clr-accent)" : "1px solid rgba(255,255,255,0.25)",
+                        outline: selectedColor === c ? "2px solid rgba(226, 255, 76, 0.4)" : "none",
+                        outlineOffset: "2px",
+                        cursor: "pointer",
+                        transition: "transform 0.15s ease",
+                        transform: selectedColor === c ? "scale(1.15)" : "scale(1)",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Quantity */}
             {!isComingSoon && (
               <div style={{ marginBottom: "2rem" }}>
@@ -190,7 +222,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                 <div className="qty-control" role="group" aria-label="Quantity">
                   <button className="qty-btn" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Decrease">−</button>
                   <span className="qty-value" aria-live="polite">{qty}</span>
-                  <button className="qty-btn" onClick={() => setQty(qty + 1)} aria-label="Increase">+</button>
+                  <button className="qty-btn" onClick={() => setQty(Math.min(20, qty + 1))} aria-label="Increase">+</button>
                 </div>
               </div>
             )}

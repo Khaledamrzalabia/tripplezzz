@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: Props) {
     offers: {
       "@type": "Offer",
       url: `https://triple-z.com/products/${product.slug}`,
-      priceCurrency: "USD",
+      priceCurrency: "EGP",
       price: product.price,
       availability:
         product.availability === "in-stock" || product.availability === "low-stock"

@@ -14,18 +14,31 @@ import { isProductComingSoon } from "../types/product";
 
 type CartAction =
   | { type: "ADD"; product: Product; quantity: number; selectedSize?: string; selectedColor?: string }
-  | { type: "REMOVE"; productId: string; selectedSize?: string }
-  | { type: "UPDATE_QTY"; productId: string; selectedSize?: string; quantity: number }
+  | { type: "REMOVE"; productId: string; selectedSize?: string; selectedColor?: string }
+  | { type: "UPDATE_QTY"; productId: string; selectedSize?: string; selectedColor?: string; quantity: number }
   | { type: "CLEAR" }
   | { type: "HYDRATE"; payload: CartState };
+
+function matchesCartItem(
+  item: { product: { id: string }; selectedSize?: string; selectedColor?: string },
+  productId: string,
+  selectedSize?: string,
+  selectedColor?: string
+) {
+  return (
+    item.product.id === productId &&
+    (item.selectedSize ?? "") === (selectedSize ?? "") &&
+    (item.selectedColor ?? "") === (selectedColor ?? "")
+  );
+}
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "HYDRATE":
       return action.payload;
     case "ADD": {
-      const existing = state.items.findIndex(
-        (i) => i.product.id === action.product.id && i.selectedSize === action.selectedSize
+      const existing = state.items.findIndex((i) =>
+        matchesCartItem(i, action.product.id, action.selectedSize, action.selectedColor)
       );
       if (existing > -1) {
         const items = [...state.items];
@@ -42,7 +55,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "REMOVE": {
       return {
         items: state.items.filter(
-          (i) => !(i.product.id === action.productId && i.selectedSize === action.selectedSize)
+          (i) => !matchesCartItem(i, action.productId, action.selectedSize, action.selectedColor)
         ),
       };
     }
@@ -50,13 +63,13 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       if (action.quantity < 1) {
         return {
           items: state.items.filter(
-            (i) => !(i.product.id === action.productId && i.selectedSize === action.selectedSize)
+            (i) => !matchesCartItem(i, action.productId, action.selectedSize, action.selectedColor)
           ),
         };
       }
       return {
         items: state.items.map((i) =>
-          i.product.id === action.productId && i.selectedSize === action.selectedSize
+          matchesCartItem(i, action.productId, action.selectedSize, action.selectedColor)
             ? { ...i, quantity: action.quantity }
             : i
         ),
@@ -79,8 +92,8 @@ export interface CartToastItem {
 interface CartContextValue {
   state: CartState;
   addItem: (product: Product, quantity: number, selectedSize?: string, selectedColor?: string) => void;
-  removeItem: (productId: string, selectedSize?: string) => void;
-  updateQty: (productId: string, quantity: number, selectedSize?: string) => void;
+  removeItem: (productId: string, selectedSize?: string, selectedColor?: string) => void;
+  updateQty: (productId: string, quantity: number, selectedSize?: string, selectedColor?: string) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -146,11 +159,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, 4000);
   };
 
-  const removeItem = (productId: string, selectedSize?: string) =>
-    dispatch({ type: "REMOVE", productId, selectedSize });
+  const removeItem = (productId: string, selectedSize?: string, selectedColor?: string) =>
+    dispatch({ type: "REMOVE", productId, selectedSize, selectedColor });
 
-  const updateQty = (productId: string, quantity: number, selectedSize?: string) =>
-    dispatch({ type: "UPDATE_QTY", productId, selectedSize, quantity });
+  const updateQty = (productId: string, quantity: number, selectedSize?: string, selectedColor?: string) =>
+    dispatch({ type: "UPDATE_QTY", productId, selectedSize, selectedColor, quantity });
 
   const clearCart = () => dispatch({ type: "CLEAR" });
 

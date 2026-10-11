@@ -146,9 +146,17 @@ export async function POST(req: NextRequest) {
     // 3. Verified Egyptian shipping fee lookup from admin settings
     const activeRates = await getShippingRates();
     let verifiedShipping = 70; // safe default
-    const matchedGov = activeRates.find(
-      (g) => governorate.includes(g.en) || governorate.includes(g.ar)
-    );
+    const cleanInputGov = (governorate || "").toLowerCase().replace(/محافظة/g, "").trim();
+    const matchedGov = activeRates.find((g) => {
+      const cleanAr = (g.ar || "").toLowerCase().replace(/محافظة/g, "").trim();
+      const cleanEn = (g.en || "").toLowerCase().trim();
+      return (
+        governorate.toLowerCase().includes(cleanEn) ||
+        cleanEn.includes(cleanInputGov) ||
+        governorate.includes(cleanAr) ||
+        cleanAr.includes(cleanInputGov)
+      );
+    });
     if (matchedGov) {
       verifiedShipping = Number(matchedGov.shipping) || 0;
     }

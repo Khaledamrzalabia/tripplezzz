@@ -19,16 +19,21 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB max
 
 export async function POST(request: Request) {
   try {
-    const limit = guardMultiSignalRateLimit(request, "file_upload", {
-      windowMs: 10 * 60 * 1000, // 10 minutes
-      maxRequests: 10, // max 10 uploads per 10 mins
-    });
+    const cookieHeader = request.headers.get("cookie") || "";
+    const isAdmin = cookieHeader.includes("tz_admin_session=");
 
-    if (!limit.allowed) {
-      return NextResponse.json(
-        { error: "تم تجاوز الحد المسموح به لرفع الملفات مؤقتاً." },
-        { status: 429 }
-      );
+    if (!isAdmin) {
+      const limit = guardMultiSignalRateLimit(request, "file_upload", {
+        windowMs: 10 * 60 * 1000, // 10 minutes
+        maxRequests: 10, // max 10 uploads per 10 mins for public/customers
+      });
+
+      if (!limit.allowed) {
+        return NextResponse.json(
+          { error: "تم تجاوز الحد المسموح به لرفع الملفات مؤقتاً." },
+          { status: 429 }
+        );
+      }
     }
 
     const formData = await request.formData();

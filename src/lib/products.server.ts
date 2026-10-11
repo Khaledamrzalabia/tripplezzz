@@ -207,12 +207,14 @@ export async function updateServerProduct(
   updatedFields: Partial<Product>
 ): Promise<Product | null> {
   const currentList = await getAsyncServerProducts();
-  const index = currentList.findIndex((p) => p.id === id);
+  const index = currentList.findIndex((p) => p.id === id || p.slug === id);
   if (index === -1) return null;
 
+  const targetId = currentList[index].id;
   const mergedProduct: Product = {
     ...currentList[index],
     ...updatedFields,
+    id: targetId,
   };
 
   // 1. Direct PostgreSQL Pooler
@@ -239,7 +241,7 @@ export async function updateServerProduct(
   }
 
   // Keep local JSON updated if writable
-  const updatedList = currentList.map((p) => (p.id === id ? mergedProduct : p));
+  const updatedList = currentList.map((p) => (p.id === targetId ? mergedProduct : p));
   saveLocalProducts(updatedList);
 
   return mergedProduct;

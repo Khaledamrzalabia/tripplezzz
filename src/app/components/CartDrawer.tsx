@@ -52,11 +52,11 @@ export default function CartDrawer() {
     }, 280);
   };
 
-  const handleRemove = (productId: string, selectedSize?: string) => {
-    const key = productId + (selectedSize ?? "");
+  const handleRemove = (productId: string, selectedSize?: string, selectedColor?: string) => {
+    const key = productId + (selectedSize ?? "") + (selectedColor ?? "");
     setRemovingKey(key);
     setTimeout(() => {
-      removeItem(productId, selectedSize);
+      removeItem(productId, selectedSize, selectedColor);
       setRemovingKey(null);
     }, 220);
   };
@@ -199,7 +199,7 @@ export default function CartDrawer() {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleRemove(item.product.id, item.selectedSize)}
+                          onClick={() => handleRemove(item.product.id, item.selectedSize, item.selectedColor)}
                           className="tz-drawer-item-remove"
                           aria-label="Remove item"
                         >
@@ -208,13 +208,18 @@ export default function CartDrawer() {
                       </div>
                       <div className="tz-drawer-item-meta">
                         {item.selectedSize && <span>Size: <strong>{item.selectedSize}</strong></span>}
+                        {item.selectedColor && (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                            <span style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: item.selectedColor, display: "inline-block", border: "1px solid rgba(255,255,255,0.3)" }} />
+                          </span>
+                        )}
                         {item.product.collection && <span className="tz-drawer-tag">{item.product.collection.toUpperCase()}</span>}
                       </div>
                       <div className="tz-drawer-item-bottom">
                         <div className="tz-drawer-qty-selector">
                           <button
                             type="button"
-                            onClick={() => updateQty(item.product.id, item.quantity - 1, item.selectedSize)}
+                            onClick={() => updateQty(item.product.id, item.quantity - 1, item.selectedSize, item.selectedColor)}
                             className="tz-qty-btn"
                             aria-label="Decrease quantity"
                           >
@@ -223,7 +228,7 @@ export default function CartDrawer() {
                           <span className="tz-qty-val">{item.quantity}</span>
                           <button
                             type="button"
-                            onClick={() => updateQty(item.product.id, item.quantity + 1, item.selectedSize)}
+                            onClick={() => updateQty(item.product.id, item.quantity + 1, item.selectedSize, item.selectedColor)}
                             className="tz-qty-btn"
                             aria-label="Increase quantity"
                           >

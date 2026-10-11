@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Product } from "../../types/product";
 import { isProductComingSoon } from "../../types/product";
 import { useCart } from "../../context/CartContext";
@@ -18,30 +18,55 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
   const { formatPrice } = useCurrency();
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
+  const [likeBump, setLikeBump] = useState(false);
+
+  // Sync wishlist from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("tz_wishlist");
+      if (saved) {
+        const list: string[] = JSON.parse(saved);
+        if (Array.isArray(list) && list.includes(product.id)) {
+          setLiked(true);
+        }
+      }
+    } catch {}
+  }, [product.id]);
 
   const HeadingTag = headingLevel;
 
   const primaryImage = product.images[0];
   const isComingSoon = isProductComingSoon(product);
-  const productHref = `/products/${product.slug?.trim() || product.id}`;
+  const safeIdentifier = product.slug?.trim() || product.id || "shop";
+  const productHref = `/products/${encodeURIComponent(safeIdentifier)}`;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (isComingSoon || product.availability === "out-of-stock") return;
-    addItem(product, 1, product.sizes?.[0]);
+    addItem(product, 1, product.sizes?.[0], product.colors?.[0]);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
 
-  const [likeBump, setLikeBump] = useState(false);
-
   const handleToggleLike = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setLiked(!liked);
+    const next = !liked;
+    setLiked(next);
     setLikeBump(true);
     setTimeout(() => setLikeBump(false), 420);
+
+    try {
+      const saved = localStorage.getItem("tz_wishlist");
+      let list: string[] = saved ? JSON.parse(saved) : [];
+      if (next) {
+        if (!list.includes(product.id)) list.push(product.id);
+      } else {
+        list = list.filter((id) => id !== product.id);
+      }
+      localStorage.setItem("tz_wishlist", JSON.stringify(list));
+    } catch {}
   };
 
   return (

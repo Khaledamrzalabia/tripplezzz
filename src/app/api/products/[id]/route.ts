@@ -43,7 +43,7 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       if (trimmed) {
         cleanSlug = trimmed;
       } else if (body.name?.trim()) {
-        cleanSlug = body.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        cleanSlug = body.name.trim().toLowerCase().replace(/[^\p{L}\p{N}\s\-_]/gu, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
       }
     }
 

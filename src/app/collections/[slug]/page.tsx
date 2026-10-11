@@ -17,18 +17,23 @@ type Params = { slug: string };
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const meta = COLLECTION_META[slug];
+  const allProducts = await getAsyncServerProducts();
+  const hasProducts = allProducts.some((p) => (p.collection || "").toLowerCase() === slug.toLowerCase());
+  const meta = COLLECTION_META[slug] || (hasProducts ? {
+    name: slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " "),
+    description: `Explore the Triple Z ${slug} collection. Limited edition streetwear.`,
+    image: "/campaign/banner-argentina.webp",
+  } : null);
+
   if (!meta) return {};
-  return { title: meta.name + " Collection", description: meta.description };
+  return { title: meta.name + " Collection | Triple Z", description: meta.description };
 }
 
 export default async function CollectionPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const meta = COLLECTION_META[slug];
-  if (!meta) notFound();
   const allProducts = await getAsyncServerProducts();
   const products = allProducts
-    .filter((p) => p.collection === slug)
+    .filter((p) => (p.collection || "").toLowerCase() === slug.toLowerCase())
     .sort((a, b) => {
       const aOpen = !isProductComingSoon(a);
       const bOpen = !isProductComingSoon(b);
@@ -36,6 +41,14 @@ export default async function CollectionPage({ params }: { params: Promise<Param
       if (!aOpen && bOpen) return -1;
       return 0;
     });
+
+  const meta = COLLECTION_META[slug] || (products.length > 0 ? {
+    name: slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " "),
+    description: `Explore the Triple Z ${slug} drop. Limited edition football streetwear.`,
+    image: products[0]?.images[0]?.src || "/campaign/banner-argentina.webp",
+  } : null);
+
+  if (!meta) notFound();
 
   return (
     <div className="page-padding">

@@ -33,17 +33,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate slug from name if not provided
-    const slug =
-      body.slug?.trim() ||
-      body.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+    // Generate slug from name or slug input, safely supporting Arabic and English
+    const rawInputSlug = body.slug?.trim();
+    const cleanSlug = rawInputSlug
+      ? rawInputSlug.toLowerCase().replace(/[^\p{L}\p{N}\-_]/gu, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")
+      : body.name
+          .trim()
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s\-_]/gu, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+
+    const finalSlug = cleanSlug || `product-${Date.now().toString(36)}`;
+    const finalId = body.id || `tz-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 7)}`;
 
     const newProduct: Product = {
-      id: body.id || `tz-${Date.now().toString().slice(-4)}`,
-      slug: slug || `product-${Date.now()}`,
+      id: finalId,
+      slug: finalSlug,
       name: body.name.trim(),
       description: body.description?.trim() || "",
       longDescription: body.longDescription?.trim() || "",
@@ -51,7 +58,7 @@ export async function POST(request: NextRequest) {
       fitSilhouette: body.fitSilhouette?.trim() || "",
       garmentCare: body.garmentCare?.trim() || "",
       price: body.price !== undefined && body.price !== "" && Number(body.price) > 0 ? Number(body.price) : undefined,
-      currency: body.currency || "USD",
+      currency: body.currency || "EGP",
       images: Array.isArray(body.images) && body.images.length > 0
         ? body.images
         : [{ src: "/hero.jpg", alt: body.name }],
