@@ -8,6 +8,7 @@ import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
 import { EGYPT_GOVERNORATES, type GovernorateShipping, type PaymentMethod, type PaymentType } from "../../types/order";
+import { DEFAULT_STORE_SETTINGS, type StoreSettings } from "../../types/settings";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -66,6 +67,20 @@ export default function CheckoutPage() {
   const [paymentProofUrl, setPaymentProofUrl] = useState("");
   const [uploadingProof, setUploadingProof] = useState(false);
   const [copiedText, setCopiedText] = useState<string | null>(null);
+
+  // Store Settings (Dynamic Payment & Social Details)
+  const [storeSettings, setStoreSettings] = useState<StoreSettings>(DEFAULT_STORE_SETTINGS);
+
+  useEffect(() => {
+    fetch("/api/settings?t=" + Date.now(), { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.payment) {
+          setStoreSettings(data);
+        }
+      })
+      .catch((err) => console.warn("Failed to load dynamic store settings:", err));
+  }, []);
 
   // Status & Validation
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -1176,64 +1191,70 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
 
                       <div className="checkout-payment-channel-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
                         {/* InstaPay */}
-                        <div
-                          onClick={() => setPaymentMethod("instapay")}
-                          style={{
-                            padding: "1rem",
-                            borderRadius: "var(--radius-md)",
-                            border: paymentMethod === "instapay" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
-                            background: paymentMethod === "instapay" ? "rgba(226, 255, 76, 0.05)" : "transparent",
-                            cursor: "pointer"
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
-                            <span>⚡</span>
-                            <span>انستا باي (InstaPay)</span>
+                        {storeSettings.payment.instapay.enabled && (
+                          <div
+                            onClick={() => setPaymentMethod("instapay")}
+                            style={{
+                              padding: "1rem",
+                              borderRadius: "var(--radius-md)",
+                              border: paymentMethod === "instapay" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
+                              background: paymentMethod === "instapay" ? "rgba(226, 255, 76, 0.05)" : "transparent",
+                              cursor: "pointer"
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
+                              <span>⚡</span>
+                              <span>انستا باي (InstaPay)</span>
+                            </div>
+                            <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
+                              سكرين شوت من التحويل فقط
+                            </div>
                           </div>
-                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
-                            سكرين شوت من التحويل فقط
-                          </div>
-                        </div>
+                        )}
 
                         {/* Vodafone Cash */}
-                        <div
-                          onClick={() => setPaymentMethod("vodafone_cash")}
-                          style={{
-                            padding: "1rem",
-                            borderRadius: "var(--radius-md)",
-                            border: paymentMethod === "vodafone_cash" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
-                            background: paymentMethod === "vodafone_cash" ? "rgba(226, 255, 76, 0.05)" : "transparent",
-                            cursor: "pointer"
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
-                            <span>📱</span>
-                            <span>فودافون كاش</span>
+                        {storeSettings.payment.vodafoneCash.enabled && (
+                          <div
+                            onClick={() => setPaymentMethod("vodafone_cash")}
+                            style={{
+                              padding: "1rem",
+                              borderRadius: "var(--radius-md)",
+                              border: paymentMethod === "vodafone_cash" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
+                              background: paymentMethod === "vodafone_cash" ? "rgba(226, 255, 76, 0.05)" : "transparent",
+                              cursor: "pointer"
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
+                              <span>📱</span>
+                              <span>فودافون كاش</span>
+                            </div>
+                            <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
+                              رقم المحول منه + سكرين شوت
+                            </div>
                           </div>
-                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
-                            رقم المحول منه + سكرين شوت
-                          </div>
-                        </div>
+                        )}
 
                         {/* PayPal */}
-                        <div
-                          onClick={() => setPaymentMethod("paypal")}
-                          style={{
-                            padding: "1rem",
-                            borderRadius: "var(--radius-md)",
-                            border: paymentMethod === "paypal" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
-                            background: paymentMethod === "paypal" ? "rgba(226, 255, 76, 0.05)" : "transparent",
-                            cursor: "pointer"
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
-                            <span>🌐</span>
-                            <span>PayPal</span>
+                        {storeSettings.payment.paypal.enabled && (
+                          <div
+                            onClick={() => setPaymentMethod("paypal")}
+                            style={{
+                              padding: "1rem",
+                              borderRadius: "var(--radius-md)",
+                              border: paymentMethod === "paypal" ? "2px solid var(--clr-accent)" : "1px solid var(--clr-border)",
+                              background: paymentMethod === "paypal" ? "rgba(226, 255, 76, 0.05)" : "transparent",
+                              cursor: "pointer"
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
+                              <span>🌐</span>
+                              <span>PayPal</span>
+                            </div>
+                            <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
+                              سكرين شوت من الدفع فقط
+                            </div>
                           </div>
-                          <div style={{ fontSize: "0.75rem", color: "var(--clr-text-secondary)", marginTop: "0.3rem" }}>
-                            سكرين شوت من الدفع فقط
-                          </div>
-                        </div>
+                        )}
                       </div>
 
                       {/* Payment Account Credentials & 1-Tap Copy */}
@@ -1249,12 +1270,12 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                               <div>
                                 <span style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>عنوان الدفع اللحظي (IPA):</span>
                                 <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-accent)", letterSpacing: "0.03em", wordBreak: "break-all" }}>
-                                  migohlmy@instapay
+                                  {storeSettings.payment.instapay.ipa}
                                 </div>
                               </div>
                               <button
                                 type="button"
-                                onClick={() => handleCopy("migohlmy@instapay", "ipa")}
+                                onClick={() => handleCopy(storeSettings.payment.instapay.ipa, "ipa")}
                                 className="btn btn-outline"
                                 style={{ padding: "0.4rem 0.9rem", fontSize: "0.8rem" }}
                               >
@@ -1263,44 +1284,48 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                             </div>
 
                             {/* Direct InstaPay payment link */}
-                            <div style={{
-                              background: "rgba(226, 255, 76, 0.06)",
-                              border: "1px solid rgba(226, 255, 76, 0.2)",
-                              borderRadius: "var(--radius-sm)",
-                              padding: "0.75rem 1rem",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              flexWrap: "wrap",
-                              gap: "0.75rem"
-                            }}>
-                              <div style={{ fontSize: "0.85rem" }}>
-                                <span>أو اضغط لفتح رابط الدفع المباشر في إنستاباي:</span>
+                            {storeSettings.payment.instapay.link && (
+                              <div style={{
+                                background: "rgba(226, 255, 76, 0.06)",
+                                border: "1px solid rgba(226, 255, 76, 0.2)",
+                                borderRadius: "var(--radius-sm)",
+                                padding: "0.75rem 1rem",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                flexWrap: "wrap",
+                                gap: "0.75rem"
+                              }}>
+                                <div style={{ fontSize: "0.85rem" }}>
+                                  <span>أو اضغط لفتح رابط الدفع المباشر في إنستاباي:</span>
+                                </div>
+                                <a
+                                  href={storeSettings.payment.instapay.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-pill-white"
+                                  style={{ padding: "0.45rem 1rem", fontSize: "0.85rem", textDecoration: "none" }}
+                                >
+                                  فتح رابط الدفع ↗
+                                </a>
                               </div>
-                              <a
-                                href="https://ipn.eg/S/migohlmy/instapay/2BdKeD"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn btn-pill-white"
-                                style={{ padding: "0.45rem 1rem", fontSize: "0.85rem", textDecoration: "none" }}
-                              >
-                                فتح رابط الدفع ↗
-                              </a>
-                            </div>
+                            )}
                           </div>
                         )}
 
                         {paymentMethod === "vodafone_cash" && (
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
                             <div>
-                              <span style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>رقم محفظة فودافون كاش المعتمد:</span>
+                              <span style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>
+                                {storeSettings.payment.vodafoneCash.accountName || "رقم محفظة فودافون كاش المعتمد:"}
+                              </span>
                               <div style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--clr-accent)", letterSpacing: "0.08em" }}>
-                                01044463717
+                                {storeSettings.payment.vodafoneCash.number}
                               </div>
                             </div>
                             <button
                               type="button"
-                              onClick={() => handleCopy("01044463717", "voda")}
+                              onClick={() => handleCopy(storeSettings.payment.vodafoneCash.number, "voda")}
                               className="btn btn-outline"
                               style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}
                             >
@@ -1314,17 +1339,30 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                             <div>
                               <span style={{ fontSize: "0.8rem", color: "var(--clr-text-secondary)" }}>حساب PayPal الرسمي:</span>
                               <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--clr-accent)", letterSpacing: "0.03em" }}>
-                                payments@triple-z.com
+                                {storeSettings.payment.paypal.email}
                               </div>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => handleCopy("payments@triple-z.com", "paypal")}
-                              className="btn btn-outline"
-                              style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}
-                            >
-                              {copiedText === "paypal" ? "✓ تم النسخ" : "نسخ الإيميل 📋"}
-                            </button>
+                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                              {storeSettings.payment.paypal.link && (
+                                <a
+                                  href={storeSettings.payment.paypal.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-pill-white"
+                                  style={{ padding: "0.45rem 0.9rem", fontSize: "0.85rem", textDecoration: "none" }}
+                                >
+                                  فتح الرابط ↗
+                                </a>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleCopy(storeSettings.payment.paypal.email, "paypal")}
+                                className="btn btn-outline"
+                                style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}
+                              >
+                                {copiedText === "paypal" ? "✓ تم النسخ" : "نسخ الإيميل 📋"}
+                              </button>
+                            </div>
                           </div>
                         )}
 

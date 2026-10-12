@@ -131,11 +131,7 @@ export async function getAsyncServerProducts(): Promise<Product[]> {
         if (res.rows && res.rows.length > 0) {
           return res.rows.map(rowToProduct);
         } else {
-          // Table exists but is empty; auto-seed with default products
-          for (const p of (defaultProducts as unknown as Product[])) {
-            await upsertProductInPostgres(pool, p);
-          }
-          return (defaultProducts as unknown as Product[]);
+          return [];
         }
       } catch (err) {
         console.warn("Direct PostgreSQL query error, trying fallback:", err);
@@ -254,7 +250,7 @@ export async function deleteServerProduct(id: string): Promise<boolean> {
     const pool = getPool();
     if (pool) {
       try {
-        await pool.query("DELETE FROM products WHERE id = $1", [id]);
+        await pool.query("DELETE FROM products WHERE id = $1 OR slug = $1", [id]);
       } catch (err) {
         console.error("Direct PostgreSQL delete error:", err);
       }
@@ -264,14 +260,14 @@ export async function deleteServerProduct(id: string): Promise<boolean> {
   // 2. Supabase SDK
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
-      await supabaseAdmin.from("products").delete().eq("id", id);
+      await supabaseAdmin.from("products").delete().or(`id.eq.${id},slug.eq.${id}`);
     } catch (err) {
       console.error("Supabase delete error:", err);
     }
   }
 
   const localList = getLocalProducts();
-  const filtered = localList.filter((p) => p.id !== id);
+  const filtered = localList.filter((p) => p.id !== id && p.slug !== id);
   saveLocalProducts(filtered);
 
   return true;

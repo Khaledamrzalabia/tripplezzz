@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export type AdminTab = "dashboard" | "orders" | "products" | "shipping";
+export type AdminTab = "dashboard" | "orders" | "products" | "shipping" | "settings";
 
 interface Props {
   activeTab: AdminTab;
@@ -12,6 +12,7 @@ interface Props {
   productsCount: number;
   onLogout: () => void;
   onOpenCreate: () => void;
+  onOpenChangePassword: () => void;
 }
 
 export default function AdminHeader({
@@ -22,6 +23,7 @@ export default function AdminHeader({
   productsCount,
   onLogout,
   onOpenCreate,
+  onOpenChangePassword,
 }: Props) {
   return (
     <header className="admin-header-apple">
@@ -48,6 +50,16 @@ export default function AdminHeader({
           >
             <span>+</span>
             <span>إضافة قطعة جديدة</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenChangePassword}
+            className="btn btn-outline admin-header-btn"
+            title="تغيير كلمة المرور"
+          >
+            <span>🔑</span>
+            <span>تغيير الباسورد</span>
           </button>
 
           <Link
@@ -118,6 +130,15 @@ export default function AdminHeader({
         >
           <span className="admin-segment-icon">🚚</span>
           <span>أسعار الشحن</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("settings")}
+          className={`admin-segment-btn ${activeTab === "settings" ? "active" : ""}`}
+        >
+          <span className="admin-segment-icon">⚙️</span>
+          <span>الدفع والسوشيال</span>
         </button>
       </nav>
     </header>

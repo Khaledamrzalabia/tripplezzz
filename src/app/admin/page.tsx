@@ -10,8 +10,10 @@ import AdminDashboard from "./components/AdminDashboard";
 import AdminOrders from "./components/AdminOrders";
 import AdminProducts from "./components/AdminProducts";
 import AdminShipping from "./components/AdminShipping";
+import AdminSettings from "./components/AdminSettings";
 import ProductModal, { type ProductFormData } from "./components/ProductModal";
 import PaymentProofModal from "./components/PaymentProofModal";
+import ChangePasswordModal from "./components/ChangePasswordModal";
 
 const INITIAL_FORM: ProductFormData = {
   name: "",
@@ -55,6 +57,9 @@ export default function AdminPage() {
   const [formData, setFormData] = useState<ProductFormData>(INITIAL_FORM);
   const [saving, setSaving] = useState(false);
 
+  // Change Password Modal
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+
   const fetchOrders = async () => {
     try {
       setOrdersLoading(true);
@@ -73,7 +78,9 @@ export default function AdminPage() {
   const fetchProducts = async () => {
     try {
       setProductsLoading(true);
-      const res = await fetch("/api/products");
+      const res = await fetch(`/api/products?t=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (res.ok) {
         const data = await res.json();
         setProducts(data);
@@ -169,14 +176,24 @@ export default function AdminPage() {
 
   // Delete Product
   const handleDeleteProduct = async (productId: string, productName: string) => {
-    if (!confirm(`هل أنت متأكد من حذف القطعة "${productName}"؟`)) return;
+    if (!confirm(`هل أنت متأكد من حذف القطعة "${productName}" نهائياً؟`)) return;
+    const backupProducts = [...products];
+    // Optimistic UI removal
+    setProducts((prev) => prev.filter((p) => p.id !== productId && p.slug !== productId));
     try {
       const res = await fetch(`/api/products/${productId}`, { method: "DELETE" });
       if (res.ok) {
+        // Re-fetch to ensure sync with database
         fetchProducts();
+      } else {
+        const errData = await res.json().catch(() => null);
+        alert(errData?.error || "فشل حذف القطعة من السيرفر.");
+        setProducts(backupProducts);
       }
     } catch (err) {
       console.error("Delete error:", err);
+      alert("حدث خطأ في الاتصال أثناء حذف القطعة.");
+      setProducts(backupProducts);
     }
   };
 
@@ -302,6 +319,7 @@ export default function AdminPage() {
           productsCount={products.length}
           onLogout={handleLogout}
           onOpenCreate={handleOpenCreate}
+          onOpenChangePassword={() => setChangePasswordOpen(true)}
         />
 
         {/* Tab 1: Dashboard View */}
@@ -349,6 +367,11 @@ export default function AdminPage() {
         {activeTab === "shipping" && (
           <AdminShipping />
         )}
+
+        {/* Tab 5: Payment & Social Settings Management View */}
+        {activeTab === "settings" && (
+          <AdminSettings />
+        )}
       </div>
 
       {/* Modal: View Payment Proof Screenshot */}
@@ -366,6 +389,12 @@ export default function AdminPage() {
         onClose={() => setModalOpen(false)}
         onSubmit={handleSubmitProduct}
         saving={saving}
+      />
+
+      {/* Modal: Change Admin Password */}
+      <ChangePasswordModal
+        isOpen={changePasswordOpen}
+        onClose={() => setChangePasswordOpen(false)}
       />
     </main>
   );

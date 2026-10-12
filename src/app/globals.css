@@ -8877,4 +8877,129 @@ body.drawer-open {
   .checkout-auth-grid {
     grid-template-columns: 1fr !important;
   }
-}
+}
+
+/* ==========================================================================
+   ADMIN CHANGE PASSWORD MODAL & CONTROLS
+   ========================================================================== */
+.admin-modal-box {
+  background: #0d1016;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  width: 92%;
+  max-width: 480px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  text-align: right;
+  animation: adminModalFadeIn 0.22s ease-out;
+}
+
+@keyframes adminModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 20, 28, 0.9);
+}
+
+.admin-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.admin-modal-subtitle {
+  font-size: 0.8rem;
+  color: var(--clr-text-muted);
+  line-height: 1.4;
+}
+
+.admin-modal-close-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(90deg);
+}
+
+.admin-password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.admin-password-input-wrap input {
+  padding-left: 2.8rem !important;
+}
+
+.admin-password-toggle-btn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  padding: 4px 6px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: opacity 0.2s;
+}
+
+.admin-password-toggle-btn:hover {
+  opacity: 0.8;
+}
+
+.admin-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.admin-alert-banner.error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.admin-alert-banner.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+

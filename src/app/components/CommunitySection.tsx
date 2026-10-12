@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -10,6 +13,16 @@ const COMMUNITY_IMAGES = [
 ];
 
 export default function CommunitySection() {
+  const [instagramUrl, setInstagramUrl] = useState("https://www.instagram.com/triplez1606/");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.social?.instagram) setInstagramUrl(data.social.instagram);
+      })
+      .catch(() => {});
+  }, []);
   return (
     <section className="section mockup-community-section" aria-label="Community lookbook">
       <div className="site-container">
@@ -36,7 +49,7 @@ export default function CommunitySection() {
                 Real people. Real style. Tag us to be featured.
               </p>
             </div>
-            <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="community-arrow-btn" aria-label="Follow us on Instagram">
+            <Link href={instagramUrl} target="_blank" rel="noopener noreferrer" className="community-arrow-btn" aria-label="Follow us on Instagram">
               →
             </Link>
           </div>

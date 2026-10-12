@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   getAsyncServerProducts,
   updateServerProduct,
@@ -75,6 +76,15 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/shop");
+      revalidatePath("/products");
+      revalidatePath("/admin");
+    } catch (e) {
+      // safe fallback
+    }
+
     return NextResponse.json({ success: true, product: updated });
   } catch (error) {
     console.error("Error updating product:", error);
@@ -94,6 +104,15 @@ export async function DELETE(request: NextRequest, { params }: RouteProps) {
 
     if (!success) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/shop");
+      revalidatePath("/products");
+      revalidatePath("/admin");
+    } catch (e) {
+      // safe fallback
     }
 
     return NextResponse.json({ success: true, message: "Product deleted successfully" });

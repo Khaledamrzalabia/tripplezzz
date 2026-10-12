@@ -24,9 +24,19 @@ export default function OrderConfirmationPage() {
   const [isRedirectCancelled, setIsRedirectCancelled] = useState(false);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Instagram DM target URL & Profile
-  const instagramDmUrl = "https://ig.me/m/triplez1606";
-  const instagramProfileUrl = "https://www.instagram.com/triplez1606/";
+  // Instagram DM target URL & Profile (Dynamic from Admin settings with fallback)
+  const [instagramDmUrl, setInstagramDmUrl] = useState("https://ig.me/m/triplez1606");
+  const [instagramProfileUrl, setInstagramProfileUrl] = useState("https://www.instagram.com/triplez1606/");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.social?.instagramDm) setInstagramDmUrl(data.social.instagramDm);
+        if (data?.social?.instagram) setInstagramProfileUrl(data.social.instagram);
+      })
+      .catch(() => {});
+  }, []);
 
   // Default detailed message in case sessionStorage wasn't populated
   const fallbackMessage = `مرحباً Triple Z 👋

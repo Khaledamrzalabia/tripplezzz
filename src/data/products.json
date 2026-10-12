@@ -1,41 +1,5 @@
 [
   {
-    "id": "tz-002",
-    "slug": "triple-z-portugal-heritage-hoodie",
-    "name": "Portugal Heritage Hoodie",
-    "description": "Deep crimson and forest green block construction with metallic gold crest.",
-    "longDescription": "500gsm heavyweight brushed fleece. Contrast color-block paneling inspired by Portuguese football heritage. Custom gold hardware and embroidered heritage crest.",
-    "craftSpecs": [],
-    "fitSilhouette": "",
-    "garmentCare": "",
-    "price": 900,
-    "currency": "USD",
-    "images": [
-      {
-        "alt": "Portugal Heritage Hoodie",
-        "src": "https://pub-cb13df92ef414969943ee4af399cc80d.r2.dev/assets/products/portugal-heritage-hoodie.png"
-      }
-    ],
-    "category": "tops",
-    "collection": "portugal",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "colors": [
-      "#8b1e28",
-      "#1c4a2b",
-      "#0a0a0a"
-    ],
-    "availability": "coming-soon",
-    "isBlurred": true,
-    "featured": false,
-    "isPlaceholder": false
-  },
-  {
     "id": "tz-005",
     "slug": "triple-z-messi-10-hoodie",
     "name": "Messi 10 Hoodie",
