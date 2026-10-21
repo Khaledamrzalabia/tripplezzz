@@ -1,0 +1,89 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import type { SiteMediaSettings } from "../../types/settings";
+
+interface Props {
+  media: SiteMediaSettings;
+}
+
+export default function Hero({ media }: Props) {
+  const subtitleLines = media.heroSubtitle.split("\n");
+  return (
+    <section className="hero" aria-label="Campaign hero">
+      {/* Background image: editable from the admin "Content & Media" tab */}
+      <div className="hero-bg" aria-hidden="true">
+        <Image
+          src={media.heroImage}
+          alt="Triple Z Winter Collection Campaign"
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: "center center" }}
+        />
+      </div>
+      <div className="hero-overlay" aria-hidden="true" />
+
+      {/* Main Content */}
+      <div className="hero-content">
+        <div className="hero-text-block">
+          {/* Top Eyebrow */}
+          <div className="hero-top-eyebrow">
+            <span className="hero-gold-dash" />
+            <span className="hero-eyebrow-text">{media.heroEyebrow}</span>
+          </div>
+
+          {/* Headline */}
+          <h1 className="hero-headline">
+            FOOTBALL,<br />
+            WORN<br />
+            <span className="hero-highlight-sky">DIFFERENTLY.</span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="hero-subline">
+            {subtitleLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < subtitleLines.length - 1 && <br />}
+              </span>
+            ))}
+          </p>
+
+          {/* Action Buttons */}
+          <div className="hero-actions">
+            <Link href="#products" className="hero-btn-primary">
+              SHOP THE COLLECTION
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Corner Indicators (N badge & Scroll indicator) */}
+      <div className="hero-bottom-indicators" aria-hidden="true">
+        <div className="hero-indicator-badge">
+          <span>N</span>
+        </div>
+        <div className="hero-indicator-scroll">
+          <span className="hero-scroll-bar" />
+          <span className="hero-scroll-label">SCROLL</span>
+        </div>
+      </div>
+
+      {/* Mobile Animated Energy Strip: Ticker marquee and hype pill */}
+      <div className="hero-mobile-ticker" aria-hidden="true">
+        <div className="hero-ticker-track">
+          <span className="hero-ticker-item">⚡ ARE YOU READY?</span>
+          <span className="hero-ticker-item">TRIPLE Z STREETWEAR</span>
+          <span className="hero-ticker-item">NEW SEASON DROPS</span>
+          <span className="hero-ticker-item">MESSI 10 • CR7 HERITAGE</span>
+          <span className="hero-ticker-item">⚡ ARE YOU READY?</span>
+          <span className="hero-ticker-item">TRIPLE Z STREETWEAR</span>
+          <span className="hero-ticker-item">NEW SEASON DROPS</span>
+          <span className="hero-ticker-item">MESSI 10 • CR7 HERITAGE</span>
+        </div>
+      </div>
+    </section>
+  );
+}

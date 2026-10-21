@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#0a0a0a"/>
+  <!-- Gold Accent Border -->
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.4"/>
+  <!-- 3 Stars -->
+  <g fill="#c9a96e" transform="translate(18, 12)">
+    <polygon points="4,0 5.2,2.5 8,2.9 6,4.8 6.5,7.6 4,6.3 1.5,7.6 2,4.8 0,2.9 2.8,2.5"/>
+    <polygon points="14,0 15.2,2.5 18,2.9 16,4.8 16.5,7.6 14,6.3 11.5,7.6 12,4.8 10,2.9 12.8,2.5"/>
+    <polygon points="24,0 25.2,2.5 28,2.9 26,4.8 26.5,7.6 24,6.3 21.5,7.6 22,4.8 20,2.9 22.8,2.5"/>
+  </g>
+  <!-- ZZZ Monogram Text -->
+  <text x="32" y="44" font-family="'Inter', sans-serif" font-weight="900" font-size="20" fill="#fafafa" letter-spacing="2" text-anchor="middle">
+    ZZZ
+  </text>
+  <rect x="20" y="49" width="24" height="2" fill="#c9a96e" rx="1"/>
+</svg>

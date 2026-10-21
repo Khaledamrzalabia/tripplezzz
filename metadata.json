@@ -1,0 +1,8 @@
+{
+  "name": "Triple Z — Football Streetwear",
+  "description": "Premium football streetwear label e-commerce store with catalog, collections, lookbook, cart, checkout, currency switcher, and admin catalog management.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
