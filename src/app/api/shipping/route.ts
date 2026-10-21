@@ -16,7 +16,7 @@ export async function GET() {
         "Cache-Control": "no-store, must-revalidate",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/shipping error:", error);
     return NextResponse.json(
       { error: "Failed to fetch shipping rates" },
@@ -45,6 +45,24 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    // Orders match the governorate by its exact names, so every row needs both names, unique, and a real price
+    const seen = new Set<string>();
+    for (const r of rates) {
+      const en = String(r?.en ?? "").trim();
+      const ar = String(r?.ar ?? "").trim();
+      const fee = Number(r?.shipping);
+      if (!en || !ar || !Number.isFinite(fee) || fee < 0) {
+        return NextResponse.json(
+          { error: `بيانات محافظة ناقصة أو سعر شحن غير صحيح (${ar || en || "بدون اسم"})` },
+          { status: 400 }
+        );
+      }
+      if (seen.has(en.toLowerCase())) {
+        return NextResponse.json({ error: `المحافظة ${en} متكررة` }, { status: 400 });
+      }
+      seen.add(en.toLowerCase());
+    }
+
     await updateShippingRates(rates);
     const updatedRates = await getShippingRates();
 
@@ -53,10 +71,10 @@ export async function PUT(req: NextRequest) {
       message: "تم تحديث أسعار الشحن بنجاح",
       rates: updatedRates,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("PUT /api/shipping error:", error);
     return NextResponse.json(
-      { error: error.message || "حدث خطأ أثناء حفظ أسعار الشحن" },
+      { error: "حدث خطأ أثناء حفظ أسعار الشحن" },
       { status: 500 }
     );
   }
@@ -83,10 +101,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "إجراء غير معروف" }, { status: 400 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/shipping error:", error);
     return NextResponse.json(
-      { error: error.message || "فشل تنفيذ العملية" },
+      { error: "فشل تنفيذ العملية" },
       { status: 500 }
     );
   }

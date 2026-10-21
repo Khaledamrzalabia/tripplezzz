@@ -1,11 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getAllProducts } from "../lib/products";
+import { getCachedServerProducts } from "../lib/products.server";
+import { SITE_URL } from "../lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl =
-    process.env.SITE_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://triplezzz.vercel.app");
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = SITE_URL;
   const now = new Date();
 
   // Static marketing & utility routes
@@ -78,8 +76,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // Dynamic product routes
-  const products = getAllProducts();
+  // Dynamic product routes: the live catalogue (database), not the bundled demo JSON
+  const products = await getCachedServerProducts();
   const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: now,

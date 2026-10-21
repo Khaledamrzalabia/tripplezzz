@@ -45,6 +45,7 @@ export function mapDbRecordToProduct(record: any): Product {
     isBlurred: Boolean(record.is_blurred),
     featured: Boolean(record.featured),
     isPlaceholder: Boolean(record.is_placeholder),
+    stock: record.stock === null || record.stock === undefined ? null : Number(record.stock),
   };
 }
 
@@ -70,6 +71,7 @@ export function mapProductToDbRecord(product: Product): any {
     is_blurred: Boolean(product.isBlurred),
     featured: Boolean(product.featured),
     is_placeholder: Boolean(product.isPlaceholder),
+    stock: product.stock ?? null,
     updated_at: new Date().toISOString(),
   };
 }

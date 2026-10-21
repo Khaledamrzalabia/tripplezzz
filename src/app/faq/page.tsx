@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
-  description: "Find answers regarding orders, sizing, worldwide delivery, authenticity, and returns.",
+  description: "Find answers regarding orders, payment, sizing, delivery across Egypt, and returns.",
 };
 
 const FAQS = [
@@ -12,15 +12,15 @@ const FAQS = [
     items: [
       {
         q: "What payment methods are supported?",
-        a: "We accept Visa, Mastercard, American Express, Apple Pay, Google Pay, and localized regional payment gateways across Egypt, Saudi Arabia, the UAE, and worldwide.",
+        a: "Cash on delivery, InstaPay, Vodafone Cash, and PayPal. With online transfers you can pay the full amount or a 30% deposit and the rest on delivery. Upload the transfer screenshot at checkout so we can confirm your order.",
       },
       {
-        q: "Can I view prices and pay in local currency (EGP, SAR, AED, USD, EUR)?",
-        a: "Yes. Use the currency selector in the top bar or footer to view prices and check out in USD, EGP, SAR, AED, EUR, or GBP with transparent real-time conversion rates.",
+        q: "Which currency are prices in?",
+        a: "All prices are in Egyptian Pounds (EGP).",
       },
       {
         q: "Can I cancel or modify an order after placing it?",
-        a: "Orders are processed swiftly within 2 hours. If you need to make changes, please contact concierge@triple-z.com immediately with your order ID.",
+        a: "While your order is still pending review, you can cancel it from your account page. Once we confirm it, reach us through the Contact page with your order number.",
       },
     ],
   },
@@ -28,16 +28,12 @@ const FAQS = [
     category: "SHIPPING & DELIVERY",
     items: [
       {
-        q: "How fast is delivery?",
-        a: "Domestic orders (Egypt & GCC regional hubs) arrive in 2–4 business days. Worldwide express shipping typically takes 3–6 business days with full courier tracking.",
+        q: "Where do you ship and how fast?",
+        a: "We ship to every governorate in Egypt and aim to dispatch orders within 2–5 business days.",
       },
       {
-        q: "How do I qualify for free shipping?",
-        a: "Free shipping is automatically applied on all orders totaling $150 USD or equivalent (approx. 7,500 EGP / 560 SAR / 550 AED).",
-      },
-      {
-        q: "Do I have to pay customs duties or import taxes?",
-        a: "For domestic and GCC orders, all taxes are included at checkout. International orders are shipped DDU (Delivered Duty Unpaid) or with pre-calculated duties depending on destination regulations.",
+        q: "How much is shipping?",
+        a: "Shipping depends on your governorate and is shown at checkout before you confirm. You pay one shipping fee per order.",
       },
     ],
   },
@@ -67,7 +63,7 @@ const FAQS = [
       },
       {
         q: "How do I initiate a return?",
-        a: "Visit our Returns portal or email returns@triple-z.com with your order number. Our logistics partner will schedule a courier pickup from your address.",
+        a: "Reach us through the Contact page (WhatsApp or email) with your order number and tell us whether you want an exchange or a refund.",
       },
     ],
   },

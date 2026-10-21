@@ -85,3 +85,17 @@ export const EGYPT_GOVERNORATES: GovernorateShipping[] = [
   { en: "Matrouh", ar: "مطروح / الساحل", shipping: 110 },
   { en: "New Valley", ar: "الوادي الجديد", shipping: 130 },
 ];
+
+/** Active statuses in the normal order flow (before delivery or cancellation) */
+export const ACTIVE_ORDER_STATUSES: OrderStatus[] = ["pending", "confirmed", "preparing", "shipped"];
+
+/**
+ * Status change rules (shared by the API and the admin UI):
+ * - delivered and cancelled are final
+ * - active statuses can move to each other (to fix a wrong click), to delivered, or to cancelled
+ */
+export function canChangeOrderStatus(from: OrderStatus, to: OrderStatus): boolean {
+  if (from === to) return false;
+  if (!ACTIVE_ORDER_STATUSES.includes(from)) return false;
+  return ACTIVE_ORDER_STATUSES.includes(to) || to === "delivered" || to === "cancelled";
+}

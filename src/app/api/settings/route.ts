@@ -18,7 +18,7 @@ export async function GET() {
         "Cache-Control": "no-store, must-revalidate",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/settings error:", error);
     return NextResponse.json(
       { error: "Failed to fetch store settings" },
@@ -62,10 +62,10 @@ export async function PUT(req: NextRequest) {
       message: "تم حفظ وتحديث إعدادات الدفع والسوشيال ميديا بنجاح",
       settings: updated,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("PUT /api/settings error:", error);
     return NextResponse.json(
-      { error: error.message || "حدث خطأ أثناء حفظ الإعدادات" },
+      { error: "حدث خطأ أثناء حفظ الإعدادات" },
       { status: 500 }
     );
   }
@@ -103,10 +103,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "إجراء غير معروف" }, { status: 400 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/settings error:", error);
     return NextResponse.json(
-      { error: error.message || "فشل تنفيذ العملية" },
+      { error: "فشل تنفيذ العملية" },
       { status: 500 }
     );
   }

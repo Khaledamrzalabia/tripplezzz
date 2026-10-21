@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { Order, OrderStatus } from "../../../types/order";
+import { canChangeOrderStatus, type Order, type OrderStatus } from "../../../types/order";
 
 interface Props {
   orders: Order[];
@@ -187,7 +187,11 @@ export default function AdminOrders({
                         className={`admin-order-status-select status-${order.status}`}
                       >
                         {STATUS_OPTIONS.map((st) => (
-                          <option key={st.value} value={st.value}>
+                          <option
+                            key={st.value}
+                            value={st.value}
+                            disabled={st.value !== order.status && !canChangeOrderStatus(order.status, st.value)}
+                          >
                             {st.labelAr}
                           </option>
                         ))}
@@ -512,7 +516,11 @@ export default function AdminOrders({
                             className={`admin-status-select status-${o.status}`}
                           >
                             {STATUS_OPTIONS.map((st) => (
-                              <option key={st.value} value={st.value}>
+                              <option
+                                key={st.value}
+                                value={st.value}
+                                disabled={st.value !== o.status && !canChangeOrderStatus(o.status, st.value)}
+                              >
                                 {st.labelAr}
                               </option>
                             ))}

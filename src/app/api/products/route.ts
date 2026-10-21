@@ -6,6 +6,13 @@ import {
 } from "../../../lib/products.server";
 import type { Product } from "../../../types/product";
 
+// "" / null / undefined = unlimited stock; otherwise a whole number >= 0
+function parseStock(value: unknown): number | null {
+  if (value === undefined || value === null || value === "") return null;
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
 export async function GET() {
   const products = await getAsyncServerProducts();
   return NextResponse.json(products, {
@@ -45,7 +52,11 @@ export async function POST(request: NextRequest) {
           .replace(/-+/g, "-")
           .replace(/^-|-$/g, "");
 
-    const finalSlug = cleanSlug || `product-${Date.now().toString(36)}`;
+    // Product links must be unique: "hoodie" becomes "hoodie-2" when "hoodie" is taken
+    const baseSlug = cleanSlug || `product-${Date.now().toString(36)}`;
+    const takenSlugs = new Set((await getAsyncServerProducts()).map((p) => p.slug));
+    let finalSlug = baseSlug;
+    for (let n = 2; takenSlugs.has(finalSlug); n++) finalSlug = `${baseSlug}-${n}`;
     const finalId = body.id || `tz-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 7)}`;
 
     const newProduct: Product = {
@@ -70,6 +81,7 @@ export async function POST(request: NextRequest) {
       isBlurred: Boolean(body.isBlurred || body.availability === "coming-soon"),
       featured: Boolean(body.featured),
       isPlaceholder: false,
+      stock: parseStock(body.stock),
     };
 
     await createServerProduct(newProduct);

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 interface Props {
@@ -165,7 +166,9 @@ export default function SizeGuideModal({ isOpen, onClose, category = "tops" }: P
         </div>
 
         <div className="tz-modal-footer">
-          <p className="tz-footer-hint">Need personal sizing assistance? Contact concierge@triple-z.com</p>
+          <p className="tz-footer-hint">
+            Need help with sizing? <Link href="/contact" onClick={onClose}>Message us</Link>
+          </p>
           <button type="button" onClick={onClose} className="btn btn-pill-white-sm">
             GOT IT
           </button>

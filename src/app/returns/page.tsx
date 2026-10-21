@@ -29,7 +29,7 @@ export default function ReturnsPage() {
             <span style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "var(--clr-accent)", display: "block", marginBottom: "0.5rem" }}>01</span>
             <h3 style={{ fontSize: "1.1rem", textTransform: "uppercase", marginBottom: "0.5rem" }}>REQUEST</h3>
             <p style={{ color: "var(--clr-text-secondary)", fontSize: "0.9rem", lineHeight: 1.6 }}>
-              Contact returns@triple-z.com with your order number and specify whether you need an exchange or a refund.
+              Reach us through the <Link href="/contact">Contact page</Link> with your order number and specify whether you need an exchange or a refund.
             </p>
           </div>
           <div style={{ background: "var(--clr-bg-surface)", border: "1px solid var(--clr-border)", borderRadius: "var(--radius-md)", padding: "2rem" }}>

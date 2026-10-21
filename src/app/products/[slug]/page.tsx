@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAsyncServerProducts } from "../../../lib/products.server";
+import { SITE_URL, absoluteUrl } from "../../../lib/site";
+import { isProductComingSoon } from "../../../types/product";
 import ProductDetailClient from "./ProductDetailClient";
 
 interface Props {
@@ -52,24 +54,31 @@ export default async function ProductPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: product.images.map((img) => `https://triple-z.com${img.src}`),
+    image: product.images.map((img) => absoluteUrl(img.src)),
     description: product.description,
     sku: product.id,
     brand: {
       "@type": "Brand",
       name: "Triple Z",
     },
-    offers: {
-      "@type": "Offer",
-      url: `https://triple-z.com/products/${product.slug}`,
-      priceCurrency: "EGP",
-      price: product.price,
-      availability:
-        product.availability === "in-stock" || product.availability === "low-stock"
-          ? "https://schema.org/InStock"
-          : "https://schema.org/PreOrder",
-      itemCondition: "https://schema.org/NewCondition",
-    },
+    // Search engines require a price on an Offer: teaser pieces without one get no offer
+    ...(product.price
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: `${SITE_URL}/products/${encodeURIComponent(product.slug)}`,
+            priceCurrency: "EGP",
+            price: product.price,
+            availability:
+              product.availability === "out-of-stock"
+                ? "https://schema.org/OutOfStock"
+                : isProductComingSoon(product)
+                ? "https://schema.org/PreOrder"
+                : "https://schema.org/InStock",
+            itemCondition: "https://schema.org/NewCondition",
+          },
+        }
+      : {}),
   };
 
   return (

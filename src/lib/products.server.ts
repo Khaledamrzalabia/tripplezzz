@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { cacheLife } from "next/cache";
 import type { Product } from "../types/product";
 import defaultProducts from "../data/products.json";
 import {
@@ -64,12 +65,12 @@ async function upsertProductInPostgres(pool: any, product: Product): Promise<voi
       id, slug, name, description, long_description, price, currency,
       images, category, collection, sizes, colors, availability,
       is_blurred, featured, is_placeholder,
-      craft_specs, fit_silhouette, garment_care
+      craft_specs, fit_silhouette, garment_care, stock
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7,
       $8, $9, $10, $11, $12, $13,
       $14, $15, $16,
-      $17, $18, $19
+      $17, $18, $19, $20
     )
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
@@ -90,6 +91,7 @@ async function upsertProductInPostgres(pool: any, product: Product): Promise<voi
       craft_specs = EXCLUDED.craft_specs,
       fit_silhouette = EXCLUDED.fit_silhouette,
       garment_care = EXCLUDED.garment_care,
+      stock = EXCLUDED.stock,
       updated_at = NOW();
   `;
   const values = [
@@ -112,6 +114,7 @@ async function upsertProductInPostgres(pool: any, product: Product): Promise<voi
     JSON.stringify(product.craftSpecs || []),
     product.fitSilhouette || "",
     product.garmentCare || "",
+    product.stock ?? null,
   ];
 
   await pool.query(query, values);
@@ -159,6 +162,13 @@ export async function getAsyncServerProducts(): Promise<Product[]> {
   return getLocalProducts();
 }
 
+// Cached read for routes that don't need second-by-second freshness (sitemap)
+export async function getCachedServerProducts(): Promise<Product[]> {
+  "use cache";
+  cacheLife("hours");
+  return getAsyncServerProducts();
+}
+
 // Synchronous getter for SSG/static metadata
 export function getServerProducts(): Product[] {
   return getLocalProducts();
@@ -170,12 +180,9 @@ export async function createServerProduct(product: Product): Promise<boolean> {
   if (isPostgresConfigured) {
     const pool = getPool();
     if (pool) {
-      try {
-        await ensureProductsTable();
-        await upsertProductInPostgres(pool, product);
-      } catch (err) {
-        console.error("Direct PostgreSQL insert error:", err);
-      }
+      // Postgres is the source of truth: a failed write must not be reported as saved
+      await ensureProductsTable();
+      await upsertProductInPostgres(pool, product);
     }
   }
 
@@ -217,12 +224,9 @@ export async function updateServerProduct(
   if (isPostgresConfigured) {
     const pool = getPool();
     if (pool) {
-      try {
-        await ensureProductsTable();
-        await upsertProductInPostgres(pool, mergedProduct);
-      } catch (err) {
-        console.error("Direct PostgreSQL update error:", err);
-      }
+      // Postgres is the source of truth: a failed write must not be reported as saved
+      await ensureProductsTable();
+      await upsertProductInPostgres(pool, mergedProduct);
     }
   }
 

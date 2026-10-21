@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { getAllProducts } from "../../lib/products";
+import type { Product } from "../../types/product";
 import { useCurrency } from "../../context/CurrencyContext";
 
 interface Props {
@@ -13,7 +13,8 @@ interface Props {
 
 export default function SearchModal({ isOpen, onClose }: Props) {
   const [query, setQuery] = useState("");
-  const allProducts = getAllProducts();
+  // Live catalogue (includes products added from the admin), loaded when the search opens
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const { formatPrice } = useCurrency();
@@ -45,6 +46,20 @@ export default function SearchModal({ isOpen, onClose }: Props) {
       setQuery("");
     }, 220);
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    fetch("/api/products")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data)) setAllProducts(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (shouldRender && !isClosing) {

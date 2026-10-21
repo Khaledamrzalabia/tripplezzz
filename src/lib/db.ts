@@ -110,6 +110,7 @@ export async function ensureProductsTable(): Promise<void> {
       ALTER TABLE products ADD COLUMN IF NOT EXISTS craft_specs JSONB DEFAULT '[]'::jsonb;
       ALTER TABLE products ADD COLUMN IF NOT EXISTS fit_silhouette TEXT;
       ALTER TABLE products ADD COLUMN IF NOT EXISTS garment_care TEXT;
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS stock INTEGER;
     `);
     tableInitialized = true;
   } catch (err) {
@@ -143,5 +144,6 @@ export function rowToProduct(row: any): Product {
     isBlurred: Boolean(row.is_blurred),
     featured: Boolean(row.featured),
     isPlaceholder: Boolean(row.is_placeholder),
+    stock: row.stock === null || row.stock === undefined ? null : Number(row.stock),
   };
 }

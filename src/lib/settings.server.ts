@@ -232,19 +232,16 @@ export async function updateStoreSettings(newSettings: Partial<StoreSettings>): 
   if (isPostgresConfigured) {
     const pool = getPool();
     if (pool) {
-      try {
-        await ensureSettingsTable(pool);
-        await pool.query(
-          `INSERT INTO store_settings (key, value, updated_at)
-           VALUES ('store_config', $1::jsonb, NOW())
-           ON CONFLICT (key) DO UPDATE SET
-             value = EXCLUDED.value,
-             updated_at = NOW()`,
-          [JSON.stringify(merged)]
-        );
-      } catch (err) {
-        console.error("Failed to persist store_config in DB:", err);
-      }
+      // The database is the source of truth: a failed write must not be reported as saved
+      await ensureSettingsTable(pool);
+      await pool.query(
+        `INSERT INTO store_settings (key, value, updated_at)
+         VALUES ('store_config', $1::jsonb, NOW())
+         ON CONFLICT (key) DO UPDATE SET
+           value = EXCLUDED.value,
+           updated_at = NOW()`,
+        [JSON.stringify(merged)]
+      );
     }
   }
 

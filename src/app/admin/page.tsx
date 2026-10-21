@@ -22,6 +22,7 @@ const INITIAL_FORM: ProductFormData = {
   category: "tops",
   collection: "core",
   price: "120",
+  stock: "",
   availability: "coming-soon",
   description: "",
   longDescription: "",
@@ -135,6 +136,9 @@ export default function AdminPage() {
       });
       if (res.ok) {
         fetchOrders();
+      } else {
+        const errData = await res.json().catch(() => null);
+        alert(errData?.error || "فشل تحديث حالة الطلب.");
       }
     } catch (err) {
       console.error("Failed to update status:", err);
@@ -214,6 +218,7 @@ export default function AdminPage() {
       category: product.category,
       collection: product.collection || "core",
       price: product.price !== undefined && product.price !== null ? String(product.price) : "",
+      stock: product.stock !== undefined && product.stock !== null ? String(product.stock) : "",
       availability: product.availability,
       description: product.description,
       longDescription: product.longDescription || "",

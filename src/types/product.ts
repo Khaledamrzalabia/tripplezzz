@@ -35,6 +35,8 @@ export interface Product {
   isBlurred?: boolean;
   /** True = verified real product data; False = placeholder demo data */
   isPlaceholder?: boolean;
+  /** Pieces left for sale. null/undefined = unlimited (no stock tracking) */
+  stock?: number | null;
 }
 
 /**

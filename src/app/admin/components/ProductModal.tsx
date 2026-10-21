@@ -22,6 +22,8 @@ export interface ProductFormData {
   category: ProductCategory;
   collection: string;
   price: string;
+  /** "" = unlimited */
+  stock: string;
   availability: ProductAvailability;
   description: string;
   longDescription: string;
@@ -289,6 +291,24 @@ export default function ProductModal({
                       🔒 وضع <strong>Coming Soon:</strong> يتم إخفاء السعر وقفل زر الإضافة للحقيبة تلقائياً حتى إطلاق الدروب.
                     </span>
                   )}
+                </div>
+
+                <div className="admin-form-group">
+                  <label className="admin-form-label">
+                    الكمية المتاحة (Stock)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={formData.stock}
+                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                    placeholder="سيبها فاضية = بدون حد"
+                    className="admin-form-input"
+                  />
+                  <span className="admin-form-hint">
+                    بتقل مع كل طلب، وبترجع لو الطلب اتلغى. لما توصل 0 المنتج بيتحول Sold Out لوحده.
+                  </span>
                 </div>
               </div>
             </div>

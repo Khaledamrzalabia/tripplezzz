@@ -12,6 +12,13 @@ interface RouteProps {
   params: Promise<{ id: string }>;
 }
 
+// "" / null = unlimited stock; otherwise a whole number >= 0
+function parseStock(value: unknown): number | null {
+  if (value === null || value === "") return null;
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
 export async function GET(request: NextRequest, { params }: RouteProps) {
   const { id } = await params;
   const products = await getAsyncServerProducts();
@@ -68,7 +75,16 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       ...(Array.isArray(body.craftSpecs) && { craftSpecs: body.craftSpecs }),
       ...(body.fitSilhouette !== undefined && { fitSilhouette: body.fitSilhouette.trim() }),
       ...(body.garmentCare !== undefined && { garmentCare: body.garmentCare.trim() }),
+      ...(body.stock !== undefined && { stock: parseStock(body.stock) }),
     };
+
+    // Another product already uses this link
+    if (updateData.slug) {
+      const clash = (await getAsyncServerProducts()).find((p) => p.slug === updateData.slug && p.id !== id && p.slug !== id);
+      if (clash) {
+        return NextResponse.json({ error: `الرابط "${updateData.slug}" مستخدم لمنتج تاني (${clash.name})` }, { status: 409 });
+      }
+    }
 
     const updated = await updateServerProduct(id, updateData);
 

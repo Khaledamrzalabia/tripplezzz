@@ -17,7 +17,12 @@ type CartAction =
   | { type: "REMOVE"; productId: string; selectedSize?: string; selectedColor?: string }
   | { type: "UPDATE_QTY"; productId: string; selectedSize?: string; selectedColor?: string; quantity: number }
   | { type: "CLEAR" }
-  | { type: "HYDRATE"; payload: CartState };
+  | { type: "HYDRATE"; payload: CartState }
+  | { type: "SYNC"; products: Product[] };
+
+function isPurchasable(product: Product): boolean {
+  return !isProductComingSoon(product) && product.availability !== "out-of-stock";
+}
 
 function matchesCartItem(
   item: { product: { id: string }; selectedSize?: string; selectedColor?: string },
@@ -77,6 +82,16 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
     case "CLEAR":
       return { items: [] };
+    case "SYNC": {
+      // Replace saved product snapshots with the live catalogue; drop what can't be bought anymore
+      const byId = new Map(action.products.map((p) => [p.id, p]));
+      return {
+        items: state.items.flatMap((i) => {
+          const fresh = byId.get(i.product.id);
+          return fresh && isPurchasable(fresh) ? [{ ...i, product: fresh }] : [];
+        }),
+      };
+    }
     default:
       return state;
   }
@@ -103,6 +118,10 @@ interface CartContextValue {
   toggleDrawer: () => void;
   lastAddedItem: CartToastItem | null;
   clearLastAddedItem: () => void;
+  /** Re-reads live prices/availability; returns true when the cart changed */
+  refreshCart: () => Promise<boolean>;
+  /** Message about items removed or re-priced by the last refresh */
+  cartNotice: string | null;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -115,6 +134,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const toastTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const [state, dispatch] = useReducer(cartReducer, { items: [] });
   const isHydratedRef = React.useRef(false);
+  const stateRef = React.useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+  const [cartNotice, setCartNotice] = useState<string | null>(null);
+
+  const refreshCart = React.useCallback(async (): Promise<boolean> => {
+    try {
+      const res = await fetch("/api/products", { cache: "no-store" });
+      if (!res.ok) return false;
+      const products: Product[] = await res.json();
+      if (!Array.isArray(products)) return false;
+
+      const byId = new Map(products.map((p) => [p.id, p]));
+      const removed: string[] = [];
+      let repriced = false;
+      for (const item of stateRef.current.items) {
+        const fresh = byId.get(item.product.id);
+        if (!fresh || !isPurchasable(fresh)) removed.push(item.product.name);
+        else if ((fresh.price ?? 0) !== (item.product.price ?? 0)) repriced = true;
+      }
+
+      dispatch({ type: "SYNC", products });
+      const notes: string[] = [];
+      if (removed.length) notes.push(`اتشال من السلة لأنه مبقاش متاح: ${removed.join("، ")}.`);
+      if (repriced) notes.push("أسعار بعض القطع اتحدثت، راجع الإجمالي.");
+      setCartNotice(notes.length ? notes.join(" ") : null);
+      return removed.length > 0 || repriced;
+    } catch {
+      return false;
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -129,7 +180,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // ignore parsing error
     }
     isHydratedRef.current = true;
-  }, []);
+    // Saved carts keep old prices: sync them with the live catalogue right away.
+    // State is only set after the network call resolves, not synchronously in this effect.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    refreshCart();
+  }, [refreshCart]);
 
   useEffect(() => {
     if (isHydratedRef.current) {
@@ -149,7 +204,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const addItem = (product: Product, quantity: number, selectedSize?: string, selectedColor?: string) => {
-    if (isProductComingSoon(product) || product.availability === "out-of-stock") return;
+    if (!isPurchasable(product)) return;
     dispatch({ type: "ADD", product, quantity, selectedSize, selectedColor });
     // Trigger lightweight toast notification without hijacking the viewport
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
@@ -190,6 +245,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         toggleDrawer,
         lastAddedItem,
         clearLastAddedItem,
+        refreshCart,
+        cartNotice,
       }}
     >
       {children}

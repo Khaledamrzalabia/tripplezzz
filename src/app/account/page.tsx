@@ -283,12 +283,14 @@ export default function AccountPage() {
                           <span style={{ color: "#ef4444" }}>تم إلغاء هذا الطلب</span>
                         ) : ["shipped", "delivered"].includes(order.status) ? (
                           <span style={{ color: "var(--clr-accent)" }}>الطلب قيد التوصيل مع المندوب</span>
+                        ) : order.status === "pending" ? (
+                          <span>يمكنك إلغاء الطلب قبل ما نأكده</span>
                         ) : (
-                          <span>يمكنك إلغاء الطلب قبل تحويله للشحن</span>
+                          <span>الطلب اتأكد. للإلغاء تواصل معانا على واتساب أو إنستجرام</span>
                         )}
                       </div>
 
-                      {["pending", "confirmed", "preparing"].includes(order.status) && (
+                      {order.status === "pending" && (
                         <button
                           type="button"
                           onClick={() => handleCancelOrder(order)}

@@ -28,24 +28,25 @@ export default function AdminDashboard({
     const validOrders = orders.filter((o) => o.status !== "cancelled");
     const totalGrossRevenue = validOrders.reduce((sum, o) => sum + (o.total || 0), 0);
 
-    const collectedDeposits = validOrders.reduce((sum, o) => {
-      if (o.paymentMethod === "cod") {
-        return sum + (o.status === "delivered" ? (o.total || 0) : 0);
-      }
-      if (o.paymentType === "deposit") {
-        return sum + (o.depositAmount || 0);
-      }
-      return sum + (o.total || 0);
-    }, 0);
+    // Money actually received: online transfers count once the order is confirmed (screenshot checked);
+    // a delivered order means everything was paid (deposit + cash on delivery)
+    const collectedFor = (o: Order): number => {
+      if (o.status === "delivered") return o.total || 0;
+      if (o.paymentMethod === "cod" || o.status === "pending") return 0;
+      return o.depositAmount || 0;
+    };
 
+    const collectedDeposits = validOrders.reduce((sum, o) => sum + collectedFor(o), 0);
+
+    // Everything not collected yet on open orders (collected + pending = gross revenue)
     const pendingCollection = validOrders
-      .filter((o) => o.status !== "delivered" && o.status !== "cancelled")
-      .reduce((sum, o) => {
-        if (o.paymentMethod === "cod") {
-          return sum + (o.total || 0);
-        }
-        return sum + (o.remainingAmount || 0);
-      }, 0);
+      .filter((o) => o.status !== "delivered")
+      .reduce((sum, o) => sum + (o.total || 0) - collectedFor(o), 0);
+
+    // Transfers the customer says they made but nobody has checked yet
+    const awaitingReview = validOrders
+      .filter((o) => o.status === "pending" && o.paymentMethod !== "cod")
+      .reduce((sum, o) => sum + (o.depositAmount || 0), 0);
 
     const aov = validOrders.length > 0 ? Math.round(totalGrossRevenue / validOrders.length) : 0;
 
@@ -73,6 +74,7 @@ export default function AdminDashboard({
       totalGrossRevenue,
       collectedDeposits,
       pendingCollection,
+      awaitingReview,
       aov,
       statusCounts,
       stockCounts,
@@ -115,13 +117,16 @@ export default function AdminDashboard({
           <div className="admin-kpi-card highlight-green">
             <div className="admin-kpi-top">
               <span className="admin-kpi-icon">⚡</span>
-              <span className="admin-kpi-badge">العربونات المحصلة</span>
+              <span className="admin-kpi-badge">المبالغ المحصلة</span>
             </div>
             <div className="admin-kpi-num" style={{ color: "#10b981" }}>
               {metrics.collectedDeposits.toLocaleString("ar-EG")} <small>ج.م</small>
             </div>
             <div className="admin-kpi-foot">
-              ديبوزيت (30%) + مدفوع بالكامل (100%)
+              تحويلات مؤكدة + طلبات اتسلمت
+              {metrics.awaitingReview > 0 && (
+                <> • {metrics.awaitingReview.toLocaleString("ar-EG")} ج.م تحويلات لسه محتاجة مراجعة</>
+              )}
             </div>
           </div>
 
@@ -135,7 +140,7 @@ export default function AdminDashboard({
               {metrics.pendingCollection.toLocaleString("ar-EG")} <small>ج.م</small>
             </div>
             <div className="admin-kpi-foot">
-              مبالغ مستحقة للتحصيل عند التسليم كاش
+              كل اللي لسه ما اتحصلش من الطلبات المفتوحة
             </div>
           </div>
 

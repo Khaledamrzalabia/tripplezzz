@@ -7,12 +7,13 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 import { useCustomerAuth } from "../../context/CustomerAuthContext";
+import { normalizeEgyptPhone } from "../../lib/phone";
 import { EGYPT_GOVERNORATES, type GovernorateShipping, type PaymentMethod, type PaymentType } from "../../types/order";
 import { DEFAULT_STORE_SETTINGS, type StoreSettings } from "../../types/settings";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { state, totalPrice, totalItems, clearCart } = useCart();
+  const { state, totalPrice, totalItems, clearCart, refreshCart, cartNotice } = useCart();
   const { formatPrice } = useCurrency();
   const { customer, loading: authLoading, login, register } = useCustomerAuth();
 
@@ -52,7 +53,8 @@ export default function CheckoutPage() {
   }, []);
 
   // Step 2: Shipping Details
-  const [governorate, setGovernorate] = useState(EGYPT_GOVERNORATES[0].en);
+  // Empty until the customer picks one: shipping depends on it, so never assume Cairo
+  const [governorate, setGovernorate] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
@@ -144,9 +146,14 @@ export default function CheckoutPage() {
     }
   }, [customer]);
 
+  // Saved carts can hold old prices: re-read the live catalogue when checkout opens
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
+
   // Shipping calculation (Dynamic admin-configured rates)
-  const currentGov = shippingRates.find((g) => g.en === governorate) || shippingRates[0] || EGYPT_GOVERNORATES[0];
-  const shippingFee = currentGov ? currentGov.shipping : 60;
+  const currentGov = shippingRates.find((g) => g.en === governorate) || null;
+  const shippingFee = currentGov ? currentGov.shipping : 0;
   const subtotal = totalPrice;
   const grandTotal = subtotal + shippingFee;
 
@@ -233,15 +240,15 @@ export default function CheckoutPage() {
               stateText.includes(arName) ||
               (data.display_name && data.display_name.includes(arName))
             );
-          }) || shippingRates[0] || EGYPT_GOVERNORATES[0];
+          });
 
           const detectedCity = addr.city || addr.town || addr.suburb || addr.neighbourhood || addr.village || "";
           const street = addr.road || addr.residential || addr.suburb || "";
 
           // Instead of instantly applying without user knowing, prompt confirmation modal
           setDetectedLocationData({
-            govEn: matchedGov.en,
-            govAr: matchedGov.ar,
+            govEn: matchedGov?.en || "",
+            govAr: matchedGov?.ar || "غير محددة، اختارها من القائمة",
             city: detectedCity,
             street,
             displayName: data.display_name || "",
@@ -313,14 +320,14 @@ export default function CheckoutPage() {
 
   // Wizard Step Validations
   const validateStep1 = () => {
-    const cleanPhone = phone.replace(/[\s\-\+]/g, "").replace(/^20/, "");
+    const cleanPhone = normalizeEgyptPhone(phone);
     if (!fullName.trim()) {
       setFormError("يرجى إدخال الاسم الكامل للمتابعة");
       scrollToTop("smooth");
       return false;
     }
 
-    if (!cleanPhone || !/^01[0125][0-9]{8}$/.test(cleanPhone)) {
+    if (!cleanPhone) {
       setFormError("يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم (يبدأ بـ 010 أو 011 أو 012 أو 015)");
       scrollToTop("smooth");
       return false;
@@ -337,6 +344,11 @@ export default function CheckoutPage() {
   };
 
   const validateStep2 = () => {
+    if (!currentGov) {
+      setFormError("يرجى اختيار المحافظة علشان نحسب مصاريف الشحن");
+      scrollToTop("smooth");
+      return false;
+    }
     if (!city.trim() || !address.trim()) {
       setFormError("يرجى ملء الحي والعنوان بالتفصيل (الشارع، رقم العقار، الشقة) للمتابعة");
       scrollToTop("smooth");
@@ -358,8 +370,8 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (!fullName.trim() || !phone.trim() || !city.trim() || !address.trim()) {
-      setFormError("يرجى التأكد من ملء جميع بيانات الشحن والتواصل");
+    if (!fullName.trim() || !phone.trim() || !currentGov || !city.trim() || !address.trim()) {
+      setFormError("يرجى التأكد من ملء جميع بيانات الشحن والتواصل واختيار المحافظة");
       scrollToTop("smooth");
       return;
     }
@@ -384,7 +396,12 @@ export default function CheckoutPage() {
       }
     }
 
-    const cleanPhone = phone.replace(/[\s\-\+]/g, "").replace(/^20/, "");
+    const cleanPhone = normalizeEgyptPhone(phone);
+    if (!cleanPhone) {
+      setFormError("يرجى إدخال رقم موبايل مصري صحيح (010 / 011 / 012 / 015)");
+      scrollToTop("smooth");
+      return;
+    }
     const safeEmail = email.trim() || customer?.email || `${cleanPhone}@customer.triplez.com`;
 
     try {
@@ -425,6 +442,21 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
+      if (res.status === 409 && data.code === "PRICE_CHANGED") {
+        // Prices moved since the cart was filled: show the live totals before the customer pays anything else
+        await refreshCart();
+        setStatus("idle");
+        setCurrentStep(3);
+        setFormError(
+          `${data.error} الإجمالي الصحيح: ${data.totals.total} ج.م` +
+            (data.totals.depositAmount && data.totals.depositAmount !== data.totals.total
+              ? ` (العربون: ${data.totals.depositAmount} ج.م)`
+              : "") +
+            ". لو حوّلت مبلغ مختلف، تواصل معانا قبل ما تأكد."
+        );
+        scrollToTop("smooth");
+        return;
+      }
       if (!res.ok || !data.success) {
         throw new Error(data.error || "فشل إرسال الطلب");
       }
@@ -632,6 +664,20 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
         </div>
 
         {/* Global Error message */}
+        {cartNotice && (
+          <div role="status" style={{
+            background: "rgba(234, 179, 8, 0.1)",
+            border: "1px solid #eab308",
+            color: "#fde68a",
+            padding: "1rem 1.25rem",
+            borderRadius: "var(--radius-md)",
+            marginBottom: "1rem",
+            fontSize: "0.95rem"
+          }}>
+            ⚠️ {cartNotice}
+          </div>
+        )}
+
         {formError && (
           <div style={{
             background: "rgba(239, 68, 68, 0.1)",
@@ -997,6 +1043,9 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                         onChange={(e) => setGovernorate(e.target.value)}
                         className="form-input"
                       >
+                        <option value="" disabled>
+                          اختار المحافظة...
+                        </option>
                         {shippingRates.map((g) => (
                           <option key={g.en} value={g.en}>
                             {g.ar} - شحن: {g.shipping} ج.م
@@ -1480,8 +1529,8 @@ ${paymentType === "deposit" && paymentMethod !== "cod" ? `• العربون ا�
                 <span>{subtotal} ج.م</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", color: "var(--clr-text-secondary)" }}>
-                <span>مصاريف الشحن ({currentGov.ar} - شحنة واحدة للطلب):</span>
-                <span>{shippingFee} ج.م</span>
+                <span>مصاريف الشحن ({currentGov ? `${currentGov.ar} - شحنة واحدة للطلب` : "اختار المحافظة"}):</span>
+                <span>{currentGov ? `${shippingFee} ج.م` : "—"}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 800, fontSize: "1.2rem", borderTop: "1px solid var(--clr-border)", paddingTop: "0.75rem" }}>
                 <span>إجمالي الفاتورة:</span>

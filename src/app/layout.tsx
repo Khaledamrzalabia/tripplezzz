@@ -7,6 +7,7 @@ import { CurrencyProvider } from "../context/CurrencyContext";
 import { CustomerAuthProvider } from "../context/CustomerAuthContext";
 import { SiteMediaProvider } from "../context/SiteMediaContext";
 import { getCachedStoreSettings } from "../lib/settings.server";
+import { SITE_URL } from "../lib/site";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -28,11 +29,6 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
 };
-
-const SITE_URL =
-  process.env.SITE_URL ||
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://triplezzz.vercel.app");
 
 const baseMetadata: Metadata = {
   appleWebApp: {
@@ -67,7 +63,7 @@ const baseMetadata: Metadata = {
     siteName: "Triple Z",
     type: "website",
     locale: "en_US",
-    url: "https://triple-z.com",
+    url: SITE_URL,
     title: "Triple Z — Football Streetwear",
     description: "Premium football streetwear inspired by football culture. Football, worn differently.",
   },
@@ -114,19 +110,14 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "ClothingStore",
   name: "Triple Z",
-  url: "https://triplezzz.vercel.app",
+  url: SITE_URL,
 
   description: "Premium football streetwear inspired by football culture.",
   priceRange: "$$$",
-  sameAs: [
-    "https://instagram.com/triplez",
-    "https://tiktok.com/@triplez",
-    "https://youtube.com/@triplez",
-    "https://x.com/triplez",
-  ],
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://triplezzz.vercel.app/shop?query={search_term_string}",
+    // The shop page reads ?search=
+    target: `${SITE_URL}/shop?search={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
@@ -142,8 +133,15 @@ function HeaderFallback() {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { media } = await getCachedStoreSettings();
-  const jsonLd = { ...organizationJsonLd, logo: new URL(media.logo, SITE_URL).toString() };
+  const { media, social } = await getCachedStoreSettings();
+  const jsonLd = {
+    ...organizationJsonLd,
+    logo: new URL(media.logo, SITE_URL).toString(),
+    // Real profiles from the admin settings (skips empty or bare-domain placeholders like "https://x.com")
+    sameAs: [social.instagram, social.tiktok, social.facebook, social.x, social.youtube].filter((url) =>
+      /^https?:\/\/[^/]+\/.+/.test(url)
+    ),
+  };
 
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable} ${bebasNeue.variable}`}>

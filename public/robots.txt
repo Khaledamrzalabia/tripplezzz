@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /api/
-Disallow: /cart
-Disallow: /checkout
-Disallow: /order-confirmation
-
-Sitemap: https://triple-z.com/sitemap.xml
