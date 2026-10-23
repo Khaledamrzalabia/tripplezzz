@@ -227,7 +227,7 @@ export default function AdminPage() {
       garmentCare: product.garmentCare || "",
       sizes: product.sizes || [],
       colors: product.colors && product.colors.length > 0 ? product.colors : ["#0a0a0a", "#4a7c9d", "#c9a96e"],
-      isBlurred: Boolean(product.isBlurred || product.availability === "coming-soon"),
+      isBlurred: Boolean(product.isBlurred),
       images: product.images && product.images.length > 0 ? product.images : [{ src: "/hero.jpg", alt: product.name }],
       featured: Boolean(product.featured),
     });

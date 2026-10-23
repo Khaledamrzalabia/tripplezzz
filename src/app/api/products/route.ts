@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       sizes: Array.isArray(body.sizes) ? body.sizes : ["S", "M", "L", "XL"],
       colors: Array.isArray(body.colors) && body.colors.length > 0 ? body.colors : ["#0a0a0a", "#4a7c9d", "#c9a96e"],
       availability: body.availability || "in-stock",
-      isBlurred: Boolean(body.isBlurred || body.availability === "coming-soon"),
+      isBlurred: Boolean(body.isBlurred),
       featured: Boolean(body.featured),
       isPlaceholder: false,
       stock: parseStock(body.stock),

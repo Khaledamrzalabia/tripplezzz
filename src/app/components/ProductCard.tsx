@@ -99,10 +99,10 @@ export default function ProductCard({ product, headingLevel = "h2" }: Props) {
           {primaryImage ? (
             <Image
               src={primaryImage.src}
-              alt={isComingSoon ? "Coming Soon Piece" : (primaryImage.alt || product.name)}
+              alt={product.isBlurred ? "Coming Soon Piece" : (primaryImage.alt || product.name)}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 20vw"
-              className={`mockup-card-img ${isComingSoon ? "mockup-card-img-blurred" : ""}`}
+              className={`mockup-card-img ${product.isBlurred ? "mockup-card-img-blurred" : ""}`}
             />
           ) : (
             <div className="mockup-card-no-img">No Image</div>

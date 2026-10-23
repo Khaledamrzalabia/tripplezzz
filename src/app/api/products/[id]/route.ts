@@ -70,7 +70,7 @@ export async function PUT(request: NextRequest, { params }: RouteProps) {
       ...(Array.isArray(body.sizes) && { sizes: body.sizes }),
       ...(Array.isArray(body.colors) && { colors: body.colors }),
       ...(body.availability !== undefined && { availability: body.availability }),
-      isBlurred: body.isBlurred !== undefined ? Boolean(body.isBlurred) : (isComingSoon ? true : false),
+      ...(body.isBlurred !== undefined && { isBlurred: Boolean(body.isBlurred) }),
       ...(body.featured !== undefined && { featured: Boolean(body.featured) }),
       ...(Array.isArray(body.craftSpecs) && { craftSpecs: body.craftSpecs }),
       ...(body.fitSilhouette !== undefined && { fitSilhouette: body.fitSilhouette.trim() }),

@@ -255,14 +255,7 @@ export default function ProductModal({
                     value={formData.availability}
                     onChange={(e) => {
                       const availability = e.target.value as ProductAvailability;
-                      // Coming Soon is always blurred; leaving it turns the blur off (it can be re-enabled below)
-                      const isBlurred =
-                        availability === "coming-soon"
-                          ? true
-                          : formData.availability === "coming-soon"
-                          ? false
-                          : formData.isBlurred;
-                      setFormData({ ...formData, availability, isBlurred });
+                      setFormData({ ...formData, availability });
                     }}
                     className="admin-form-input"
                   >
@@ -323,21 +316,14 @@ export default function ProductModal({
                 <label className="admin-checkbox-label">
                   <input
                     type="checkbox"
-                    checked={formData.isBlurred || formData.availability === "coming-soon"}
-                    disabled={formData.availability === "coming-soon"}
+                    checked={Boolean(formData.isBlurred)}
                     onChange={(e) => setFormData({ ...formData, isBlurred: e.target.checked })}
                   />
                   <span>تطبيق بلور تشويقي على الصورة (Blur Image)</span>
                 </label>
               </div>
 
-              {formData.availability === "coming-soon" && (
-                <span className="admin-form-hint gold">
-                  منتجات Coming Soon بتظهر بالبلور دايماً. لشيل البلور غيّر حالة التوفر الأول.
-                </span>
-              )}
-
-              {(formData.availability === "coming-soon" || formData.isBlurred) && (
+              {formData.isBlurred && (
                 <>
                   <p className="admin-teaser-desc">
                     يتم تعتيم صورة المنتج وإظهار شارة <strong>COMING SOON</strong> مع عرض ألوان التشويق الثلاثة لجذب جمهور إنستغرام وتيك توك قبل موعد الطرح.

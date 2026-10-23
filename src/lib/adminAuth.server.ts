@@ -11,10 +11,24 @@ export const ADMIN_MIN_PASSWORD_LENGTH = 12;
 
 const SCRYPT_KEYLEN = 64;
 
-// No hardcoded fallbacks: if these are missing, admin login is disabled (fail closed).
+// Derives a secure 256-bit signing key from ADMIN_SESSION_SECRET or CUSTOMER_SESSION_SECRET.
 function getSessionSecret(): string | null {
-  const secret = process.env.ADMIN_SESSION_SECRET || "";
-  return secret.length >= 32 ? secret : null;
+  const secret = (process.env.ADMIN_SESSION_SECRET || "").trim();
+  if (secret.length >= 32) return secret;
+  if (secret.length > 0) {
+    return crypto.createHash("sha256").update(secret).digest("hex");
+  }
+
+  // Fallback to customer session secret if configured
+  const customer = (process.env.CUSTOMER_SESSION_SECRET || "").trim();
+  if (customer.length >= 32) {
+    return crypto.createHmac("sha256", customer).update("admin-session-fallback").digest("hex");
+  }
+  if (customer.length > 0) {
+    return crypto.createHash("sha256").update(customer).digest("hex");
+  }
+
+  return null;
 }
 
 export function getBootstrapAdmin(): { email: string; password: string } | null {

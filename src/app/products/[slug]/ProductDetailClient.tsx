@@ -61,13 +61,13 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                 sizes="(max-width: 768px) 100vw, 50vw"
                 style={{
                   objectFit: "cover",
-                  filter: isComingSoon || product.isBlurred ? "blur(26px) brightness(0.65) saturate(110%)" : "none",
-                  transform: isComingSoon || product.isBlurred ? "scale(1.15)" : "none",
+                  filter: product.isBlurred ? "blur(26px) brightness(0.65) saturate(110%)" : "none",
+                  transform: product.isBlurred ? "scale(1.15)" : "none",
                   transition: "all 0.3s ease",
                 }}
                 priority
               />
-              {(isComingSoon || product.isBlurred) && (
+              {product.isBlurred && (
                 <div className="mockup-card-coming-soon-overlay">
                   <span className="mockup-card-coming-soon-pill" style={{ fontSize: "0.9rem", padding: "0.75rem 2rem", letterSpacing: "0.18em" }}>
                     🔒 COMING SOON DROP
@@ -103,8 +103,8 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                       sizes="76px"
                       style={{
                         objectFit: "cover",
-                        filter: isComingSoon || product.isBlurred ? "blur(14px) brightness(0.7)" : "none",
-                        transform: isComingSoon || product.isBlurred ? "scale(1.2)" : "none",
+                        filter: product.isBlurred ? "blur(14px) brightness(0.7)" : "none",
+                        transform: product.isBlurred ? "scale(1.2)" : "none",
                       }}
                     />
                   </button>
